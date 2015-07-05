@@ -1,0 +1,40 @@
+{
+  "name": "bitcore",
+  "main": "./bitcore.min.js",
+  "version": "0.12.11",
+  "homepage": "http://bitcore.io",
+  "authors": [
+    "BitPay, Inc."
+  ],
+  "description": "A pure, powerful core for your bitcoin project.",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "bitcoin",
+    "bitcore",
+    "btc",
+    "satoshi"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "CONTRIBUTING.md",
+    "gulpfile.js",
+    "lib",
+    "index.js",
+    "karma.conf.js",
+    "npm-shrinkwrap.json",
+    "test"
+  ],
+  "_release": "0.12.11",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.12.11",
+    "commit": "92ead9a08190e34c2055389ca77a46875e71e666"
+  },
+  "_source": "git://github.com/bitpay/bitcore.git",
+  "_target": "~0.12.11",
+  "_originalSource": "bitcore",
+  "_direct": true
+}
