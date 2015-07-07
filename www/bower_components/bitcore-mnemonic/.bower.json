@@ -1,0 +1,41 @@
+{
+  "name": "bitcore-mnemonic",
+  "main": "./bitcore-mnemonic.min.js",
+  "version": "0.11.0",
+  "homepage": "https://github.com/bitpay/bitcore-mnemonic",
+  "authors": [
+    "BitPay"
+  ],
+  "description": "BIP39 - Mnemonics implemented for Bitcore.",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "bitcoin",
+    "bitcore",
+    "btc",
+    "satoshi",
+    "mnemonic"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "index.js",
+    "gulpfile.js",
+    "README.md",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.11.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.11.0",
+    "commit": "c5d9eb20e5009f79f6401f03c071ac429f97de06"
+  },
+  "_source": "git://github.com/bitpay/bitcore-mnemonic.git",
+  "_target": "~0.11.0",
+  "_originalSource": "bitcore-mnemonic",
+  "_direct": true
+}

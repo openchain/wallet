@@ -1,14 +1,21 @@
-var module = angular.module('OpenChainWallet.Services', []);
+var module = angular.module("OpenChainWallet.Services", []);
 
-module.factory('openChainApiService', function ($http) {
-    var apiService = { };
+module.service("openChainApiService", function ($http) {
 
-    apiService.getTransactionStream = function (from) {
-        return $http({
-            method: 'GET',
-            url: 'http://localhost:5000/transactionstream?from='
-        });
+    this.getTransactionStream = function (from) {
+        return $http.get("http://localhost:5000/stream?from=");
     }
 
-    return apiService;
+    this.postTransaction = function (transaction) {
+        return $http.post(
+            "http://localhost:5000/submit",
+            { raw: transaction.encode().toHex() });
+    }
+});
+
+module.service("protobufBuilder", function () {
+    this.builder = dcodeIO.ProtoBuf.loadProtoFile("content/schema.proto");
+    var root = this.builder.build();
+    this.Transaction = root.OpenChain.Transaction;
+    this.LedgerRecord = root.OpenChain.LedgerRecord;
 });
