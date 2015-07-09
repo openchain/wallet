@@ -1,5 +1,5 @@
-<div>
-  
+<div ng-show="mode == 'form'">
+
   From account:
   <input type="text" ng-model="fromAccount">
 
@@ -13,4 +13,21 @@
   <input type="text" ng-model="amount">
 
   <button type="button" ng-click="send()">Submit</button>
+</div>
+
+<div ng-show="mode == 'spinner'">
+  Please wait...
+</div>
+
+<div ng-show="mode == 'confirm'">
+  <div>Sending {{amount}} units of asset {{asset}}</div>
+  <div>Current balance on {{fromAccount}}: {{fromBalance}}</div>
+  <div>Current balance on {{toAccount}}: {{toBalance}}</div>
+  
+  Confirm?
+  <button type="button" ng-click="confirm()">Submit</button>
+</div>
+
+<div ng-show="mode == 'confirmed'">
+  Confirmed, ledger record: {{ledgerRecordId}}
 </div>

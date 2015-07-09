@@ -14,10 +14,10 @@ module.controller("HomeController", function ($scope, $location, openChainApiSer
     }
 
     $scope.transactions = [{ "raw": "abcd" }, { "raw": "efhd" }];
-    $scope.address = walletSettings.address.toString();
+    $scope.root_account = walletSettings.root_account.toString();
 
-    openChainApiService.getTransactionStream().success(function (response) {
-        $scope.transactions = response;
+    openChainApiService.getSubaccounts(walletSettings.root_account).success(function (response) {
+        $scope.accounts = response;
     });
 });
 
@@ -45,7 +45,7 @@ module.controller("SignInController", function ($scope, $location, walletSetting
 
             walletSettings.hd_key = hd_key;
             walletSettings.derived_key = derivedKey;
-            walletSettings.address = derivedKey.privateKey.toAddress();
+            walletSettings.root_account = "/account/p2pkh/" + derivedKey.privateKey.toAddress().toString();
             walletSettings.initialized = true;
 
             $location.path("/");
@@ -56,32 +56,58 @@ module.controller("SignInController", function ($scope, $location, walletSetting
 // ***** SendController *****
 // **************************
 
-module.controller("SendController", function ($scope, $location, protobufBuilder, openChainApiService, walletSettings) {
+module.controller("SendController", function ($scope, $location, $q, protobufBuilder, openChainApiService, walletSettings) {
 
     if (!walletSettings.initialized) {
         $location.path("/");
         return;
     }
 
+    $scope.mode = "form";
+
     $scope.send = function () {
-        var transaction = new protobufBuilder.Transaction({
+        $q.all([
+            openChainApiService.getAccountStatus($scope.fromAccount, $scope.asset),
+            openChainApiService.getAccountStatus($scope.toAccount, $scope.asset)
+        ])
+            .then(function (result) { accountsRetrieved(result[0].data, result[1].data); });
+        
+        $scope.mode = "spinner";
+    };
+
+    var accountsRetrieved = function (from, to) {
+        $scope.fromBalance = from["amount"];
+        $scope.toBalance = to["amount"];
+
+        $scope.constructedTransaction = new protobufBuilder.Transaction({
             "account_entries": [
                 {
                     "account": $scope.fromAccount,
                     "asset": $scope.asset,
-                    "amount": parseInt($scope.amount),
-                    "version": ByteBuffer.fromHex("")
+                    "amount": -parseInt($scope.amount),
+                    "version": ByteBuffer.fromHex(from["version"])
                 },
                 {
                     "account": $scope.toAccount,
                     "asset": $scope.asset,
-                    "amount": -parseInt($scope.amount),
-                    "version": ByteBuffer.fromHex("")
+                    "amount": parseInt($scope.amount),
+                    "version": ByteBuffer.fromHex(to["version"])
                 },
             ],
             "metadata": ByteBuffer.fromHex("")
         });
 
-        openChainApiService.postTransaction(transaction);
+        $scope.mode = "confirm";
     };
+
+    $scope.confirm = function () {
+
+        openChainApiService.postTransaction($scope.constructedTransaction).then(transactionConfirmed);
+        $scope.mode = "spinner";
+    };
+
+    var transactionConfirmed = function (result) {
+        $scope.mode = "confirmed";
+        $scope.ledgerRecordId = result.data["ledger_record"];
+    }
 });

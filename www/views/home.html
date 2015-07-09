@@ -1,5 +1,9 @@
 <div>
-  Your address: {{ address }}
+  <div>Your address: {{ root_account }}</div>
+
+  <div ng-repeat="account in accounts">
+    {{ account.account }} [Asset: {{ account.asset }}] => Balance: {{ account.amount }}
+  </div>
 
   <a href="#/send">Send</a>
 </div>

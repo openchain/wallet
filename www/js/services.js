@@ -9,7 +9,26 @@ module.service("openChainApiService", function ($http) {
     this.postTransaction = function (transaction) {
         return $http.post(
             "http://localhost:5000/submit",
-            { raw: transaction.encode().toHex() });
+            {
+                transaction: transaction.encode().toHex(),
+                authentication: [ ]
+            });
+    }
+
+    this.getAccountStatus = function (account, asset) {
+        return $http({
+            url: "http://localhost:5000/query/accountentry",
+            method: "GET",
+            params: { account: account, asset: asset }
+        });
+    }
+
+    this.getSubaccounts = function (account) {
+        return $http({
+            url: "http://localhost:5000/query/subaccounts",
+            method: "GET",
+            params: { account: account }
+        });
     }
 });
 
