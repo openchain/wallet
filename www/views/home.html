@@ -5,5 +5,11 @@
     {{ account.account }} [Asset: {{ account.asset }}] => Balance: {{ account.amount }}
   </div>
 
+  <div ng-repeat="endpoint in endpoints">
+    {{ endpoint.name }} [URL: {{ endpoint.rootUrl }}] => <a href="#/send/{{ endpoint.id }}">Send</a>
+  </div>
+
+  <div><a href="#/addendpoint">Add endpoint</a></div>
+
   <a href="#/send">Send</a>
 </div>

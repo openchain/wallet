@@ -6,7 +6,7 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** HomeController *****
 // **************************
 
-module.controller("HomeController", function ($scope, $location, openChainApiService, walletSettings) {
+module.controller("HomeController", function ($scope, $location, apiService, walletSettings, endpointManager) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -15,10 +15,12 @@ module.controller("HomeController", function ($scope, $location, openChainApiSer
 
     $scope.transactions = [{ "raw": "abcd" }, { "raw": "efhd" }];
     $scope.root_account = walletSettings.root_account.toString();
+    $scope.endpoints = endpointManager.endpoints;
+    //apiService.getSubaccounts(walletSettings.root_account).success(function (response) {
+    //    $scope.accounts = response;
+    //});
 
-    openChainApiService.getSubaccounts(walletSettings.root_account).success(function (response) {
-        $scope.accounts = response;
-    });
+
 });
 
 // ***** SignInController *****
@@ -56,20 +58,21 @@ module.controller("SignInController", function ($scope, $location, walletSetting
 // ***** SendController *****
 // **************************
 
-module.controller("SendController", function ($scope, $location, $q, protobufBuilder, openChainApiService, walletSettings) {
+module.controller("SendController", function ($scope, $location, $q, $routeParams, protobufBuilder, apiService, walletSettings, endpointManager) {
 
     if (!walletSettings.initialized) {
-        $location.path("/");
+        $location.path("/signin");
         return;
     }
 
     $scope.mode = "form";
+    $scope.endpoint = endpointManager.endpoints[$routeParams.ledgerId];
 
     $scope.send = function () {
         $q.all([
-            openChainApiService.getAccountStatus($scope.fromAccount, $scope.asset),
-            openChainApiService.getAccountStatus($scope.toAccount, $scope.asset)
-        ])
+                apiService.getAccountStatus($scope.endpoint, $scope.fromAccount, $scope.asset),
+                apiService.getAccountStatus($scope.endpoint, $scope.toAccount, $scope.asset)
+            ])
             .then(function (result) { accountsRetrieved(result[0].data, result[1].data); });
         
         $scope.mode = "spinner";
@@ -80,6 +83,7 @@ module.controller("SendController", function ($scope, $location, $q, protobufBui
         $scope.toBalance = to["amount"];
 
         $scope.constructedTransaction = new protobufBuilder.Transaction({
+            "ledger_id": $scope.endpoint.rootUrl,
             "account_entries": [
                 {
                     "account": $scope.fromAccount,
@@ -101,8 +105,7 @@ module.controller("SendController", function ($scope, $location, $q, protobufBui
     };
 
     $scope.confirm = function () {
-
-        openChainApiService.postTransaction($scope.constructedTransaction).then(transactionConfirmed);
+        apiService.postTransaction($scope.endpoint, $scope.constructedTransaction).then(transactionConfirmed);
         $scope.mode = "spinner";
     };
 
@@ -110,4 +113,25 @@ module.controller("SendController", function ($scope, $location, $q, protobufBui
         $scope.mode = "confirmed";
         $scope.ledgerRecordId = result.data["ledger_record"];
     }
+});
+
+// ***** AddEndpointController *****
+// *********************************
+
+module.controller("AddEndpointController", function ($scope, $location, walletSettings, apiService, endpointManager) {
+
+    if (!walletSettings.initialized) {
+        $location.path("/signin");
+        return;
+    }
+
+    // TODO: Remove
+    $scope.url = "http://localhost:5000/";
+
+    $scope.add = function () {
+        apiService.getLedgerInfo($scope.url).then(function (result) {
+            endpointManager.addEndpoint(result.data);
+            $location.path("/");
+        });
+    };
 });

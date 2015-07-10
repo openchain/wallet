@@ -1,31 +1,34 @@
 var module = angular.module("OpenChainWallet.Services", []);
 
-module.service("openChainApiService", function ($http) {
+module.service("apiService", function ($http) {
 
-    this.getTransactionStream = function (from) {
-        return $http.get("http://localhost:5000/stream?from=");
-    }
-
-    this.postTransaction = function (transaction) {
+    this.postTransaction = function (endpoint, transaction) {
         return $http.post(
-            "http://localhost:5000/submit",
+            endpoint.rootUrl + "/submit",
             {
                 transaction: transaction.encode().toHex(),
                 authentication: [ ]
             });
     }
 
-    this.getAccountStatus = function (account, asset) {
+    this.getLedgerInfo = function (rootUrl) {
         return $http({
-            url: "http://localhost:5000/query/accountentry",
+            url: rootUrl + "/info",
+            method: "GET"
+        });
+    }
+
+    this.getAccountStatus = function (endpoint, account, asset) {
+        return $http({
+            url: endpoint.rootUrl + "/query/accountentry",
             method: "GET",
             params: { account: account, asset: asset }
         });
     }
 
-    this.getSubaccounts = function (account) {
+    this.getSubaccounts = function (endpoint, account) {
         return $http({
-            url: "http://localhost:5000/query/subaccounts",
+            url: endpoint.rootUrl + "/query/subaccounts",
             method: "GET",
             params: { account: account }
         });

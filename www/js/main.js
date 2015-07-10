@@ -15,9 +15,13 @@ var app =
                 templateUrl: "views/signin.html",
                 controller: "SignInController"
             })
-            .when("/send", {
+            .when("/send/:ledgerId", {
                 templateUrl: "views/send.html",
                 controller: "SendController"
+            })
+            .when("/addendpoint", {
+                templateUrl: "views/addendpoint.html",
+                controller: "AddEndpointController"
             })
             .otherwise({
                 redirectTo: '/'
