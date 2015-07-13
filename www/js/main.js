@@ -23,6 +23,10 @@ var app =
                 templateUrl: "views/addendpoint.html",
                 controller: "AddEndpointController"
             })
+            .when("/createasset/:ledgerId", {
+                templateUrl: "views/createasset.html",
+                controller: "CreateAssetController"
+            })
             .otherwise({
                 redirectTo: '/'
             });
