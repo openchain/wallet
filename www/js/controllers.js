@@ -13,14 +13,33 @@ module.controller("HomeController", function ($scope, $location, apiService, wal
         return;
     }
 
-    $scope.transactions = [{ "raw": "abcd" }, { "raw": "efhd" }];
-    $scope.root_account = walletSettings.root_account.toString();
+    $scope.rootAccount = walletSettings.rootAccount.toString();
     $scope.endpoints = endpointManager.endpoints;
-    //apiService.getSubaccounts(walletSettings.root_account).success(function (response) {
-    //    $scope.accounts = response;
-    //});
 
+    var balance = [];
 
+    function loadEndpoint(key) {
+        var endpoint = endpointManager.endpoints[key];
+        var dataModel = {
+            endpoint: endpoint,
+            state: "loading",
+            assets: []
+        };
+        balance.push(dataModel);
+        apiService.getAccountStatus(endpoint, walletSettings.rootAccount, null).then(function (result) {
+            for (var itemKey in result.data) {
+                dataModel.assets.push(result.data[itemKey]);
+            }
+
+            dataModel.assets.state = "loaded";
+        });
+    }
+
+    for (var key in endpointManager.endpoints) {
+        loadEndpoint(key);
+    }
+
+    $scope.balance = balance;
 });
 
 // ***** SignInController *****
@@ -45,9 +64,9 @@ module.controller("SignInController", function ($scope, $location, walletSetting
             var hd_key = code.toHDPrivateKey();
             var derivedKey = hd_key.derive(44, true).derive(22, true).derive(0, true).derive(0).derive(0);
 
-            walletSettings.hd_key = hd_key;
+            walletSettings.hdKey = hd_key;
             walletSettings.derived_key = derivedKey;
-            walletSettings.root_account = "/account/p2pkh/" + derivedKey.privateKey.toAddress().toString();
+            walletSettings.rootAccount = "/account/p2pkh/" + derivedKey.privateKey.toAddress().toString();
             walletSettings.initialized = true;
 
             $location.path("/");
@@ -58,7 +77,7 @@ module.controller("SignInController", function ($scope, $location, walletSetting
 // ***** SendController *****
 // **************************
 
-module.controller("SendController", function ($scope, $location, $q, $routeParams, protobufBuilder, apiService, walletSettings, endpointManager) {
+module.controller("SendController", function ($scope, $location, $q, $routeParams, protobufBuilder, apiService, encodingService, walletSettings, endpointManager) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -73,28 +92,26 @@ module.controller("SendController", function ($scope, $location, $q, $routeParam
                 apiService.getAccountStatus($scope.endpoint, $scope.fromAccount, $scope.asset),
                 apiService.getAccountStatus($scope.endpoint, $scope.toAccount, $scope.asset)
             ])
-            .then(function (result) { accountsRetrieved(result[0].data, result[1].data); });
+            .then(function (result) { accountsRetrieved(result[0].data[0], result[1].data[0]); });
         
         $scope.mode = "spinner";
     };
 
     var accountsRetrieved = function (from, to) {
-        $scope.fromBalance = from["amount"];
-        $scope.toBalance = to["amount"];
+        $scope.fromBalance = from["balance"];
+        $scope.toBalance = to["balance"];
 
-        $scope.constructedTransaction = new protobufBuilder.Transaction({
-            "ledger_id": $scope.endpoint.rootUrl,
-            "account_entries": [
+        $scope.constructedTransaction = new protobufBuilder.Mutation({
+            "namespace": encodingService.encodeNamespace($scope.endpoint.rootUrl),
+            "key_value_pairs": [
                 {
-                    "account": $scope.fromAccount,
-                    "asset": $scope.asset,
-                    "amount": -parseInt($scope.amount),
+                    "key": encodingService.encodeAccount($scope.fromAccount, $scope.asset),
+                    "value": encodingService.encodeInt64(-parseInt($scope.amount)),
                     "version": ByteBuffer.fromHex(from["version"])
                 },
                 {
-                    "account": $scope.toAccount,
-                    "asset": $scope.asset,
-                    "amount": parseInt($scope.amount),
+                    "key": encodingService.encodeAccount($scope.toAccount, $scope.asset),
+                    "value": encodingService.encodeInt64(parseInt($scope.amount)),
                     "version": ByteBuffer.fromHex(to["version"])
                 },
             ],
@@ -124,9 +141,6 @@ module.controller("AddEndpointController", function ($scope, $location, walletSe
         $location.path("/signin");
         return;
     }
-
-    // TODO: Remove
-    $scope.url = "http://localhost:5000/";
 
     $scope.add = function () {
         apiService.getLedgerInfo($scope.url).then(function (result) {

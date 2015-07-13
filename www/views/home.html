@@ -1,15 +1,28 @@
-<div>
-  <div>Your address: {{ root_account }}</div>
+<div class="row">
 
-  <div ng-repeat="account in accounts">
-    {{ account.account }} [Asset: {{ account.asset }}] => Balance: {{ account.amount }}
+  <!-- Left column -->
+  <div class="col-md-6">
+
+    <div class="panel panel-default">
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat-start="endpoint in balance">
+          <h3 class="panel-title">{{ endpoint.endpoint.name }} [<a href="#/send/{{ endpoint.endpoint.id }}">Send</a>]</h3>
+        </li>
+
+        <li class="list-group-item" ng-repeat="asset in endpoint.assets" ng-repeat-end>
+          <div>{{ asset.balance }} {{ asset.asset }}</div>
+        </li>
+
+      </ul>
+    </div>
+
   </div>
 
-  <div ng-repeat="endpoint in endpoints">
-    {{ endpoint.name }} [URL: {{ endpoint.rootUrl }}] => <a href="#/send/{{ endpoint.id }}">Send</a>
+  <!-- Right column -->
+  <div class="col-md-6">
+    <div class="alert alert-success">
+      {{ rootAccount }}
+    </div>
   </div>
 
-  <div><a href="#/addendpoint">Add endpoint</a></div>
-
-  <a href="#/send">Send</a>
 </div>

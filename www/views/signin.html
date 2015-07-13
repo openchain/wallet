@@ -1,7 +1,36 @@
-<div>
-  Sign in page
+<div class="row">
+  <div class="col-md-offset-3 col-md-6">
 
-  <input type="text" ng-model="seed" placeholder="Enter a name here">
+    <form method="post" class="sign-in-form" autocomplete="off">
 
-  <button type="button" ng-click="submit()">Submit</button>
+      <div class="panel panel-primary full-page-dialog">
+        <div class="panel-heading">
+          <h3 class="panel-title">Sign in</h3>
+        </div>
+        <div class="panel-body">
+
+          <div class="body-header">
+            <i class="fa fa-lock fa-3x pull-left fa-border"></i>
+            <p>Please enter your passphrase to sign in.</p>
+          </div>
+          <hr>
+
+          <div class="form-group password-box">
+            <label class="control-label" for="seed">Enter your passphrase</label>
+            <input class="form-control hash-password" type="password" id="seed" ng-model="seed" placeholder="Passphrase">
+          </div>
+
+        </div>
+        <div class="panel-footer text-right">
+
+          <div class="row">
+            <div class="col-md-3 col-md-offset-9">
+              <button type="submit" class="btn btn-primary" ng-click="submit()">Sign In</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
 </div>
