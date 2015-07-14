@@ -6,11 +6,11 @@
     <div class="panel panel-default">
       <ul class="list-group">
         <li class="list-group-item" ng-repeat-start="endpoint in balance">
-          <h3 class="panel-title">{{ endpoint.endpoint.name }} [<a href="#/send/{{ endpoint.endpoint.id }}">Send</a>] [<a href="#/createasset/{{ endpoint.endpoint.id }}">Create Asset</a>]</h3>
+          <h3 class="panel-title">{{ endpoint.endpoint.properties.name }} [<a href="#/send/{{ endpoint.endpoint.properties.id }}">Send</a>] [<a href="#/createasset/{{ endpoint.endpoint.properties.id }}">Create Asset</a>]</h3>
         </li>
 
         <li class="list-group-item" ng-repeat="asset in endpoint.assets" ng-repeat-end>
-          <div>{{ asset.balance }} {{ asset.asset }}</div>
+          <div>{{ asset.balance }} {{ asset.asset }} {{ asset.assetDefinition.name_short }}</div>
         </li>
 
       </ul>

@@ -51,9 +51,9 @@ module.service("apiService", function ($http, encodingService) {
         //    return result;
         //});
         return $http({
-            url: endpoint.rootUrl + "/query/accountentries",
+            url: endpoint.rootUrl + "/query/account",
             method: "GET",
-            params: { account: account, asset: asset }
+            params: { account: account }
         });
     }
 
@@ -100,6 +100,13 @@ module.service("encodingService", function () {
         buffer.LE();
         var usage = buffer.readInt32();
         var result = buffer.readInt64();
+        return result;
+    };
+
+    this.decodeString = function (buffer) {
+        buffer.LE();
+        var usage = buffer.readInt32();
+        var result = buffer.readIString();
         return result;
     };
 });

@@ -6,7 +6,7 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** HomeController *****
 // **************************
 
-module.controller("HomeController", function ($scope, $location, apiService, walletSettings, endpointManager) {
+module.controller("HomeController", function ($scope, $location, $q, apiService, walletSettings, endpointManager) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -32,6 +32,12 @@ module.controller("HomeController", function ($scope, $location, apiService, wal
             }
 
             dataModel.assets.state = "loaded";
+        }).then(function () {
+            return $q.all(dataModel.assets.map(function (asset) {
+                return endpoint.getAssetDefinition(asset.asset).then(function(result) {
+                    asset.assetDefinition = result;
+                });
+            }));
         });
     }
 
@@ -65,7 +71,7 @@ module.controller("SignInController", function ($scope, $location, walletSetting
             var derivedKey = hd_key.derive(44, true).derive(22, true).derive(0, true).derive(0).derive(0);
 
             walletSettings.hdKey = hd_key;
-            walletSettings.derived_key = derivedKey;
+            walletSettings.derivedKey = derivedKey;
             walletSettings.rootAccount = "/account/p2pkh/" + derivedKey.privateKey.toAddress().toString();
             walletSettings.initialized = true;
 
