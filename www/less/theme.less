@@ -1,0 +1,60 @@
+﻿
+li.list-group-item {
+    .currency-icon {
+        float: left;
+
+        display: inline-block;
+        text-align: center;
+        margin: 0;
+        position: relative;
+
+        span {
+            color: #fff;
+            display: block;
+            height: 48px;
+            width: 48px;
+            line-height: 46px;
+        }
+
+        img {
+            height: 48px;
+            width: 48px;
+        }
+
+        .security-level {
+            position: absolute;
+            right: 0px;
+            bottom: 0px;
+        }
+    }
+
+    .list-group-item-heading {
+        line-height: 20.9px;/*@headings-line-height * @font-size-h4;*/
+        font-weight: normal;
+        margin-bottom: 0;
+        padding: 4px 0 10px;
+    }
+
+    .details-left {
+        margin-left: 12px + 48px + 2 * (4px + 1px);
+
+        i {
+            width: 1.15em;
+        }
+
+        .list-group-item-heading, .list-group-item-text {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
+
+    .details-right {
+        float: right;
+        text-align: right;
+
+        .list-group-item-heading {
+            margin-left: 15px;
+        }
+    }
+}
