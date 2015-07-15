@@ -1,14 +1,21 @@
 var module = angular.module("OpenChainWallet.Services", []);
 var ByteBuffer = dcodeIO.ByteBuffer;
+var Long = dcodeIO.Long;
 
-module.service("apiService", function ($http, encodingService) {
+module.service("apiService", function ($http, encodingService, walletSettings) {
 
     this.postTransaction = function (endpoint, transaction) {
+        var encodedTransaction = transaction.encode();
         return $http.post(
             endpoint.rootUrl + "/submit",
             {
-                transaction: transaction.encode().toHex(),
-                authentication: [ ]
+                transaction: encodedTransaction.toHex(),
+                signatures: [
+                    {
+                        pub_key: ByteBuffer.wrap(walletSettings.derivedKey.publicKey.toBuffer()).toHex(),
+                        signature: ByteBuffer.wrap(walletSettings.sign(encodedTransaction)).toHex()
+                    }
+                ]
             });
     }
 
@@ -20,7 +27,7 @@ module.service("apiService", function ($http, encodingService) {
         }).then(function (result) {
             return {
                 key: key,
-                value: result.data.value == null ? null : ByteBuffer.fromHex(result.data.value),
+                value: ByteBuffer.fromHex(result.data.value),
                 version: ByteBuffer.fromHex(result.data.version)
             };
         });
@@ -33,23 +40,27 @@ module.service("apiService", function ($http, encodingService) {
         });
     }
 
-    this.getAccountStatus = function (endpoint, account, asset) {
-        //return this.getValue(endpoint, encodingService.encodeAccount(account, asset)).then(function (result) {
-        //    var result = {
-        //        account: account,
-        //        asset: asset,
-        //        version: result.data.version
-        //    };
+    this.getAccount = function (endpoint, account, asset) {
+        return this.getValue(endpoint, encodingService.encodeAccount(account, asset)).then(function (result) {
+            var accountResult = {
+                account: account,
+                asset: asset,
+                version: result.version
+            };
 
-        //    if (result.data.value == null) {
-        //        result["balance"] = 0;
-        //    }
-        //    else {
-        //        result["balance"] = encodingService.decodeInt64(result.data.value);
-        //    }
+            if (result.value.remaining() == 0) {
+                // Unset value
+                accountResult["balance"] = Long.ZERO;
+            }
+            else {
+                accountResult["balance"] = encodingService.decodeInt64(result.value);
+            }
 
-        //    return result;
-        //});
+            return accountResult;
+        });
+    }
+
+    this.getAccountAssets = function (endpoint, account) {
         return $http({
             url: endpoint.rootUrl + "/query/account",
             method: "GET",
@@ -82,7 +93,7 @@ module.service("encodingService", function () {
 
     this.encodeInt64 = function (value) {
         var result = new ByteBuffer(null, true);
-        result.writeInt32(1);
+        result.writeInt32(2);
         result.writeInt64(value);
         result.flip();
         return result;

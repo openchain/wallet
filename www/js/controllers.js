@@ -26,7 +26,7 @@ module.controller("HomeController", function ($scope, $location, $q, apiService,
             assets: []
         };
         balance.push(dataModel);
-        apiService.getAccountStatus(endpoint, walletSettings.rootAccount, null).then(function (result) {
+        apiService.getAccountAssets(endpoint, walletSettings.rootAccount).then(function (result) {
             for (var itemKey in result.data) {
                 dataModel.assets.push(result.data[itemKey]);
             }
@@ -72,7 +72,7 @@ module.controller("SignInController", function ($scope, $location, walletSetting
 
             walletSettings.hdKey = hd_key;
             walletSettings.derivedKey = derivedKey;
-            walletSettings.rootAccount = "/account/p2pkh/" + derivedKey.privateKey.toAddress().toString();
+            walletSettings.rootAccount = "/p2pkh/" + derivedKey.privateKey.toAddress().toString();
             walletSettings.initialized = true;
 
             $location.path("/");
@@ -91,14 +91,15 @@ module.controller("SendController", function ($scope, $location, $q, $routeParam
     }
 
     $scope.mode = "form";
+    $scope.fromAccount = walletSettings.rootAccount;
     $scope.endpoint = endpointManager.endpoints[$routeParams.ledgerId];
 
     $scope.send = function () {
         $q.all([
-                apiService.getAccountStatus($scope.endpoint, $scope.fromAccount, $scope.asset),
-                apiService.getAccountStatus($scope.endpoint, $scope.toAccount, $scope.asset)
+                apiService.getAccount($scope.endpoint, $scope.fromAccount, $scope.asset),
+                apiService.getAccount($scope.endpoint, $scope.toAccount, $scope.asset)
             ])
-            .then(function (result) { accountsRetrieved(result[0].data[0], result[1].data[0]); });
+            .then(function (result) { accountsRetrieved(result[0], result[1]); });
         
         $scope.mode = "spinner";
     };
@@ -112,13 +113,13 @@ module.controller("SendController", function ($scope, $location, $q, $routeParam
             "key_value_pairs": [
                 {
                     "key": encodingService.encodeAccount($scope.fromAccount, $scope.asset),
-                    "value": encodingService.encodeInt64(-parseInt($scope.amount)),
-                    "version": ByteBuffer.fromHex(from["version"])
+                    "value": encodingService.encodeInt64(from["balance"].subtract(Long.fromString($scope.amount))),
+                    "version": from["version"]
                 },
                 {
                     "key": encodingService.encodeAccount($scope.toAccount, $scope.asset),
-                    "value": encodingService.encodeInt64(parseInt($scope.amount)),
-                    "version": ByteBuffer.fromHex(to["version"])
+                    "value": encodingService.encodeInt64(to["balance"].add(Long.fromString($scope.amount))),
+                    "version": to["version"]
                 },
             ],
             "metadata": ByteBuffer.fromHex("")
@@ -185,7 +186,7 @@ module.controller("CreateAssetController", function ($scope, $location, $routePa
                 "key_value_pairs": [
                     {
                         "key": key,
-                        "value": encodingService.encodeString(value, 0),
+                        "value": encodingService.encodeString(value, 1),
                         "version": result.version
                     }
                 ],

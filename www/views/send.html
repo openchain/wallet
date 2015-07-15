@@ -23,8 +23,8 @@
 
 <div ng-show="mode == 'confirm'">
   <div>Sending {{amount}} units of asset {{asset}}</div>
-  <div>Current balance on {{fromAccount}}: {{fromBalance}}</div>
-  <div>Current balance on {{toAccount}}: {{toBalance}}</div>
+  <div>Current balance on {{fromAccount}}: {{fromBalance.toString()}}</div>
+  <div>Current balance on {{toAccount}}: {{toBalance.toString()}}</div>
   
   Confirm?
   <button type="button" ng-click="confirm()">Submit</button>

@@ -1,11 +1,22 @@
 var module = angular.module("OpenChainWallet.Models", []);
+var bitcore = require("bitcore");
 
 module.value("walletSettings", {
     hdKey: null,
     derivedKey: null,
     rootAccount: null,
     initialized: false,
-    versionPrefix: "v1"
+    versionPrefix: "v1",
+    sign: function (value) {
+        var transactionBuffer = new Uint8Array(value.toArrayBuffer());
+        var hash = bitcore.crypto.Hash.sha256(bitcore.crypto.Hash.sha256(transactionBuffer));
+
+        return bitcore.crypto.ECDSA().set({
+            hashbuf: hash,
+            endian: "big",
+            privkey: this.derivedKey.privateKey
+        }).sign().sig.toBuffer();
+    }
 });
 
 module.factory("Endpoint", function ($q, apiService, encodingService) {
