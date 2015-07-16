@@ -30,4 +30,11 @@ var app =
             .otherwise({
                 redirectTo: '/'
             });
-    }]);
+    }])
+    .directive("assetItem", function () {
+        return {
+            restrict: 'A',
+            templateUrl: 'views/directives/assetitem.html',
+            replace: false
+        };
+    });

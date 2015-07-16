@@ -3,51 +3,6 @@ var ByteBuffer = dcodeIO.ByteBuffer;
 var bitcore = require("bitcore");
 var Mnemonic = require("bitcore-mnemonic");
 
-// ***** HomeController *****
-// **************************
-
-module.controller("HomeController", function ($scope, $location, $q, apiService, walletSettings, endpointManager) {
-
-    if (!walletSettings.initialized) {
-        $location.path("/signin");
-        return;
-    }
-
-    $scope.rootAccount = walletSettings.rootAccount.toString();
-    $scope.endpoints = endpointManager.endpoints;
-
-    var balance = [];
-
-    function loadEndpoint(key) {
-        var endpoint = endpointManager.endpoints[key];
-        var dataModel = {
-            endpoint: endpoint,
-            state: "loading",
-            assets: []
-        };
-        balance.push(dataModel);
-        apiService.getAccountAssets(endpoint, walletSettings.rootAccount).then(function (result) {
-            for (var itemKey in result.data) {
-                dataModel.assets.push(result.data[itemKey]);
-            }
-
-            dataModel.assets.state = "loaded";
-        }).then(function () {
-            return $q.all(dataModel.assets.map(function (asset) {
-                return endpoint.getAssetDefinition(asset.asset).then(function(result) {
-                    asset.assetDefinition = result;
-                });
-            }));
-        });
-    }
-
-    for (var key in endpointManager.endpoints) {
-        loadEndpoint(key);
-    }
-
-    $scope.balance = balance;
-});
-
 // ***** SignInController *****
 // ****************************
 

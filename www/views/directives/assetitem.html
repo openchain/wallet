@@ -1,0 +1,13 @@
+﻿
+<span class="currency-icon thumbnail">
+  <img ng-src="{{ asset.assetDefinition.iconUrl }}" />
+</span>
+
+<div class="details-right">
+  <h4 class="list-group-item-heading">{{ asset.balance.toString() }} {{ asset.assetDefinition.nameShort }}</h4>
+</div>
+
+<div class="details-left">
+  <h4 class="list-group-item-heading">{{ asset.assetDefinition.name }}</h4>
+  <p class="list-group-item-text text-muted"><i class="fa fa-edit"></i> Asset path: {{ asset.assetDefinition.fullPath }}</p>
+</div>

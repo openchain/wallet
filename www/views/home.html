@@ -1,39 +1,88 @@
-<div class="row">
+<div ng-switch on="display">
+  <!-- Home Screen -->
+  <div ng-switch-when="home" class="row">
 
-  <!-- Left column -->
-  <div class="col-md-6">
+    <!-- Left column -->
+    <div class="col-md-6">
 
-    <div class="panel panel-default">
-      <ul class="list-group">
-        <li class="list-group-item" ng-repeat-start="endpoint in balance">
-          <h3 class="panel-title">{{ endpoint.endpoint.properties.name }} [<a href="#/send/{{ endpoint.endpoint.properties.id }}">Send</a>] [<a href="#/createasset/{{ endpoint.endpoint.properties.id }}">Create Asset</a>]</h3>
-        </li>
+      <div class="panel panel-default">
+        <div class="list-group">
+          <div class="list-group-item" ng-repeat-start="endpoint in balance">
+            <h3 class="panel-title">{{ endpoint.endpoint.properties.name }}</h3>
+          </div>
 
-        <!-- Asset item -->
-        <li class="list-group-item clearfix" ng-repeat="asset in endpoint.assets" ng-repeat-end>
-          <a href="#" class="currency-icon thumbnail color-popover">
-            <img ng-src="{{ asset.assetDefinition.icon_url }}" />
+          <!-- Asset item -->
+          <a href="" class="list-group-item clearfix" ng-click="sendAsset(asset)" asset-item ng-repeat="asset in endpoint.assets" ng-repeat-end>
+            
           </a>
+          
+        </div>
+      </div>
 
-          <div class="details-right">
-            <h4 class="list-group-item-heading">{{ asset.balance }} {{ asset.assetDefinition.name_short }}</h4>
-          </div>
+    </div>
 
-          <div class="details-left">
-            <h4 class="list-group-item-heading">{{ asset.assetDefinition.name }}</h4>
-            <p class="list-group-item-text text-muted"><i class="fa fa-edit"></i> Asset path: {{ asset.asset }}</p>
-          </div>
-        </li>
-      </ul>
+    <!-- Right column -->
+    <div class="col-md-6">
+      <div class="alert alert-success">
+        {{ rootAccount }}
+      </div>
     </div>
 
   </div>
 
-  <!-- Right column -->
-  <div class="col-md-6">
-    <div class="alert alert-success">
-      {{ rootAccount }}
+  <!-- Send Screen -->
+  <div ng-switch-when="send" class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form class="form-horizontal">
+        <div class="panel panel-primary full-page-dialog">
+          <div class="panel-heading">
+            <h3 class="panel-title">Send Funds</h3>
+          </div>
+          <div class="panel-body">
+
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Sending Asset</label>
+              <div class="col-sm-9">
+                <!-- Asset item -->
+                <div class="list-group-item clearfix" asset-item>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="from-address" class="col-sm-3 control-label">From</label>
+              <div class="col-sm-9">
+                <p class="form-control-static" id="from-address">{{ rootAccount }}</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="destination" class="col-sm-3 control-label">To</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="destination" placeholder="Destination" ng-model="sendTo">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="amount" class="col-sm-3 control-label">Amount</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="sendAmount">
+              </div>
+            </div>
+
+          </div>
+          <div class="panel-footer text-right">
+
+            <div class="row">
+              <div class="col-md-3 col-md-offset-9">
+                <button type="submit" class="btn btn-default" ng-click="cancelSend()">Cancel</button>
+                <button type="submit" class="btn btn-primary" ng-click="confirmSend(sendTo, sendAmount)">Send</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </form>
     </div>
   </div>
-
 </div>

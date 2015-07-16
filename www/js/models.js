@@ -47,10 +47,22 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
                 return _this.downloadAssetDefinition(assetPath).then(function (result) {
 
                     if (result != null) {
-                        _this.assets[assetPath] = result;
-                    }
+                        assetInfo = {
+                            name: result.name,
+                            nameShort: result.name_short,
+                            iconUrl: result.icon_url,
+                            path: assetPath,
+                            fullPath: _this.rootUrl + "asset" + assetPath
+                        };
 
-                    return result;
+                        _this.assets[assetPath] = assetInfo;
+
+                        return assetInfo;
+                    }
+                    else {
+                        return null;
+                    }
+                    
                 })
             };
         };
