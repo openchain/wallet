@@ -1,5 +1,16 @@
-﻿
+﻿@import "../bower_components/bootstrap/less/bootstrap.less";
+
+@font-family-sans-serif:    "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-size-h1:              floor((@font-size-base * 2.4)); // ~36px
+@headings-font-weight:      300;
+@font-size-base:            15px;
+
 .list-group-item {
+    &.section-header {
+        background-color: @panel-default-heading-bg;
+        color: @panel-default-text;
+    }
+    
     .currency-icon {
         float: left;
 
@@ -29,7 +40,7 @@
     }
 
     .list-group-item-heading {
-        line-height: 20.9px;/*@headings-line-height * @font-size-h4;*/
+        line-height: @headings-line-height * @font-size-h4;
         font-weight: normal;
         margin-bottom: 0;
         padding: 4px 0 10px;
@@ -56,5 +67,22 @@
         .list-group-item-heading {
             margin-left: 15px;
         }
+    }
+}
+
+.form-group {
+    h4.form-control-static {
+        margin-top: 0;
+    }
+
+    .form-control-static.text-muted {
+        min-height: initial;
+        padding-top: 0;
+    }
+}
+
+.panel-footer {
+    .btn {
+        margin-left: 10px;
     }
 }

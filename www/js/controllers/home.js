@@ -61,6 +61,7 @@ module.controller("HomeController", function ($scope, $location, $route, $q, api
         $scope.sendingAsset = asset;
         $scope.display = "send";
         $scope.asset = asset;
+        $scope.sendStatus = "send-active";
     };
 
     // Handle sending the asset
@@ -88,11 +89,24 @@ module.controller("HomeController", function ($scope, $location, $route, $q, api
                     "metadata": ByteBuffer.fromHex("")
                 });
 
+                $scope.sendStatus = "send-wait";
                 return apiService.postTransaction(endpoint, constructedTransaction);
             })
-            .then(function () {
-                $route.reload();
+            .then(function (data, status, headers, config) {
+                $scope.display = "success";
+            }, function (data, status, headers, config) {
+                if (status == 400) {
+                    $scope.display = "error";
+                } else {
+                    $scope.display = "error";
+                }
             });
+    };
+
+    $scope.validateAmount = function (amount, control) {
+        var regex = /^\d+(\.\d+)?$/;
+        var valid = regex.test(amount);
+        control.$setValidity("invalidNumber", valid);
     };
 
     $scope.cancelSend = function () {

@@ -14,7 +14,7 @@ module.controller("SignInController", function ($scope, $location, walletSetting
     }
 
     var generatedMnemonic = new Mnemonic();
-    $scope.seed = generatedMnemonic.toString();
+    $scope.seed = "patrol wise idea oyster inquiry crash dignity chronic scatter time admit pet";//generatedMnemonic.toString();
 
     $scope.submit = function () {
 
