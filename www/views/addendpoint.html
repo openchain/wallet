@@ -1,7 +1,53 @@
-﻿<div>
+﻿<div class="row">
+  <div class="col-md-offset-3 col-md-6">
 
-  Add URL:
-  <input type="text" ng-model="url">
+    <form method="post" name="addEndpointForm" ng-submit="check()" autocomplete="off">
 
-  <button type="button" ng-click="add()">Submit</button>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Add endpoint</h3>
+        </div>
+        <div class="panel-body">
+
+          <div class="body-header">
+            <i class="fa fa-lock fa-3x pull-left fa-border"></i>
+            <p>Please enter the URL of the endpoint to connect to.</p>
+          </div>
+          <hr>
+
+          <div class="form-group" ng-class="{'has-error': addEndpointForm.endpointUrl.$invalid}">
+            <label class="control-label" for="endpointUrl">Endpoint URL</label>
+            <input type="text" class="form-control" name="endpointUrl" id="endpointUrl" placeholder="Endpoint URL" ng-model="endpointUrl" ng-disabled="endpoint != null" ng-change="changeUrl()">
+            <p class="help-block" ng-show="addEndpointForm.endpointUrl.$invalid">The URL could not be reached.</p>
+          </div>
+
+          <div ng-show="endpoint != null">
+            <hr>
+
+            <div class="form-group">
+              <label for="from-address" class="control-label">Name</label>
+              <h4 class="form-control-static" id="from-address">{{ endpoint.name }} <span ng-hide="endpoint.name">(No name set)</span></h4>
+            </div>
+
+            <div class="form-group">
+              <label for="from-address" class="control-label">Terms Of Service</label>
+              <p class="form-control-static" id="from-address">{{ endpoint.tos }} <span ng-hide="endpoint.tos">(The Terms of Service have not been defined)</span></p>
+            </div>
+          </div>
+
+        </div>
+        <div class="panel-footer text-right">
+
+          <div class="row">
+            <div class="col-md-12" >
+              <a class="btn btn-default" href="#/">Cancel</a>
+              <button type="submit" ng-show="endpoint == null" class="btn btn-primary">Check endpoint</button>
+              <button type="button" ng-show="endpoint != null" class="btn btn-primary" ng-click="confirm()">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
 </div>

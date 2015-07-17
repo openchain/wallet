@@ -104,11 +104,21 @@ module.controller("AddEndpointController", function ($scope, $location, walletSe
         return;
     }
 
-    $scope.add = function () {
-        apiService.getLedgerInfo($scope.url).then(function (result) {
-            endpointManager.addEndpoint(result.data);
-            $location.path("/");
+    $scope.check = function () {
+        apiService.getLedgerInfo($scope.endpointUrl).then(function (result) {
+            $scope.endpoint = result.data;
+        }, function () {
+            $scope.addEndpointForm.endpointUrl.$setValidity("connectionError", false);
         });
+    };
+
+    $scope.changeUrl = function () {
+        $scope.addEndpointForm.endpointUrl.$setValidity("connectionError", true);
+    };
+
+    $scope.confirm = function () {
+        endpointManager.addEndpoint($scope.endpoint);
+        $location.path("/");
     };
 });
 

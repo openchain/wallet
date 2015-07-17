@@ -37,4 +37,7 @@ var app =
             templateUrl: 'views/directives/assetitem.html',
             replace: false
         };
+    })
+    .run(function ($rootScope, $window) {
+        $rootScope.logOut = function () { $window.location.reload(); };
     });
