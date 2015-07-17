@@ -15,13 +15,13 @@ var app =
                 templateUrl: "views/signin.html",
                 controller: "SignInController"
             })
-            .when("/send/:ledgerId", {
-                templateUrl: "views/send.html",
-                controller: "SendController"
-            })
             .when("/addendpoint", {
                 templateUrl: "views/addendpoint.html",
                 controller: "AddEndpointController"
+            })
+            .when("/admin", {
+                templateUrl: "views/admin.html",
+                controller: "AdminController"
             })
             .when("/createasset/:ledgerId", {
                 templateUrl: "views/createasset.html",
