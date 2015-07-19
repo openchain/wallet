@@ -23,10 +23,6 @@ var app =
                 templateUrl: "views/admin.html",
                 controller: "AdminController"
             })
-            .when("/createasset/:ledgerId", {
-                templateUrl: "views/createasset.html",
-                controller: "CreateAssetController"
-            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -41,3 +37,5 @@ var app =
     .run(function ($rootScope, $window) {
         $rootScope.logOut = function () { $window.location.reload(); };
     });
+
+angular.module("OpenChainWallet.Controllers", []);
