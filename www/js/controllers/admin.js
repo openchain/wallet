@@ -33,6 +33,17 @@ module.controller("CreateAssetController", function ($scope, $location, $routePa
     $scope.assetTicker = "";
     $scope.assetImage = "";
 
+    $scope.loadAsset = function () {
+
+        $scope.$parent.endpoint.getAssetDefinition($scope.assetPath).then(function (result) {
+            if (result != null) {
+                $scope.assetName = result.name;
+                $scope.assetTicker = result.nameShort;
+                $scope.assetImage = result.iconUrl;
+            }
+        });
+    };
+
     $scope.create = function () {
 
         var key = encodingService.encodeString($scope.assetPath, 256 + 1);

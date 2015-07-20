@@ -36,7 +36,12 @@
 
           <div class="form-group">
             <label class="control-label" for="assetPath">Asset Path</label>
-            <input type="text" class="form-control" name="assetPath" id="assetPath" placeholder="Asset Path" ng-model="assetPath">
+            <div class="input-group">
+              <input type="text" class="form-control" name="assetPath" id="assetPath" placeholder="Asset Path" ng-model="assetPath">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="loadAsset()">Refresh</button>
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
