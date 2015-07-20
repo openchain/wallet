@@ -7,7 +7,7 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** HomeController *****
 // **************************
 
-module.controller("HomeController", function ($scope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService) {
+module.controller("HomeController", function ($scope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService, validator) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -104,9 +104,7 @@ module.controller("HomeController", function ($scope, $location, $route, $q, api
     };
 
     $scope.validateAmount = function (amount, control) {
-        var regex = /^\d+(\.\d+)?$/;
-        var valid = regex.test(amount);
-        control.$setValidity("invalidNumber", valid);
+        control.$setValidity("invalidNumber", validator.isNumber(amount));
     };
 
     $scope.cancelSend = function () {

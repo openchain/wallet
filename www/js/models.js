@@ -30,7 +30,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
 
         this.downloadAssetDefinition = function (assetPath) {
             return apiService.getValue(_this, encodingService.encodeString(assetPath, 1 + 256)).then(function (result) {
-                if (result.value == null) {
+                if (result.value.remaining() == 0) {
                     return null;
                 }
                 else {

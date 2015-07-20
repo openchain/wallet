@@ -131,3 +131,12 @@ module.service("protobufBuilder", function () {
         _this.Transaction = root.OpenChain.Transaction;
     });
 });
+
+module.service("validator", function () {
+    var _this = this;
+
+    this.isNumber = function (number) {
+        var regex = /^[\-]?\d+(\.\d+)?$/;
+        return regex.test(number);
+    }
+});

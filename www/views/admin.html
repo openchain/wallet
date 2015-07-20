@@ -13,17 +13,14 @@
 
     <div class="list-group">
       <a href="" class="list-group-item" ng-click="setView('asset-definition')" ng-class="{'active': display == 'asset-definition'}">Manage asset definition</a>
-      <a href="" class="list-group-item">Dapibus ac facilisis in</a>
-      <a href="" class="list-group-item">Morbi leo risus</a>
-      <a href="" class="list-group-item">Porta ac consectetur ac</a>
-      <a href="" class="list-group-item">Vestibulum at eros</a>
+      <a href="" class="list-group-item" ng-click="setView('advanced-transaction')" ng-class="{'active': display == 'advanced-transaction'}">Transaction</a>
     </div>
 
   </div>
   <div class="col-md-9" ng-switch on="display">
 
     <!-- Create Asset -->
-    <form method="post" name="createAssetDefinition" ng-switch-when="asset-definition" ng-submit="create()" autocomplete="off" ng-controller="CreateAssetController">
+    <form method="post" ng-switch-when="asset-definition" ng-submit="create()" autocomplete="off" ng-controller="CreateAssetController">
 
       <div class="panel panel-primary">
         <div class="panel-heading">
@@ -70,5 +67,27 @@
 
     </form>
 
-  </div>
+    <!-- Transaction Builder -->
+    <form method="post" ng-switch-when="advanced-transaction" ng-submit="submit()" autocomplete="off" ng-controller="TransactionController">
+      <table class="table">
+        <tr>
+          <th>Account</th>
+          <th>Asset</th>
+          <th>Amount</th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="mutation in mutations">
+          <td ng-class="{'has-error': mutation.accountError}"><input type="text" class="form-control" ng-model="mutation.account" ng-change="mutation.accountError = false"></td>
+          <td ng-class="{'has-error': mutation.assetError}"><input type="text" class="form-control" ng-model="mutation.asset" ng-change="mutation.assetError = false"></td>
+          <td ng-class="{'has-error': mutation.amountError}"><input type="text" class="form-control" ng-model="mutation.amount" ng-change="mutation.amountError = false"></td>
+          <td><button type="button" class="form-control" ng-click="remove($index)">Delete</button></td>
+        </tr>
+      </table>
+      <div class="pull-right">
+        <button type="button" class="btn btn-default" ng-click="addMutation()">Add row</button>
+        <button type="button" class="btn btn-primary" ng-click="submit()">Submit</button>
+      </div>
+    </form>
+
+</div>
 </div>
