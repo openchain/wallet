@@ -7,12 +7,14 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** HomeController *****
 // **************************
 
-module.controller("HomeController", function ($scope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService, validator) {
+module.controller("HomeController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService, validator) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
         return;
     }
+
+    $rootScope.selectedTab = "home";
 
     $scope.rootAccount = walletSettings.rootAccount.toString();
     $scope.endpoints = endpointManager.endpoints;

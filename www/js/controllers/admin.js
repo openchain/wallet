@@ -2,12 +2,14 @@
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;
 
-module.controller("AdminController", function ($scope, $location, protobufBuilder, walletSettings, apiService, encodingService, endpointManager) {
+module.controller("AdminController", function ($scope, $rootScope, $location, protobufBuilder, walletSettings, apiService, encodingService, endpointManager) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
         return;
     }
+
+    $rootScope.selectedTab = "advanced";
 
     $scope.endpoints = endpointManager.endpoints;
     $scope.display = "asset-definition";
