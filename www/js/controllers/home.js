@@ -38,11 +38,14 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
                     asset: result.data[itemKey].asset,
                     balance: Long.fromString(result.data[itemKey].balance),
                     version: ByteBuffer.fromHex(result.data[itemKey].version),
-                    endpoint: endpoint
+                    endpoint: endpoint,
+                    fullPath: endpoint.rootUrl + "asset" + result.data[itemKey].asset
                 });
             }
 
-            dataModel.assets.state = "loaded";
+            dataModel.state = "loaded";
+        }, function () {
+            dataModel.state = "error";
         }).then(function () {
             return $q.all(dataModel.assets.map(function (asset) {
                 return endpoint.getAssetDefinition(asset.asset).then(function(result) {

@@ -51,8 +51,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
                             name: result.name,
                             nameShort: result.name_short,
                             iconUrl: result.icon_url,
-                            path: assetPath,
-                            fullPath: _this.rootUrl + "asset" + assetPath
+                            path: assetPath
                         };
 
                         _this.assets[assetPath] = assetInfo;

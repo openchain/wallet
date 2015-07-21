@@ -22,6 +22,7 @@
     "protobuf": "dcodeIO/ProtoBuf.js#~4.0.0",
     "bootstrap": "~3.3.5",
     "angular-bootstrap-grid-tree": "*",
-    "less": "~2.5.1"
+    "less": "~2.5.1",
+    "components-font-awesome": "~4.3.0"
   }
 }

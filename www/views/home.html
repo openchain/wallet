@@ -7,14 +7,23 @@
 
       <div class="panel panel-default">
         <div class="list-group">
+          
           <div class="list-group-item section-header" ng-repeat-start="endpoint in balance">
             <h3 class="panel-title">{{ endpoint.endpoint.properties.name }}</h3>
           </div>
 
-          <!-- Asset item -->
-          <a asset-item href="" class="list-group-item clearfix" ng-click="sendAsset(asset)" ng-repeat="asset in endpoint.assets" ng-repeat-end>
+          <div class="list-group-item list-message" ng-show="endpoint.state == 'loading'">
+            <i class="fa fa-spinner fa-pulse fa-lg"></i> Loading...
+          </div>
+
+          <div class="list-group-item list-message" ng-show="endpoint.state == 'error'">
+            <i class="fa fa-warning fa-lg"></i> Connection error
+          </div>
+
+          <!-- Asset Items -->
+          <a asset-item href="" class="list-group-item clearfix" ng-click="sendAsset(asset)" ng-repeat="asset in endpoint.assets" ng-show="endpoint.state == 'loaded'" ng-repeat-end>
           </a>
-          
+
         </div>
       </div>
 

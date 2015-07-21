@@ -1,6 +1,9 @@
 ﻿
 <span class="currency-icon thumbnail">
-  <img ng-src="{{ asset.assetDefinition.iconUrl }}" />
+  <img ng-show="asset.assetDefinition && asset.assetDefinition.iconUrl" ng-src="{{ asset.assetDefinition.iconUrl }}" />
+  <span ng-hide="asset.assetDefinition && asset.assetDefinition.iconUrl" class="bg-primary">
+    <i class="fa fa-2x fa-money"></i>
+  </span>
 </span>
 
 <div class="details-right">
@@ -8,6 +11,6 @@
 </div>
 
 <div class="details-left">
-  <h4 class="list-group-item-heading">{{ asset.assetDefinition.name }}</h4>
-  <p class="list-group-item-text text-muted"><i class="fa fa-edit"></i> Asset path: {{ asset.assetDefinition.fullPath }}</p>
+  <h4 class="list-group-item-heading">{{ asset.assetDefinition.name }}<span ng-hide="asset.assetDefinition">(Unnamed asset)</span></h4>
+  <p class="list-group-item-text text-muted"><i class="fa fa-edit"></i> Asset path: {{ asset.fullPath }}</p>
 </div>

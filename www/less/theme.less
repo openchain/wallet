@@ -12,7 +12,7 @@
     }
     
     .currency-icon {
-        float: left;
+        .pull-left;
 
         display: inline-block;
         text-align: center;
@@ -24,18 +24,14 @@
             display: block;
             height: 48px;
             width: 48px;
-            line-height: 46px;
+            .fa {
+                line-height: 46px;
+            }
         }
 
         img {
             height: 48px;
             width: 48px;
-        }
-
-        .security-level {
-            position: absolute;
-            right: 0px;
-            bottom: 0px;
         }
     }
 
@@ -111,5 +107,16 @@
 
     .dropdown-menu {
         min-width: 100%;
+    }
+}
+
+.list-message {
+    text-align: center;
+    padding: 15px;
+    font-size: @font-size-h4;
+    font-weight: 300;
+
+    .fa {
+        margin-right: 10px;
     }
 }
