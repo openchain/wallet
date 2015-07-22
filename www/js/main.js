@@ -15,6 +15,10 @@ var app =
                 templateUrl: "views/signin.html",
                 controller: "SignInController"
             })
+            .when("/manageassets", {
+                templateUrl: "views/manageassets.html",
+                controller: "ManageAssetsController"
+            })
             .when("/addendpoint", {
                 templateUrl: "views/addendpoint.html",
                 controller: "AddEndpointController"

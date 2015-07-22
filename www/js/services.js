@@ -77,6 +77,45 @@ module.service("apiService", function ($http, encodingService, walletSettings) {
     }
 });
 
+module.service("endpointManager", function (apiService, walletSettings, Endpoint) {
+    var nextEndpointId = 0;
+    var storedEndpoints = localStorage[walletSettings.versionPrefix + ".endpoints"];
+
+    if (storedEndpoints)
+        var initialEndpoints = JSON.parse(storedEndpoints);
+    else
+        var initialEndpoints = {};
+
+    this.endpoints = {};
+
+    for (var key in initialEndpoints) {
+        if (key >= nextEndpointId)
+            nextEndpointId = key + 1;
+
+        this.endpoints[key] = new Endpoint(initialEndpoints[key]);
+    }
+
+    this.addEndpoint = function (endpoint) {
+        var newEndpoint = {
+            id: nextEndpointId++,
+            rootUrl: endpoint.root_url,
+            name: endpoint.name
+        };
+
+        this.endpoints[newEndpoint.id] = new Endpoint(newEndpoint);
+        this.saveEndpoints();
+
+    };
+
+    this.saveEndpoints = function () {
+        var jsonData = {};
+        for (var key in this.endpoints)
+            jsonData[key] = this.endpoints[key].properties;
+
+        localStorage[walletSettings.versionPrefix + ".endpoints"] = JSON.stringify(jsonData);
+    }
+});
+
 module.service("encodingService", function () {
     this.encodeNamespace = function (namespace) {
         return ByteBuffer.wrap(namespace, "utf8", true);
