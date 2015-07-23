@@ -12,7 +12,7 @@ module.controller("AdminController", function ($scope, $rootScope, $location, pr
     $rootScope.selectedTab = "advanced";
 
     $scope.endpoints = endpointManager.endpoints;
-    $scope.display = "asset-definition";
+    $scope.display = "advanced-transaction";
 
     for (var key in $scope.endpoints) {
         $scope.endpoint = $scope.endpoints[key];
@@ -26,56 +26,6 @@ module.controller("AdminController", function ($scope, $rootScope, $location, pr
     $scope.setView = function (view) {
         $scope.display = view;
     }
-});
-
-module.controller("CreateAssetController", function ($scope, $location, $routeParams, protobufBuilder, walletSettings, apiService, encodingService) {
-
-    $scope.assetPath = "";
-    $scope.assetName = "";
-    $scope.assetTicker = "";
-    $scope.assetImage = "";
-
-    $scope.loadAsset = function () {
-
-        $scope.$parent.endpoint.getAssetDefinition($scope.assetPath).then(function (result) {
-            if (result != null) {
-                $scope.assetName = result.name;
-                $scope.assetTicker = result.nameShort;
-                $scope.assetImage = result.iconUrl;
-            }
-        });
-    };
-
-    $scope.create = function () {
-
-        var key = encodingService.encodeString($scope.assetPath, 256 + 1);
-
-        var value = JSON.stringify({
-            name: $scope.assetName,
-            name_short: $scope.assetTicker,
-            icon_url: $scope.assetImage
-        });
-
-        apiService.getValue($scope.$parent.endpoint, key).then(function (result) {
-
-            var constructedTransaction = new protobufBuilder.Mutation({
-                "namespace": encodingService.encodeNamespace($scope.$parent.endpoint.rootUrl),
-                "key_value_pairs": [
-                    {
-                        "key": key,
-                        "value": encodingService.encodeString(value, 1),
-                        "version": result.version
-                    }
-                ],
-                "metadata": ByteBuffer.fromHex("")
-            });
-
-            apiService.postTransaction($scope.$parent.endpoint, constructedTransaction).then(function () {
-                $location.path("/");
-            });
-        });
-
-    };
 });
 
 module.controller("TransactionController", function ($scope, $location, $q, protobufBuilder, apiService, encodingService, validator) {
@@ -131,7 +81,7 @@ module.controller("TransactionController", function ($scope, $location, $q, prot
                 });
             }
 
-            return apiService.postTransaction(endpoint, constructedTransaction);
+            return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.hdKey);
         });
 
     };

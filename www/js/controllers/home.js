@@ -7,7 +7,7 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** HomeController *****
 // **************************
 
-module.controller("HomeController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService, validator) {
+module.controller("HomeController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService, validator, AssetData) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -33,14 +33,9 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
         balance.push(dataModel);
         apiService.getAccountAssets(endpoint, walletSettings.rootAccount).then(function (result) {
             for (var itemKey in result.data) {
-                dataModel.assets.push({
-                    account: result.data[itemKey].account,
-                    asset: result.data[itemKey].asset,
-                    balance: Long.fromString(result.data[itemKey].balance),
-                    version: ByteBuffer.fromHex(result.data[itemKey].version),
-                    endpoint: endpoint,
-                    fullPath: endpoint.rootUrl + "asset" + result.data[itemKey].asset
-                });
+                var assetData = new AssetData(endpoint, result.data[itemKey].asset);
+                assetData.setAccountBalance(result.data[itemKey]);
+                dataModel.assets.push(assetData);
             }
 
             dataModel.state = "loaded";
@@ -48,9 +43,7 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
             dataModel.state = "error";
         }).then(function () {
             return $q.all(dataModel.assets.map(function (asset) {
-                return endpoint.getAssetDefinition(asset.asset).then(function(result) {
-                    asset.assetDefinition = result;
-                });
+                return asset.fetchAssetDefinition();
             }));
         });
     }
@@ -86,7 +79,7 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
                             "version": asset["version"]
                         },
                         {
-                            "key": encodingService.encodeAccount(sendTo, asset.asset),
+                            "key": destinationBalance.key,
                             "value": encodingService.encodeInt64(destinationBalance["balance"].add(sendAmount)),
                             "version": destinationBalance["version"]
                         },
@@ -95,7 +88,7 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
                 });
 
                 $scope.sendStatus = "send-wait";
-                return apiService.postTransaction(endpoint, constructedTransaction);
+                return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.hdKey);
             })
             .then(function (data, status, headers, config) {
                 $scope.display = "success";

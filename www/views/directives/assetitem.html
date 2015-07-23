@@ -7,10 +7,10 @@
 </span>
 
 <div class="details-right">
-  <h4 class="list-group-item-heading">{{ asset.balance.toString() }} {{ asset.assetDefinition.nameShort }}</h4>
+  <h4 class="list-group-item-heading" ng-show="asset.balance">{{ asset.balance.toString() }} {{ asset.assetDefinition.nameShort }}</h4>
 </div>
 
 <div class="details-left">
-  <h4 class="list-group-item-heading">{{ asset.assetDefinition.name }}<span ng-hide="asset.assetDefinition">(Unnamed asset)</span></h4>
+  <h4 class="list-group-item-heading">{{ asset.assetDefinition.name }}<span ng-hide="asset.assetDefinition.name">(Unnamed asset)</span></h4>
   <p class="list-group-item-text text-muted"><i class="fa fa-edit"></i> Asset path: {{ asset.fullPath }}</p>
 </div>

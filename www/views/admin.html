@@ -11,66 +11,12 @@
       </ul>
     </div>
 
-    <div class="list-group">
-      <a href="" class="list-group-item" ng-click="setView('asset-definition')" ng-class="{'active': display == 'asset-definition'}">Manage asset definition</a>
+    <div class="list-group top-spacing">
       <a href="" class="list-group-item" ng-click="setView('advanced-transaction')" ng-class="{'active': display == 'advanced-transaction'}">Transaction</a>
     </div>
 
   </div>
   <div class="col-md-9" ng-switch on="display">
-
-    <!-- Create Asset -->
-    <form method="post" ng-switch-when="asset-definition" ng-submit="create()" autocomplete="off" ng-controller="CreateAssetController">
-
-      <div class="panel panel-primary">
-        <div class="panel-heading">
-          <h3 class="panel-title">Create asset definition</h3>
-        </div>
-        <div class="panel-body">
-
-          <div class="body-header">
-            <i class="fa fa-lock fa-3x pull-left fa-border"></i>
-            <p>Enter the information about the asset definition.</p>
-          </div>
-          <hr>
-
-          <div class="form-group">
-            <label class="control-label" for="assetPath">Asset Path</label>
-            <div class="input-group">
-              <input type="text" class="form-control" name="assetPath" id="assetPath" placeholder="Asset Path" ng-model="assetPath">
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="loadAsset()">Refresh</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label" for="assetName">Asset Name</label>
-            <input type="text" class="form-control" name="assetName" id="assetName" placeholder="Name" ng-model="assetName">
-          </div>
-
-          <div class="form-group">
-            <label class="control-label" for="assetImage">Asset Image URL</label>
-            <input type="text" class="form-control" name="assetImage" id="assetImage" placeholder="URL" ng-model="assetImage">
-          </div>
-
-          <div class="form-group">
-            <label class="control-label" for="assetTicker">Ticker</label>
-            <input type="text" class="form-control" name="assetTicker" id="assetTicker" placeholder="Ticker" ng-model="assetTicker">
-          </div>
-
-        </div>
-        <div class="panel-footer text-right">
-
-          <div class="row">
-            <div class="col-md-12">
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </form>
 
     <!-- Transaction Builder -->
     <form method="post" ng-switch-when="advanced-transaction" ng-submit="submit()" autocomplete="off" ng-controller="TransactionController">

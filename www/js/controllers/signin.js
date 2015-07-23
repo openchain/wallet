@@ -21,13 +21,9 @@ module.controller("SignInController", function ($scope, $rootScope, $location, w
 
             var code = new Mnemonic($scope.seed);
 
-            var hd_key = code.toHDPrivateKey();
-            var derivedKey = hd_key.derive(44, true).derive(22, true).derive(0, true).derive(0).derive(0);
+            var hdKey = code.toHDPrivateKey();
 
-            walletSettings.hdKey = hd_key;
-            walletSettings.derivedKey = derivedKey;
-            walletSettings.rootAccount = "/p2pkh/" + derivedKey.privateKey.toAddress().toString();
-            walletSettings.initialized = true;
+            walletSettings.setRootKey(hdKey);
 
             $location.path("/");
         }

@@ -1,19 +1,30 @@
 var module = angular.module("OpenChainWallet.Services", []);
+var bitcore = require("bitcore");
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;
 
-module.service("apiService", function ($http, encodingService, walletSettings) {
+module.service("apiService", function ($http, encodingService) {
 
-    this.postTransaction = function (endpoint, transaction) {
+    this.postTransaction = function (endpoint, transaction, key) {
         var encodedTransaction = transaction.encode();
+
+        var transactionBuffer = new Uint8Array(encodedTransaction.toArrayBuffer());
+        var hash = bitcore.crypto.Hash.sha256(bitcore.crypto.Hash.sha256(transactionBuffer));
+
+        var signatureBuffer = bitcore.crypto.ECDSA().set({
+            hashbuf: hash,
+            endian: "big",
+            privkey: key.privateKey
+        }).sign().sig.toBuffer();
+
         return $http.post(
             endpoint.rootUrl + "/submit",
             {
                 transaction: encodedTransaction.toHex(),
                 signatures: [
                     {
-                        pub_key: ByteBuffer.wrap(walletSettings.derivedKey.publicKey.toBuffer()).toHex(),
-                        signature: ByteBuffer.wrap(walletSettings.sign(encodedTransaction)).toHex()
+                        pub_key: ByteBuffer.wrap(key.publicKey.toBuffer()).toHex(),
+                        signature: ByteBuffer.wrap(signatureBuffer).toHex()
                     }
                 ]
             });
@@ -43,6 +54,7 @@ module.service("apiService", function ($http, encodingService, walletSettings) {
     this.getAccount = function (endpoint, account, asset) {
         return this.getValue(endpoint, encodingService.encodeAccount(account, asset)).then(function (result) {
             var accountResult = {
+                key: result.key,
                 account: account,
                 asset: asset,
                 version: result.version

@@ -1,1 +1,160 @@
-﻿
+﻿<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+
+    <!-- Asset Selector -->
+    <form method="post" autocomplete="off">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Manage Asset</h3>
+        </div>
+        <div class="panel-body">
+
+          <div class="body-header">
+            <i class="fa fa-lock fa-3x pull-left fa-border"></i>
+            <p>Select the endpoint and asset path for the asset you want to edit.</p>
+          </div>
+          <hr>
+
+          <div ng-show="mode == 'select-path'">
+
+            <div class="form-group">
+              <label class="control-label" for="assetPath">Endpoint</label>
+              <div class="input-group fullsize-dropdown">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <b class="caret"></b>
+                    <span>{{ endpoint.properties.name }}</span><span ng-hide="endpoint">Select an Endpoint...</span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="e in endpoints"><a href="" ng-click="setEndpoint(e)">{{ e.properties.name }}</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label" for="assetPath">Asset Path</label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="assetPath" id="assetPath" placeholder="Asset Path" ng-model="fields.assetPath">
+                <div class="input-group-btn">
+
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Select a slot...
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="slot in slots"><a href="" ng-click="fields.assetPath = '/p2pkh/' + slot.address">[{{ slot.index }}] {{ slot.address }}</a></li>
+                  </ul>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-group" ng-show="mode == 'show-form'">
+            <label class="control-label" for="assetName">Asset</label>
+            <!-- Asset item -->
+            <div class="list-group-item clearfix" asset-item>
+            </div>
+          </div>
+
+        </div>
+        <div class="panel-footer text-right" ng-show="mode == 'select-path'">
+
+          <div class="row">
+            <div class="col-md-12">
+              <button type="button" ng-click="displayForm()" class="btn btn-primary" ng-disabled="fields.assetPath == null || fields.assetPath == '' || endpoint == null">Confirm</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+
+    <div id="accordion" role="tablist" aria-multiselectable="true" ng-show="mode == 'show-form'">
+      
+      <!-- Edit asset definition -->
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" onclick="return false;" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Edit Asset Definition
+            </a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+          <div class="panel-body">
+
+            <div>
+              <p>Modify the characteristics of the asset by editing the fields below.</p>
+            </div>
+            <hr>
+
+            <div class="form-group">
+              <label class="control-label" for="assetName">Asset Name</label>
+              <input type="text" class="form-control" name="assetName" id="assetName" placeholder="Name" ng-model="fields.assetName">
+            </div>
+
+            <div class="form-group">
+              <label class="control-label" for="assetImage">Asset Image URL</label>
+              <input type="text" class="form-control" name="assetImage" id="assetImage" placeholder="URL" ng-model="fields.assetImage">
+            </div>
+
+            <div class="form-group">
+              <label class="control-label" for="assetTicker">Ticker</label>
+              <input type="text" class="form-control" name="assetTicker" id="assetTicker" placeholder="Ticker" ng-model="fields.assetTicker">
+            </div>
+          </div>
+
+          <div class="panel-footer text-right">
+
+            <div class="row">
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-primary" ng-click="editAsset()">Modify</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issue an asset -->
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+          <h4 class="panel-title">
+            <a class="collapsed" onclick="return false;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Issue Asset
+            </a>
+          </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+
+          <div class="panel-body">
+
+            <div>
+              <p>Type the number of units of the asset to issue.</p>
+            </div>
+            <hr>
+
+            <div class="form-group" ng-class="{'has-error': fields.quantityInvalid }">
+              <label class="control-label" for="quantity">Quantity Issued</label>
+              <input type="text" class="form-control" name="quantity" id="quantity" placeholder="Quantity" ng-model="fields.quantity" ng-change="changeAmount()">
+            </div>
+
+          </div>
+
+          <div class="panel-footer text-right">
+            <div class="row">
+              <div class="col-md-12">
+                <button type="button" class="btn btn-primary" ng-click="issueAsset()" ng-disabled="fields.quantityInvalid">Issue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
