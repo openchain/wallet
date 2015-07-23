@@ -81,7 +81,7 @@ module.controller("TransactionController", function ($scope, $location, $q, prot
                 });
             }
 
-            return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.hdKey);
+            return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.derivedKey);
         });
 
     };

@@ -88,7 +88,7 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
                 });
 
                 $scope.sendStatus = "send-wait";
-                return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.hdKey);
+                return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.derivedKey);
             })
             .then(function (data, status, headers, config) {
                 $scope.display = "success";
