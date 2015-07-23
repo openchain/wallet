@@ -58,7 +58,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     $scope.editAsset = function () {
 
-        var key = encodingService.encodeString($scope.fields.assetPath, 256 + 1);
+        var key = encodingService.encodeString($scope.fields.assetPath, encodingService.usage.ASSET_DEFINITION);
 
         var value = JSON.stringify({
             name: $scope.fields.assetName,
@@ -71,7 +71,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
             "key_value_pairs": [
                 {
                     "key": key,
-                    "value": encodingService.encodeString(value, 1),
+                    "value": encodingService.encodeString(value, encodingService.usage.TEXT),
                     "version": $scope.version
                 }
             ],
@@ -126,6 +126,6 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
                 return walletSettings.getAssetKey(i);
         }
 
-        return wallet.hdKey;;
+        return walletSettings.derivedKey;
     };
 });

@@ -89,3 +89,42 @@ module.controller("TransactionController", function ($scope, $location, $q, prot
     $scope.addMutation();
 
 });
+
+module.controller("AliasEditorController", function ($scope, $location, $q, protobufBuilder, apiService, encodingService, walletSettings) {
+    $scope.fields = {
+        alias: "",
+        path: ""
+    };
+
+    $scope.loadAlias = function () {
+        apiService.getAlias($scope.endpoint, $scope.fields.alias).then(function (result) {
+            if (result.path != null) {
+                $scope.fields.path = result.path;
+            }
+            else {
+                $scope.fields.path = "";
+            }
+        });
+    };
+
+    $scope.submit = function () {
+        var endpoint = $scope.endpoint;
+
+        apiService.getAlias(endpoint, $scope.fields.alias).then(function (result) {
+
+            var constructedTransaction = new protobufBuilder.Mutation({
+                "namespace": encodingService.encodeNamespace(endpoint.rootUrl),
+                "key_value_pairs": [
+                    {
+                        "key": result.key,
+                        "value": encodingService.encodeString($scope.fields.path, encodingService.usage.TEXT),
+                        "version": result.version
+                    }
+                ],
+                "metadata": ByteBuffer.fromHex("")
+            });
+
+            return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.derivedKey);
+        });
+    };
+});

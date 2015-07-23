@@ -72,6 +72,26 @@ module.service("apiService", function ($http, encodingService) {
         });
     }
 
+    this.getAlias = function (endpoint, alias) {
+        return this.getValue(endpoint, encodingService.encodeString(alias, encodingService.usage.ALIAS)).then(function (result) {
+            var accountResult = {
+                key: result.key,
+                alias: alias,
+                version: result.version
+            };
+
+            if (result.value.remaining() == 0) {
+                // Unset value
+                accountResult["path"] = null;
+            }
+            else {
+                accountResult["path"] = encodingService.decodeString(result.value);
+            }
+
+            return accountResult;
+        });
+    }
+
     this.getAccountAssets = function (endpoint, account) {
         return $http({
             url: endpoint.rootUrl + "/query/account",
@@ -129,13 +149,25 @@ module.service("endpointManager", function (apiService, walletSettings, Endpoint
 });
 
 module.service("encodingService", function () {
+    var _this = this;
+
+    this.usage = {
+        DEFAULT: 0,
+        TEXT: 1,
+        INT64: 2,
+
+        ACCOUNT_KEY: 0 + 256,
+        ASSET_DEFINITION: 1 + 256,
+        ALIAS: 2 + 256
+    };
+
     this.encodeNamespace = function (namespace) {
         return ByteBuffer.wrap(namespace, "utf8", true);
     };
 
     this.encodeAccount = function (account, asset) {
         var result = new ByteBuffer(null, true);
-        result.writeInt32(256);
+        result.writeInt32(_this.usage.ACCOUNT_KEY);
         result.writeIString(account);
         result.writeIString(asset);
         result.flip();
@@ -144,7 +176,7 @@ module.service("encodingService", function () {
 
     this.encodeInt64 = function (value) {
         var result = new ByteBuffer(null, true);
-        result.writeInt32(2);
+        result.writeInt32(_this.usage.INT64);
         result.writeInt64(value);
         result.flip();
         return result;
