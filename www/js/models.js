@@ -82,9 +82,7 @@ module.factory("AssetData", function ($q, apiService, encodingService) {
         this.fullPath = endpoint.rootUrl + "asset" + assetPath;
 
         this.setAccountBalance = function (balanceData) {
-            _this.account = balanceData.account;
-            _this.balance = Long.fromString(balanceData.balance);
-            _this.version = ByteBuffer.fromHex(balanceData.version);
+            _this.currentRecord = balanceData;
         };
 
         this.fetchAssetDefinition = function () {
@@ -115,10 +113,24 @@ module.service("TransactionBuilder", function (apiService, protobufBuilder, enco
             return _this;
         };
 
+        this.addAccountRecord = function(previous, change) {
+            return _this.addRecord(
+                previous.key,
+                encodingService.encodeInt64(previous.balance.add(change)),
+                previous.version);
+        };
+
+        this.fetchAndAddAccountRecord = function (account, asset, change) {
+            return apiService.getAccount(_this.endpoint, account, asset)
+                .then(function (currentRecord) {
+                    _this.addAccountRecord(currentRecord, change);
+                });
+        }
+
         this.submit = function (key) {
             var constructedTransaction = new protobufBuilder.Mutation({
                 "namespace": encodingService.encodeNamespace(_this.endpoint.rootUrl),
-                "records": this.records,
+                "records": _this.records,
                 "metadata": ByteBuffer.fromHex("")
             });
             

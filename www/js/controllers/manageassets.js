@@ -75,24 +75,12 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     $scope.issueAsset = function () {
         var issueAmount = Long.fromString($scope.fields.quantity);
-        
+        var transaction = new TransactionBuilder($scope.endpoint);
+
         $q.all([
-            apiService.getAccount($scope.endpoint, $scope.fields.assetPath, $scope.fields.assetPath),
-            apiService.getAccount($scope.endpoint, walletSettings.rootAccount, $scope.fields.assetPath)
+            transaction.fetchAndAddAccountRecord($scope.fields.assetPath, $scope.fields.assetPath, issueAmount.negate()),
+            transaction.fetchAndAddAccountRecord(walletSettings.rootAccount, $scope.fields.assetPath, issueAmount),
         ]).then(function (array) {
-            var valueFrom = array[0];
-            var valueTo = array[1];
-
-            var transaction = new TransactionBuilder($scope.endpoint)
-                .addRecord(
-                    valueFrom.key,
-                    encodingService.encodeInt64(valueFrom["balance"].subtract(issueAmount)),
-                    valueFrom.version)
-                .addRecord(
-                    valueTo.key,
-                    encodingService.encodeInt64(valueTo["balance"].add(issueAmount)),
-                    valueTo.version);
-
             transaction.submit(findKey($scope.fields.assetPath)).then(function () {
                 $location.path("/");
             });

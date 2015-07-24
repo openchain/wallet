@@ -96,16 +96,26 @@ module.service("apiService", function ($http, encodingService) {
             url: endpoint.rootUrl + "/query/account",
             method: "GET",
             params: { account: account }
+        }).then(function (result) {
+            return result.data.map(function (item) {
+                return {
+                    key: encodingService.encodeAccount(item.account, item.asset, encodingService.usage.ACCOUNT),
+                    account: item.account,
+                    asset: item.asset,
+                    version: ByteBuffer.fromHex(item.version),
+                    balance: Long.fromString(item.balance)
+                };
+            });
         });
     }
 
-    this.getSubaccounts = function (endpoint, account) {
-        return $http({
-            url: endpoint.rootUrl + "/query/subaccounts",
-            method: "GET",
-            params: { account: account }
-        });
-    }
+    //this.getSubaccounts = function (endpoint, account) {
+    //    return $http({
+    //        url: endpoint.rootUrl + "/query/subaccounts",
+    //        method: "GET",
+    //        params: { account: account }
+    //    });
+    //}
 });
 
 module.service("endpointManager", function (apiService, walletSettings, Endpoint) {

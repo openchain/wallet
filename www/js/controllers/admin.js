@@ -70,10 +70,7 @@ module.controller("TransactionController", function ($scope, $location, $q, Tran
             var transaction = new TransactionBuilder(endpoint);
             
             for (var i = 0; i < $scope.mutations.length; i++) {
-                constructedTransaction.addRecord(
-                    encodingService.encodeAccount($scope.mutations[i].account, $scope.mutations[i].asset, encodingService.usage.ACCOUNT),
-                    encodingService.encodeInt64(array[i].balance.add(Long.fromString($scope.mutations[i].amount))),
-                    array[i].version);
+                transaction.addAccountRecord(array[i], Long.fromString($scope.mutations[i].amount));
             }
 
             return transaction.submit(walletSettings.derivedKey);

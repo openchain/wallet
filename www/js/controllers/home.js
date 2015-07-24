@@ -32,9 +32,9 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
         };
         balance.push(dataModel);
         apiService.getAccountAssets(endpoint, walletSettings.rootAccount).then(function (result) {
-            for (var itemKey in result.data) {
-                var assetData = new AssetData(endpoint, result.data[itemKey].asset);
-                assetData.setAccountBalance(result.data[itemKey]);
+            for (var itemKey in result) {
+                var assetData = new AssetData(endpoint, result[itemKey].asset);
+                assetData.setAccountBalance(result[itemKey]);
                 dataModel.assets.push(assetData);
             }
 
@@ -66,34 +66,23 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
     $scope.confirmSend = function (sendTo, sendAmountText) {
         var sendAmount = Long.fromString(sendAmountText);
         var endpoint = $scope.asset.endpoint;
-        var asset = $scope.asset;
+        var asset = $scope.asset.currentRecord;
 
-        apiService.getAccount(endpoint, sendTo, asset.asset)
-            .then(function (destinationBalance) {
-                var transaction = new TransactionBuilder(endpoint);
-
-                transaction.addRecord(
-                    encodingService.encodeAccount(walletSettings.rootAccount.toString(), asset.asset, encodingService.usage.ACCOUNT),
-                    encodingService.encodeInt64(asset["balance"].subtract(sendAmount)),
-                    asset["version"]);
-
-                transaction.addRecord(
-                    destinationBalance.key,
-                    encodingService.encodeInt64(destinationBalance["balance"].add(sendAmount)),
-                    destinationBalance["version"]);
-
-                $scope.sendStatus = "send-wait";
-                return transaction.submit(walletSettings.derivedKey);
-            })
-            .then(function (data, status, headers, config) {
-                $scope.display = "success";
-            }, function (data, status, headers, config) {
-                if (status == 400) {
-                    $scope.display = "error";
-                } else {
-                    $scope.display = "error";
-                }
-            });
+        var transaction = new TransactionBuilder(endpoint);
+        transaction.addAccountRecord(asset, sendAmount.negate());
+        transaction.fetchAndAddAccountRecord(sendTo, asset.asset, sendAmount).then(function () {
+            $scope.sendStatus = "send-wait";
+            return transaction.submit(walletSettings.derivedKey);
+        })
+        .then(function (data, status, headers, config) {
+            $scope.display = "success";
+        }, function (data, status, headers, config) {
+            if (status == 400) {
+                $scope.display = "error";
+            } else {
+                $scope.display = "error";
+            }
+        });
     };
 
     $scope.validateAmount = function (amount, control) {
