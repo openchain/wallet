@@ -7,7 +7,7 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** ManageAssetsController *****
 // **********************************
 
-module.controller("ManageAssetsController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService, validator, AssetData) {
+module.controller("ManageAssetsController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, encodingService, validator, AssetData) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -66,21 +66,11 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
             icon_url: $scope.fields.assetImage
         });
 
-        var constructedTransaction = new protobufBuilder.Mutation({
-            "namespace": encodingService.encodeNamespace($scope.endpoint.rootUrl),
-            "records": [
-                {
-                    "key": key,
-                    "value": encodingService.encodeString(value),
-                    "version": $scope.version
-                }
-            ],
-            "metadata": ByteBuffer.fromHex("")
-        });
-
-        apiService.postTransaction($scope.endpoint, constructedTransaction, findKey($scope.fields.assetPath)).then(function () {
-            $location.path("/");
-        });
+        new TransactionBuilder($scope.endpoint)
+            .addRecord(key, encodingService.encodeString(value), $scope.version)
+            .submit(findKey($scope.fields.assetPath)).then(function () {
+                $location.path("/");
+            });
     };
 
     $scope.issueAsset = function () {
@@ -93,24 +83,17 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
             var valueFrom = array[0];
             var valueTo = array[1];
 
-            var constructedTransaction = new protobufBuilder.Mutation({
-                "namespace": encodingService.encodeNamespace($scope.endpoint.rootUrl),
-                "records": [
-                    {
-                        "key": valueFrom.key,
-                        "value": encodingService.encodeInt64(valueFrom["balance"].subtract(issueAmount)),
-                        "version": valueFrom.version
-                    },
-                    {
-                        "key": valueTo.key,
-                        "value": encodingService.encodeInt64(valueTo["balance"].add(issueAmount)),
-                        "version": valueTo.version
-                    }
-                ],
-                "metadata": ByteBuffer.fromHex("")
-            });
+            var transaction = new TransactionBuilder($scope.endpoint)
+                .addRecord(
+                    valueFrom.key,
+                    encodingService.encodeInt64(valueFrom["balance"].subtract(issueAmount)),
+                    valueFrom.version)
+                .addRecord(
+                    valueTo.key,
+                    encodingService.encodeInt64(valueTo["balance"].add(issueAmount)),
+                    valueTo.version);
 
-            apiService.postTransaction($scope.endpoint, constructedTransaction, findKey($scope.fields.assetPath)).then(function () {
+            transaction.submit(findKey($scope.fields.assetPath)).then(function () {
                 $location.path("/");
             });
         });

@@ -7,7 +7,7 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** HomeController *****
 // **************************
 
-module.controller("HomeController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, protobufBuilder, encodingService, validator, AssetData) {
+module.controller("HomeController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, encodingService, validator, AssetData) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -70,25 +70,20 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
 
         apiService.getAccount(endpoint, sendTo, asset.asset)
             .then(function (destinationBalance) {
-                var constructedTransaction = new protobufBuilder.Mutation({
-                    "namespace": encodingService.encodeNamespace(endpoint.rootUrl),
-                    "records": [
-                        {
-                            "key": encodingService.encodeAccount(walletSettings.rootAccount.toString(), asset.asset, encodingService.usage.ACCOUNT),
-                            "value": encodingService.encodeInt64(asset["balance"].subtract(sendAmount)),
-                            "version": asset["version"]
-                        },
-                        {
-                            "key": destinationBalance.key,
-                            "value": encodingService.encodeInt64(destinationBalance["balance"].add(sendAmount)),
-                            "version": destinationBalance["version"]
-                        },
-                    ],
-                    "metadata": ByteBuffer.fromHex("")
-                });
+                var transaction = new TransactionBuilder(endpoint);
+
+                transaction.addRecord(
+                    encodingService.encodeAccount(walletSettings.rootAccount.toString(), asset.asset, encodingService.usage.ACCOUNT),
+                    encodingService.encodeInt64(asset["balance"].subtract(sendAmount)),
+                    asset["version"]);
+
+                transaction.addRecord(
+                    destinationBalance.key,
+                    encodingService.encodeInt64(destinationBalance["balance"].add(sendAmount)),
+                    destinationBalance["version"]);
 
                 $scope.sendStatus = "send-wait";
-                return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.derivedKey);
+                return transaction.submit(walletSettings.derivedKey);
             })
             .then(function (data, status, headers, config) {
                 $scope.display = "success";

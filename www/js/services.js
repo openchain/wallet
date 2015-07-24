@@ -5,9 +5,8 @@ var Long = dcodeIO.Long;
 
 module.service("apiService", function ($http, encodingService) {
 
-    this.postTransaction = function (endpoint, transaction, key) {
-        var encodedTransaction = transaction.encode();
-
+    this.postTransaction = function (endpoint, encodedTransaction, key) {
+        
         var transactionBuffer = new Uint8Array(encodedTransaction.toArrayBuffer());
         var hash = bitcore.crypto.Hash.sha256(bitcore.crypto.Hash.sha256(transactionBuffer));
 

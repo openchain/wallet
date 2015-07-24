@@ -96,3 +96,35 @@ module.factory("AssetData", function ($q, apiService, encodingService) {
 
     return AssetData;
 });
+
+module.service("TransactionBuilder", function (apiService, protobufBuilder, encodingService) {
+
+    var TransactionBuilder = function (endpoint) {
+        var _this = this;
+
+        this.endpoint = endpoint;
+        this.records = [];
+
+        this.addRecord = function (key, value, version) {
+            _this.records.push({
+                "key": key,
+                "value": value,
+                "version": version
+            });
+
+            return _this;
+        };
+
+        this.submit = function (key) {
+            var constructedTransaction = new protobufBuilder.Mutation({
+                "namespace": encodingService.encodeNamespace(_this.endpoint.rootUrl),
+                "records": this.records,
+                "metadata": ByteBuffer.fromHex("")
+            });
+            
+            return apiService.postTransaction(_this.endpoint, constructedTransaction.encode(), key);
+        };
+    }
+
+    return TransactionBuilder;
+});

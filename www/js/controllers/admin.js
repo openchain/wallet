@@ -2,7 +2,7 @@
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;
 
-module.controller("AdminController", function ($scope, $rootScope, $location, protobufBuilder, walletSettings, apiService, encodingService, endpointManager) {
+module.controller("AdminController", function ($scope, $rootScope, $location, walletSettings, apiService, encodingService, endpointManager) {
 
     if (!walletSettings.initialized) {
         $location.path("/signin");
@@ -28,7 +28,7 @@ module.controller("AdminController", function ($scope, $rootScope, $location, pr
     }
 });
 
-module.controller("TransactionController", function ($scope, $location, $q, protobufBuilder, apiService, encodingService, walletSettings, validator) {
+module.controller("TransactionController", function ($scope, $location, $q, TransactionBuilder, apiService, encodingService, walletSettings, validator) {
 
     $scope.mutations = [];
 
@@ -67,21 +67,16 @@ module.controller("TransactionController", function ($scope, $location, $q, prot
             return apiService.getAccount(endpoint, mutation.account, mutation.asset);
         }))
         .then(function(array) {
-            var constructedTransaction = new protobufBuilder.Mutation({
-                "namespace": encodingService.encodeNamespace(endpoint.rootUrl),
-                "records": [ ],
-                "metadata": ByteBuffer.fromHex("")
-            });
+            var transaction = new TransactionBuilder(endpoint);
             
             for (var i = 0; i < $scope.mutations.length; i++) {
-                constructedTransaction.records.push({
-                    "key": encodingService.encodeAccount($scope.mutations[i].account, $scope.mutations[i].asset, encodingService.usage.ACCOUNT),
-                    "value": encodingService.encodeInt64(array[i].balance.add(Long.fromString($scope.mutations[i].amount))),
-                    "version": array[i].version
-                });
+                constructedTransaction.addRecord(
+                    encodingService.encodeAccount($scope.mutations[i].account, $scope.mutations[i].asset, encodingService.usage.ACCOUNT),
+                    encodingService.encodeInt64(array[i].balance.add(Long.fromString($scope.mutations[i].amount))),
+                    array[i].version);
             }
 
-            return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.derivedKey);
+            return transaction.submit(walletSettings.derivedKey);
         });
 
     };
@@ -90,7 +85,7 @@ module.controller("TransactionController", function ($scope, $location, $q, prot
 
 });
 
-module.controller("AliasEditorController", function ($scope, $location, $q, protobufBuilder, apiService, encodingService, walletSettings) {
+module.controller("AliasEditorController", function ($scope, $location, $q, TransactionBuilder, apiService, encodingService, walletSettings) {
     $scope.fields = {
         alias: "",
         path: ""
@@ -112,19 +107,10 @@ module.controller("AliasEditorController", function ($scope, $location, $q, prot
 
         apiService.getAlias(endpoint, $scope.fields.alias).then(function (result) {
 
-            var constructedTransaction = new protobufBuilder.Mutation({
-                "namespace": encodingService.encodeNamespace(endpoint.rootUrl),
-                "records": [
-                    {
-                        "key": result.key,
-                        "value": encodingService.encodeString($scope.fields.path),
-                        "version": result.version
-                    }
-                ],
-                "metadata": ByteBuffer.fromHex("")
-            });
+            var transaction = new TransactionBuilder(endpoint);
+            transaction.addRecord(result.key, encodingService.encodeString($scope.fields.path), result.version);
 
-            return apiService.postTransaction(endpoint, constructedTransaction, walletSettings.derivedKey);
+            return transaction.submit(walletSettings.derivedKey);
         });
     };
 });
