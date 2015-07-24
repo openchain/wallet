@@ -68,10 +68,10 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
         var constructedTransaction = new protobufBuilder.Mutation({
             "namespace": encodingService.encodeNamespace($scope.endpoint.rootUrl),
-            "key_value_pairs": [
+            "records": [
                 {
                     "key": key,
-                    "value": encodingService.encodeString(value, encodingService.usage.TEXT),
+                    "value": encodingService.encodeString(value),
                     "version": $scope.version
                 }
             ],
@@ -95,7 +95,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
             var constructedTransaction = new protobufBuilder.Mutation({
                 "namespace": encodingService.encodeNamespace($scope.endpoint.rootUrl),
-                "key_value_pairs": [
+                "records": [
                     {
                         "key": valueFrom.key,
                         "value": encodingService.encodeInt64(valueFrom["balance"].subtract(issueAmount)),

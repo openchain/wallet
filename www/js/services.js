@@ -52,7 +52,7 @@ module.service("apiService", function ($http, encodingService) {
     }
 
     this.getAccount = function (endpoint, account, asset) {
-        return this.getValue(endpoint, encodingService.encodeAccount(account, asset)).then(function (result) {
+        return this.getValue(endpoint, encodingService.encodeAccount(account, asset, encodingService.usage.ACCOUNT)).then(function (result) {
             var accountResult = {
                 key: result.key,
                 account: account,
@@ -152,31 +152,43 @@ module.service("encodingService", function () {
     var _this = this;
 
     this.usage = {
-        DEFAULT: 0,
-        TEXT: 1,
-        INT64: 2,
+        NONE: 0,
+        ACCOUNT: 1,
+        ASSET_DEFINITION: 2,
+        ALIAS: 3
+    }
 
-        ACCOUNT_KEY: 0 + 256,
-        ASSET_DEFINITION: 1 + 256,
-        ALIAS: 2 + 256
+    this.type = {
+        DEFAULT: 0,
+        STRING: 1,
+        INT64: 2,
+        STRING_PAIR: 3
     };
 
     this.encodeNamespace = function (namespace) {
         return ByteBuffer.wrap(namespace, "utf8", true);
     };
 
-    this.encodeAccount = function (account, asset) {
+    this.encodeAccount = function (account, asset, usage) {
         var result = new ByteBuffer(null, true);
-        result.writeInt32(_this.usage.ACCOUNT_KEY);
+        if (usage && usage != _this.usage.NONE)
+            result.writeUint16(usage);
+
+        result.writeByte(_this.type.STRING_PAIR);
+
         result.writeIString(account);
         result.writeIString(asset);
         result.flip();
         return result;
     };
 
-    this.encodeInt64 = function (value) {
+    this.encodeInt64 = function (value, usage) {
         var result = new ByteBuffer(null, true);
-        result.writeInt32(_this.usage.INT64);
+        if (usage && usage != _this.usage.NONE)
+            result.writeUint16(usage);
+
+        result.writeByte(_this.type.INT64);
+
         result.writeInt64(value);
         result.flip();
         return result;
@@ -184,22 +196,32 @@ module.service("encodingService", function () {
 
     this.encodeString = function (value, usage) {
         var result = new ByteBuffer(null, true);
-        result.writeInt32(usage);
+        if (usage && usage != _this.usage.NONE)
+            result.writeUint16(usage);
+
+        result.writeByte(_this.type.STRING);
+
         result.writeIString(value);
         result.flip();
         return result;
     };
 
-    this.decodeInt64 = function (buffer) {
+    this.decodeInt64 = function (buffer, isKey) {
         buffer.LE();
-        var usage = buffer.readInt32();
+        if (isKey)
+            buffer.readUint16();
+
+        var type = buffer.readByte();
         var result = buffer.readInt64();
         return result;
     };
 
-    this.decodeString = function (buffer) {
+    this.decodeString = function (buffer, isKey) {
         buffer.LE();
-        var usage = buffer.readInt32();
+        if (isKey)
+            buffer.readUint16();
+
+        var type = buffer.readByte();
         var result = buffer.readIString();
         return result;
     };

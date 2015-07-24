@@ -28,7 +28,7 @@ module.controller("AdminController", function ($scope, $rootScope, $location, pr
     }
 });
 
-module.controller("TransactionController", function ($scope, $location, $q, protobufBuilder, apiService, encodingService, validator) {
+module.controller("TransactionController", function ($scope, $location, $q, protobufBuilder, apiService, encodingService, walletSettings, validator) {
 
     $scope.mutations = [];
 
@@ -69,13 +69,13 @@ module.controller("TransactionController", function ($scope, $location, $q, prot
         .then(function(array) {
             var constructedTransaction = new protobufBuilder.Mutation({
                 "namespace": encodingService.encodeNamespace(endpoint.rootUrl),
-                "key_value_pairs": [ ],
+                "records": [ ],
                 "metadata": ByteBuffer.fromHex("")
             });
             
             for (var i = 0; i < $scope.mutations.length; i++) {
-                constructedTransaction.key_value_pairs.push({
-                    "key": encodingService.encodeAccount($scope.mutations[i].account, $scope.mutations[i].asset),
+                constructedTransaction.records.push({
+                    "key": encodingService.encodeAccount($scope.mutations[i].account, $scope.mutations[i].asset, encodingService.usage.ACCOUNT),
                     "value": encodingService.encodeInt64(array[i].balance.add(Long.fromString($scope.mutations[i].amount))),
                     "version": array[i].version
                 });
@@ -114,10 +114,10 @@ module.controller("AliasEditorController", function ($scope, $location, $q, prot
 
             var constructedTransaction = new protobufBuilder.Mutation({
                 "namespace": encodingService.encodeNamespace(endpoint.rootUrl),
-                "key_value_pairs": [
+                "records": [
                     {
                         "key": result.key,
-                        "value": encodingService.encodeString($scope.fields.path, encodingService.usage.TEXT),
+                        "value": encodingService.encodeString($scope.fields.path),
                         "version": result.version
                     }
                 ],

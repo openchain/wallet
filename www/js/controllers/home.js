@@ -72,9 +72,9 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
             .then(function (destinationBalance) {
                 var constructedTransaction = new protobufBuilder.Mutation({
                     "namespace": encodingService.encodeNamespace(endpoint.rootUrl),
-                    "key_value_pairs": [
+                    "records": [
                         {
-                            "key": encodingService.encodeAccount(walletSettings.rootAccount.toString(), asset.asset),
+                            "key": encodingService.encodeAccount(walletSettings.rootAccount.toString(), asset.asset, encodingService.usage.ACCOUNT),
                             "value": encodingService.encodeInt64(asset["balance"].subtract(sendAmount)),
                             "version": asset["version"]
                         },
