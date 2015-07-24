@@ -19,13 +19,17 @@ module.controller("SignInController", function ($scope, $rootScope, $location, w
 
         if (Mnemonic.isValid($scope.seed)) {
 
-            var code = new Mnemonic($scope.seed);
+            var worker = new Worker("js/derive.js");
 
-            var hdKey = code.toHDPrivateKey();
+            worker.addEventListener("message", function (hdKey) {
+                $rootScope.$apply(function () {
+                    var hdPrivateKey = new bitcore.HDPrivateKey(hdKey.data);
+                    walletSettings.setRootKey(hdPrivateKey);
+                    $location.path("/");
+                })
+            }, false);
 
-            walletSettings.setRootKey(hdKey);
-
-            $location.path("/");
+            worker.postMessage($scope.seed);
         }
     };
 });
