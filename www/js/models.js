@@ -95,7 +95,7 @@ module.factory("AssetData", function ($q, apiService, encodingService) {
     return AssetData;
 });
 
-module.service("TransactionBuilder", function (apiService, protobufBuilder, encodingService) {
+module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, encodingService) {
 
     var TransactionBuilder = function (endpoint) {
         var _this = this;
@@ -121,10 +121,27 @@ module.service("TransactionBuilder", function (apiService, protobufBuilder, enco
         };
 
         this.fetchAndAddAccountRecord = function (account, asset, change) {
-            return apiService.getAccount(_this.endpoint, account, asset)
-                .then(function (currentRecord) {
-                    _this.addAccountRecord(currentRecord, change);
+            if (account.slice(0, 1) == "@") {
+                var resolvedAccount = apiService.getAlias(_this.endpoint, account.slice(1, account.length)).then(function (result) {
+                    if (result.path == null) {
+                        return $q.reject("Unable to resolve the alias");
+                    }
+                    else {
+                        _this.addRecord(result.key, null, result.version);
+                        return $q.when(result.path);
+                    }
                 });
+            }
+            else {
+                var resolvedAccount = $q.when(account);
+            }
+
+            return resolvedAccount.then(function (accountResult) {
+                return apiService.getAccount(_this.endpoint, accountResult, asset);
+            })
+            .then(function (currentRecord) {
+                _this.addAccountRecord(currentRecord, change);
+            });
         }
 
         this.submit = function (key) {

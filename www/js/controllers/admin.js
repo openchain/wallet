@@ -63,19 +63,13 @@ module.controller("TransactionController", function ($scope, $location, $q, Tran
         if (!valid)
             return;
         
+        var transaction = new TransactionBuilder(endpoint);
         $q.all($scope.mutations.map(function (mutation) {
-            return apiService.getAccount(endpoint, mutation.account, mutation.asset);
+            return transaction.fetchAndAddAccountRecord(mutation.account, mutation.asset, Long.fromString($scope.mutations[i].amount));
         }))
         .then(function(array) {
-            var transaction = new TransactionBuilder(endpoint);
-            
-            for (var i = 0; i < $scope.mutations.length; i++) {
-                transaction.addAccountRecord(array[i], Long.fromString($scope.mutations[i].amount));
-            }
-
             return transaction.submit(walletSettings.derivedKey);
         });
-
     };
 
     $scope.addMutation();
