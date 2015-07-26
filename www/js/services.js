@@ -51,7 +51,7 @@ module.service("apiService", function ($http, encodingService) {
     }
 
     this.getAccount = function (endpoint, account, asset) {
-        return this.getValue(endpoint, encodingService.encodeAccount(account, asset, encodingService.usage.ACCOUNT)).then(function (result) {
+        return this.getValue(endpoint, encodingService.encodeAccount(account, asset)).then(function (result) {
             var accountResult = {
                 key: result.key,
                 account: account,
@@ -72,7 +72,7 @@ module.service("apiService", function ($http, encodingService) {
     }
 
     this.getAlias = function (endpoint, alias) {
-        return this.getValue(endpoint, encodingService.encodeString(alias, encodingService.usage.ALIAS)).then(function (result) {
+        return this.getValue(endpoint, encodingService.encodeAlias(alias)).then(function (result) {
             var accountResult = {
                 key: result.key,
                 alias: alias,
@@ -99,7 +99,7 @@ module.service("apiService", function ($http, encodingService) {
         }).then(function (result) {
             return result.data.map(function (item) {
                 return {
-                    key: encodingService.encodeAccount(item.account, item.asset, encodingService.usage.ACCOUNT),
+                    key: encodingService.encodeAccount(item.account, item.asset),
                     account: item.account,
                     asset: item.asset,
                     version: ByteBuffer.fromHex(item.version),
@@ -160,78 +160,38 @@ module.service("endpointManager", function (apiService, walletSettings, Endpoint
 module.service("encodingService", function () {
     var _this = this;
 
-    this.usage = {
-        NONE: 0,
-        ACCOUNT: 1,
-        ASSET_DEFINITION: 2,
-        ALIAS: 3
+    this.encodeString = function (value) {
+        return ByteBuffer.wrap(value, "utf8", true);
+    };
+
+    this.encodeAccount = function (account, asset) {
+        return _this.encodeString(account + ":ACC:" + asset);
+    };
+
+    this.encodeAlias = function (path) {
+        return _this.encodeString(path + ":ALIAS");
     }
 
-    this.type = {
-        DEFAULT: 0,
-        STRING: 1,
-        INT64: 2,
-        STRING_PAIR: 3
-    };
-
-    this.encodeNamespace = function (namespace) {
-        return ByteBuffer.wrap(namespace, "utf8", true);
-    };
-
-    this.encodeAccount = function (account, asset, usage) {
-        var result = new ByteBuffer(null, true);
-        if (usage && usage != _this.usage.NONE)
-            result.writeUint16(usage);
-
-        result.writeByte(_this.type.STRING_PAIR);
-
-        result.writeIString(account);
-        result.writeIString(asset);
-        result.flip();
-        return result;
-    };
+    this.encodeAssetDefinition = function (path) {
+        return _this.encodeString(path + ":ASDEF");
+    }
 
     this.encodeInt64 = function (value, usage) {
         var result = new ByteBuffer(null, true);
-        if (usage && usage != _this.usage.NONE)
-            result.writeUint16(usage);
-
-        result.writeByte(_this.type.INT64);
-
+        result.BE();
         result.writeInt64(value);
         result.flip();
         return result;
     };
 
-    this.encodeString = function (value, usage) {
-        var result = new ByteBuffer(null, true);
-        if (usage && usage != _this.usage.NONE)
-            result.writeUint16(usage);
-
-        result.writeByte(_this.type.STRING);
-
-        result.writeIString(value);
-        result.flip();
-        return result;
-    };
-
-    this.decodeInt64 = function (buffer, isKey) {
-        buffer.LE();
-        if (isKey)
-            buffer.readUint16();
-
-        var type = buffer.readByte();
+    this.decodeInt64 = function (buffer) {
+        buffer.BE();
         var result = buffer.readInt64();
         return result;
     };
 
-    this.decodeString = function (buffer, isKey) {
-        buffer.LE();
-        if (isKey)
-            buffer.readUint16();
-
-        var type = buffer.readByte();
-        var result = buffer.readIString();
+    this.decodeString = function (buffer) {
+        var result = buffer.readUTF8String(buffer.remaining());
         return result;
     };
 });

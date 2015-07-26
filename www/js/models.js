@@ -29,7 +29,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
         this.assets = {};
 
         this.downloadAssetDefinition = function (assetPath) {
-            return apiService.getValue(_this, encodingService.encodeString(assetPath, encodingService.usage.ASSET_DEFINITION)).then(function (result) {
+            return apiService.getValue(_this, encodingService.encodeAssetDefinition(assetPath)).then(function (result) {
                 if (result.value.remaining() == 0) {
                     return { value: null, version: result.version };
                 }
@@ -39,8 +39,8 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
             })
         };
 
-        this.getAssetDefinition = function (assetPath) {
-            if (assetPath in _this.assets) {
+        this.getAssetDefinition = function (assetPath, noCache) {
+            if (!noCache && assetPath in _this.assets) {
                 return $q.resolve(_this.assets[assetPath]);
             }
             else {
@@ -122,7 +122,7 @@ module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, 
 
         this.fetchAndAddAccountRecord = function (account, asset, change) {
             if (account.slice(0, 1) == "@") {
-                var resolvedAccount = apiService.getAlias(_this.endpoint, account.slice(1, account.length)).then(function (result) {
+                var resolvedAccount = apiService.getAlias(_this.endpoint, "/aka/" + account.slice(1, account.length)).then(function (result) {
                     if (result.path == null) {
                         return $q.reject("Unable to resolve the alias");
                     }
@@ -146,7 +146,7 @@ module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, 
 
         this.submit = function (key) {
             var constructedTransaction = new protobufBuilder.Mutation({
-                "namespace": encodingService.encodeNamespace(_this.endpoint.rootUrl),
+                "namespace": encodingService.encodeString(_this.endpoint.rootUrl),
                 "records": _this.records,
                 "metadata": ByteBuffer.fromHex("")
             });

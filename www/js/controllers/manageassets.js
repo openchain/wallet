@@ -38,7 +38,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     $scope.displayForm = function () {
         
-        $scope.endpoint.getAssetDefinition($scope.fields.assetPath).then(function (result) {
+        $scope.endpoint.getAssetDefinition($scope.fields.assetPath, true).then(function (result) {
 
             $scope.version = result.version;
 
@@ -58,7 +58,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     $scope.editAsset = function () {
 
-        var key = encodingService.encodeString($scope.fields.assetPath, encodingService.usage.ASSET_DEFINITION);
+        var key = encodingService.encodeAssetDefinition($scope.fields.assetPath);
 
         var value = JSON.stringify({
             name: $scope.fields.assetName,
