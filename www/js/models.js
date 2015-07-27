@@ -79,7 +79,13 @@ module.factory("AssetData", function ($q, apiService, encodingService) {
 
         this.asset = assetPath;
         this.endpoint = endpoint;
-        this.fullPath = endpoint.rootUrl + "asset" + assetPath;
+
+        if (endpoint.rootUrl.slice(endpoint.rootUrl.length - 1, endpoint.rootUrl.length) == "/") {
+            this.fullPath = endpoint.rootUrl + assetPath.slice(1, assetPath.length);
+        }
+        else {
+            this.fullPath = endpoint.rootUrl + assetPath;
+        }
 
         this.setAccountBalance = function (balanceData) {
             _this.currentRecord = balanceData;

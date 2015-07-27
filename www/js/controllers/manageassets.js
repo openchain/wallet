@@ -93,7 +93,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     var findKey = function (assetPath) {
         for (var i = 0; i < 20; i++) {
-            if ("/p2pkh/" + walletSettings.getAssetKey(i).privateKey.toAddress().toString() == assetPath)
+            if ("/asset/p2pkh/" + walletSettings.getAssetKey(i).privateKey.toAddress().toString() == assetPath)
                 return walletSettings.getAssetKey(i);
         }
 
