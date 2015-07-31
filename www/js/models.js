@@ -30,12 +30,12 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
         this.assets = {};
 
         this.downloadAssetDefinition = function (assetPath) {
-            return apiService.getValue(_this, encodingService.encodeAssetDefinition(assetPath)).then(function (result) {
+            return apiService.getValue(_this, encodingService.encodeData(assetPath + "/asdef")).then(function (result) {
                 if (result.value.remaining() == 0) {
-                    return { value: null, version: result.version };
+                    return { key: result.key, value: null, version: result.version };
                 }
                 else {
-                    return { value: JSON.parse(encodingService.decodeString(result.value)), version: result.version };
+                    return { key: result.key, value: JSON.parse(encodingService.decodeString(result.value)), version: result.version };
                 }
             })
         };
@@ -53,6 +53,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
                             nameShort: result.value.name_short,
                             iconUrl: result.value.icon_url,
                             path: assetPath,
+                            key: result.key,
                             version: result.version
                         };
                     }

@@ -172,10 +172,6 @@ module.service("encodingService", function () {
         return _this.encodeString(path + ":DATA");
     }
 
-    this.encodeAssetDefinition = function (path) {
-        return _this.encodeString(path + ":ASDEF");
-    }
-
     this.encodeInt64 = function (value, usage) {
         var result = new ByteBuffer(null, true);
         result.BE();

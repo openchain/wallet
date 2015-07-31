@@ -58,7 +58,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     $scope.editAsset = function () {
 
-        var key = encodingService.encodeAssetDefinition($scope.fields.assetPath);
+        var key = encodingService.encodeData($scope.fields.assetPath + "/asdef");
 
         var value = JSON.stringify({
             name: $scope.fields.assetName,
