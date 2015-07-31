@@ -129,13 +129,13 @@ module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, 
 
         this.fetchAndAddAccountRecord = function (account, asset, change) {
             if (account.slice(0, 1) == "@") {
-                var resolvedAccount = apiService.getAlias(_this.endpoint, "/aka/" + account.slice(1, account.length)).then(function (result) {
-                    if (result.path == null) {
+                var resolvedAccount = apiService.getData(_this.endpoint, "/aka/" + account.slice(1, account.length)).then(function (result) {
+                    if (result.data == null) {
                         return $q.reject("Unable to resolve the alias");
                     }
                     else {
                         _this.addRecord(result.key, null, result.version);
-                        return $q.when(result.path);
+                        return $q.when(result.data);
                     }
                 });
             }

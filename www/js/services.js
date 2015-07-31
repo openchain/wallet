@@ -71,8 +71,8 @@ module.service("apiService", function ($http, encodingService) {
         });
     }
 
-    this.getAlias = function (endpoint, alias) {
-        return this.getValue(endpoint, encodingService.encodeAlias(alias)).then(function (result) {
+    this.getData = function (endpoint, alias) {
+        return this.getValue(endpoint, encodingService.encodeData(alias)).then(function (result) {
             var accountResult = {
                 key: result.key,
                 alias: alias,
@@ -81,10 +81,10 @@ module.service("apiService", function ($http, encodingService) {
 
             if (result.value.remaining() == 0) {
                 // Unset value
-                accountResult["path"] = null;
+                accountResult["data"] = null;
             }
             else {
-                accountResult["path"] = encodingService.decodeString(result.value);
+                accountResult["data"] = encodingService.decodeString(result.value);
             }
 
             return accountResult;
@@ -168,8 +168,8 @@ module.service("encodingService", function () {
         return _this.encodeString(account + ":ACC:" + asset);
     };
 
-    this.encodeAlias = function (path) {
-        return _this.encodeString(path + ":ALIAS");
+    this.encodeData = function (path) {
+        return _this.encodeString(path + ":DATA");
     }
 
     this.encodeAssetDefinition = function (path) {
