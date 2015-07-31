@@ -19,8 +19,8 @@ self.addEventListener("message", function (e) {
     var bitcore = require("bitcore");
     var Mnemonic = require("bitcore-mnemonic");
 
-    var code = new Mnemonic(e.data);
-    var derivedKey = code.toHDPrivateKey();
+    var code = new Mnemonic(e.data.mnemonic);
+    var derivedKey = code.toHDPrivateKey(null, e.data.network);
     self.postMessage(derivedKey.xprivkey);
 
 }, false);

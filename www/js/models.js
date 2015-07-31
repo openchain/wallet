@@ -7,9 +7,10 @@ module.value("walletSettings", {
     rootAccount: null,
     initialized: false,
     versionPrefix: "v1",
+    network: null,
     setRootKey: function (key) {
         this.hdKey = key;
-
+        this.network = key.network;
         this.derivedKey = key.derive(44, true).derive(22, true).derive(0, true).derive(0).derive(0);
         this.rootAccount = "/p2pkh/" + this.derivedKey.privateKey.toAddress().toString();
         this.initialized = true;

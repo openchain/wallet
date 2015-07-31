@@ -29,7 +29,7 @@ module.controller("SignInController", function ($scope, $rootScope, $location, w
                 })
             }, false);
 
-            worker.postMessage($scope.seed);
+            worker.postMessage({ mnemonic: $scope.seed, network: "testnet" });
         }
     };
 });

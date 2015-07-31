@@ -17,7 +17,7 @@ module.service("apiService", function ($http, encodingService) {
         }).sign().sig.toBuffer();
 
         return $http.post(
-            endpoint.rootUrl + "/submit",
+            endpoint.rootUrl + "submit",
             {
                 transaction: encodedTransaction.toHex(),
                 signatures: [
@@ -31,7 +31,7 @@ module.service("apiService", function ($http, encodingService) {
 
     this.getValue = function (endpoint, key) {
         return $http({
-            url: endpoint.rootUrl + "/value",
+            url: endpoint.rootUrl + "value",
             method: "GET",
             params: { key: key.toHex() }
         }).then(function (result) {
@@ -45,7 +45,7 @@ module.service("apiService", function ($http, encodingService) {
 
     this.getLedgerInfo = function (rootUrl) {
         return $http({
-            url: rootUrl + "/info",
+            url: rootUrl + "info",
             method: "GET"
         });
     }
@@ -93,7 +93,7 @@ module.service("apiService", function ($http, encodingService) {
 
     this.getAccountAssets = function (endpoint, account) {
         return $http({
-            url: endpoint.rootUrl + "/query/account",
+            url: endpoint.rootUrl + "query/account",
             method: "GET",
             params: { account: account }
         }).then(function (result) {
