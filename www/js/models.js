@@ -12,7 +12,7 @@ module.value("walletSettings", {
         this.hdKey = key;
         this.network = key.network;
         this.derivedKey = key.derive(44, true).derive(22, true).derive(0, true).derive(0).derive(0);
-        this.rootAccount = "/p2pkh/" + this.derivedKey.privateKey.toAddress().toString();
+        this.rootAccount = "/p2pkh/" + this.derivedKey.privateKey.toAddress().toString() + "/";
         this.initialized = true;
     },
     getAssetKey: function (index) {
@@ -30,7 +30,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
         this.assets = {};
 
         this.downloadAssetDefinition = function (assetPath) {
-            return apiService.getValue(_this, encodingService.encodeData(assetPath + "/asdef")).then(function (result) {
+            return apiService.getValue(_this, encodingService.encodeData(assetPath + "asdef/")).then(function (result) {
                 if (result.value.remaining() == 0) {
                     return { key: result.key, value: null, version: result.version };
                 }
@@ -130,7 +130,7 @@ module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, 
 
         this.fetchAndAddAccountRecord = function (account, asset, change) {
             if (account.slice(0, 1) == "@") {
-                var resolvedAccount = apiService.getData(_this.endpoint, "/aka/" + account.slice(1, account.length)).then(function (result) {
+                var resolvedAccount = apiService.getData(_this.endpoint, "/aka/" + account.slice(1, account.length) + "/").then(function (result) {
                     if (result.data == null) {
                         return $q.reject("Unable to resolve the alias");
                     }

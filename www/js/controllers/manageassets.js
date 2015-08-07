@@ -58,7 +58,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     $scope.editAsset = function () {
 
-        var key = encodingService.encodeData($scope.fields.assetPath + "/asdef");
+        var key = encodingService.encodeData($scope.fields.assetPath + "asdef/");
 
         var value = JSON.stringify({
             name: $scope.fields.assetName,
@@ -93,7 +93,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     var findKey = function (assetPath) {
         for (var i = 0; i < 20; i++) {
-            if ("/asset/p2pkh/" + walletSettings.getAssetKey(i).privateKey.toAddress().toString() == assetPath)
+            if ("/asset/p2pkh/" + walletSettings.getAssetKey(i).privateKey.toAddress().toString() + "/" == assetPath)
                 return walletSettings.getAssetKey(i);
         }
 

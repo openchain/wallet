@@ -83,7 +83,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     };
 
     $scope.loadAlias = function () {
-        apiService.getData($scope.endpoint, "/aka/" + $scope.fields.alias).then(function (result) {
+        apiService.getData($scope.endpoint, "/aka/" + $scope.fields.alias + "/").then(function (result) {
             if (result.data != null) {
                 $scope.fields.path = result.data;
             }
@@ -96,7 +96,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     $scope.submit = function () {
         var endpoint = $scope.endpoint;
 
-        apiService.getData(endpoint, "/aka/" + $scope.fields.alias).then(function (result) {
+        apiService.getData(endpoint, "/aka/" + $scope.fields.alias + "/").then(function (result) {
 
             var transaction = new TransactionBuilder(endpoint);
             transaction.addRecord(result.key, encodingService.encodeString($scope.fields.path), result.version);
