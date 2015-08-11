@@ -199,6 +199,7 @@ module.service("protobufBuilder", function () {
         var root = builder.build();
         _this.Mutation = root.OpenChain.Mutation;
         _this.Transaction = root.OpenChain.Transaction;
+        _this.BytesValue = root.OpenChain.BytesValue;
     });
 });
 

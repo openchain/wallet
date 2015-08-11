@@ -112,11 +112,19 @@ module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, 
         this.records = [];
 
         this.addRecord = function (key, value, version) {
-            _this.records.push({
+            var newRecord = {
                 "key": key,
-                "value": value,
                 "version": version
-            });
+            };
+
+            if (value != null) {
+                newRecord["value"] = { "value": value };
+            }
+            else {
+                newRecord["value"] = null;
+            }
+
+            _this.records.push(newRecord);
 
             return _this;
         };
