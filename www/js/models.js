@@ -118,7 +118,7 @@ module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, 
             };
 
             if (value != null) {
-                newRecord["value"] = { "value": value };
+                newRecord["value"] = { "data": value };
             }
             else {
                 newRecord["value"] = null;
