@@ -3,7 +3,7 @@ var bitcore = require("bitcore");
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;
 
-module.service("apiService", function ($http, encodingService) {
+module.service("apiService", function ($http, encodingService, LedgerRecord) {
 
     this.postTransaction = function (endpoint, encodedTransaction, key) {
         
@@ -109,13 +109,25 @@ module.service("apiService", function ($http, encodingService) {
         });
     }
 
-    //this.getSubaccounts = function (endpoint, account) {
-    //    return $http({
-    //        url: endpoint.rootUrl + "/query/subaccounts",
-    //        method: "GET",
-    //        params: { account: account }
-    //    });
-    //}
+    this.getSubaccounts = function (endpoint, account) {
+        return $http({
+            url: endpoint.rootUrl + "/query/subaccounts",
+            method: "GET",
+            params: { account: account }
+        }).then(function (result) {
+            var records = [];
+            for (var item in result.data) {
+                var key = ByteBuffer.fromHex(result.data[item].key);
+                records.push({
+                    key: key,
+                    recordKey: LedgerRecord.parse(key),
+                    value: ByteBuffer.fromHex(result.data[item].value),
+                    version: ByteBuffer.fromHex(result.data[item].version)
+                });
+            }
+            return records;
+        });
+    }
 });
 
 module.service("endpointManager", function (apiService, walletSettings, Endpoint) {

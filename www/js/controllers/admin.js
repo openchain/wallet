@@ -105,3 +105,61 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
         });
     };
 });
+
+module.controller("TreeViewController", function ($scope, apiService, encodingService) {
+    apiService.getSubaccounts($scope.endpoint, "/").then(function (result) {
+        var rootNode = {
+            Path: "/",
+            type: "",
+            children: []
+        };
+
+        var treeData = [rootNode];
+
+        function addToTree(node, account, path) {
+            if (path.length == 0) {
+                var child = {
+                    Path: "[" + account.recordKey.recordType + "]"
+                };
+
+                if (account.recordKey.recordType == "ACC") {
+                    child.asset = account.recordKey.components[0];
+                    child.amount = encodingService.decodeInt64(account.value).toString();
+                }
+
+                node.children.push(child);
+            }
+            else {
+                var part = path[0];
+                for (var index = 0; index < node.children.length; index++) {
+                    if (node.children[index].Path == part) {
+                        addToTree(node.children[index], account, path.slice(1, path.length));
+                        return;
+                    }
+                }
+
+                var child = {
+                    Path: part,
+                    children: []
+                };
+
+                node.children.push(child);
+
+                addToTree(child, account, path.slice(1, path.length));
+            }
+        };
+
+        for (var i in result) {
+            addToTree(rootNode, result[i], result[i].recordKey.path.parts);
+        }
+
+        $scope.treeData = treeData;
+    });
+
+    $scope.treeData = [];
+    var cellTemplate = "<span class='tree-cell'>{{ row.branch[col.field] }}</span>";
+    $scope.colDefs = [
+        { field: "asset", displayName: "Asset", cellTemplate: cellTemplate },
+        { field: "amount", displayName: "Amount", cellTemplate: cellTemplate },
+    ];
+});

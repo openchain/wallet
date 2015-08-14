@@ -14,6 +14,7 @@
     <div class="list-group top-spacing">
       <a href="" class="list-group-item" ng-click="setView('advanced-transaction')" ng-class="{'active': display == 'advanced-transaction'}">Transaction</a>
       <a href="" class="list-group-item" ng-click="setView('alias-editor')" ng-class="{'active': display == 'alias-editor'}">Edit Aliases</a>
+      <a href="" class="list-group-item" ng-click="setView('tree-view')" ng-class="{'active': display == 'tree-view'}">Tree View</a>
     </div>
 
   </div>
@@ -70,6 +71,12 @@
           </div>
         </div>
     </form>
+
+    <div ng-switch-when="tree-view" ng-controller="TreeViewController">
+      
+      <tree-grid tree-data="treeData" col-defs="colDefs" expand-level="2"></tree-grid>
+
+    </div>
 
   </div>
 </div>

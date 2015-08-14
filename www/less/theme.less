@@ -142,3 +142,19 @@
 .top-spacing {
     margin-top: 20px;
 }
+
+.table.tree-grid {
+    table-layout: fixed;
+    
+    td {
+        white-space: nowrap;
+        overflow: hidden;
+
+        .tree-cell {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+    }
+}

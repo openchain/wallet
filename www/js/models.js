@@ -103,6 +103,70 @@ module.factory("AssetData", function ($q, apiService, encodingService) {
     return AssetData;
 });
 
+module.factory("LedgerRecord", function (LedgerPath) {
+    var LedgerRecord = function (path, recordType, components) {
+        var _this = this;
+
+        this.path = LedgerPath.parse(path);
+        this.recordType = recordType;
+
+        if (components)
+            this.components = components;
+        else
+            this.components = [];
+
+        this.toString = function () {
+            return _this.path.toString() + ":" + _this.recordType + ":" + _this.components.join(":");
+        };
+
+        this.toByteBuffer = function () {
+            return ByteBuffer.wrap(_this.toString(), "utf8", true);
+        };
+    }
+
+    LedgerRecord.parse = function (value) {
+        var text = value;
+        if (typeof text !== "string") {
+            text = text.readUTF8String(text.remaining());
+        }
+
+        var parts = text.split(":");
+
+        var components = [];
+        if (parts.length > 2) {
+            components = parts.slice(2, parts.length);
+        }
+
+        return new LedgerRecord(parts[0], parts[1], components);
+    };
+
+    return LedgerRecord;
+});
+
+module.factory("LedgerPath", function () {
+    var LedgerPath = function (parts) {
+        var _this = this;
+
+        this.parts = parts;
+
+        this.toString = function () {
+            return "/" + _this.parts.map(function (item) { return item + "/" }).join("/");
+        };
+    }
+
+    LedgerPath.parse = function (value) {
+        var parts = value.split("/");
+
+        if (parts.length < 2 || parts[0] != "" || parts[parts.length - 1] != "") {
+            throw "Invalid path";
+        }
+
+        return new LedgerPath(parts.slice(1, parts.length - 1));
+    };
+
+    return LedgerPath;
+});
+
 module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, encodingService) {
 
     var TransactionBuilder = function (endpoint) {
