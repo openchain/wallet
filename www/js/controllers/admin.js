@@ -12,7 +12,7 @@ module.controller("AdminController", function ($scope, $rootScope, $location, wa
     $rootScope.selectedTab = "advanced";
 
     $scope.endpoints = endpointManager.endpoints;
-    $scope.display = "advanced-transaction";
+    $scope.display = "tree-view";
 
     for (var key in $scope.endpoints) {
         $scope.endpoint = $scope.endpoints[key];
@@ -160,6 +160,7 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
         }
 
         $scope.treeData = treeData;
+        $scope.expandedNodes = [rootNode];
     });
 
     $scope.treeData = [];
