@@ -68,7 +68,7 @@ module.controller("TransactionController", function ($scope, $location, $q, Tran
             return transaction.fetchAndAddAccountRecord(mutation.account, mutation.asset, Long.fromString(mutation.amount));
         }))
         .then(function(array) {
-            return transaction.submit(walletSettings.derivedKey);
+            return transaction.uiSubmit(walletSettings.derivedKey);
         });
     };
 
@@ -101,7 +101,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
             var transaction = new TransactionBuilder(endpoint);
             transaction.addRecord(result.key, encodingService.encodeString($scope.fields.path), result.version);
 
-            return transaction.submit(walletSettings.derivedKey);
+            return transaction.uiSubmit(walletSettings.derivedKey);
         });
     };
 });

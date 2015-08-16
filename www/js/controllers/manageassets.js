@@ -68,9 +68,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
         new TransactionBuilder($scope.endpoint)
             .addRecord(key, encodingService.encodeString(value), $scope.version)
-            .submit(findKey($scope.fields.assetPath)).then(function () {
-                $location.path("/");
-            });
+            .uiSubmit(findKey($scope.fields.assetPath));
     };
 
     $scope.issueAsset = function () {
@@ -81,9 +79,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
             transaction.fetchAndAddAccountRecord($scope.fields.assetPath, $scope.fields.assetPath, issueAmount.negate()),
             transaction.fetchAndAddAccountRecord(walletSettings.rootAccount, $scope.fields.assetPath, issueAmount),
         ]).then(function (array) {
-            transaction.submit(findKey($scope.fields.assetPath)).then(function () {
-                $location.path("/");
-            });
+            return transaction.uiSubmit(findKey($scope.fields.assetPath));
         });
     };
 

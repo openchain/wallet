@@ -1,0 +1,50 @@
+<div ng-switch on="display">
+  <!-- Home Screen -->
+  <div ng-switch-when="pending" class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Sending transaction...</h3>
+        </div>
+        <div class="panel-body">
+          We are submitting the transaction for confirmation. Please wait...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div ng-switch-when="error" class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Error</h3>
+        </div>
+        <div class="panel-body">
+          The transaction failed.
+        </div>
+        <div class="panel-footer text-right">
+          <button type="button" class="btn btn-default" ng-click="cancelSend()">Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success message -->
+  <div ng-switch-when="success" class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Success</h3>
+        </div>
+        <div class="panel-body">
+          The transaction succeeded. Transaction confirmation: {{ transactionHash }}
+        </div>
+        <div class="panel-footer text-right">
+          <button type="button" class="btn btn-default" ng-click="cancelSend()">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

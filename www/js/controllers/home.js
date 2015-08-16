@@ -71,17 +71,7 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
         var transaction = new TransactionBuilder(endpoint);
         transaction.addAccountRecord(asset, sendAmount.negate());
         transaction.fetchAndAddAccountRecord(sendTo, asset.asset, sendAmount).then(function () {
-            $scope.sendStatus = "send-wait";
-            return transaction.submit(walletSettings.derivedKey);
-        })
-        .then(function (data, status, headers, config) {
-            $scope.display = "success";
-        }, function (data, status, headers, config) {
-            if (status == 400) {
-                $scope.display = "error";
-            } else {
-                $scope.display = "error";
-            }
+            return transaction.uiSubmit(walletSettings.derivedKey);
         });
     };
 

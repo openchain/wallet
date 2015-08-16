@@ -12,6 +12,10 @@ var app =
                 templateUrl: "views/home.html",
                 controller: "HomeController"
             })
+            .when("/submit", {
+                templateUrl: "views/submit.html",
+                controller: "SubmitController"
+            })
             .when("/signin", {
                 templateUrl: "views/signin.html",
                 controller: "SignInController"

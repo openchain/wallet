@@ -167,7 +167,7 @@ module.factory("LedgerPath", function () {
     return LedgerPath;
 });
 
-module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, encodingService) {
+module.service("TransactionBuilder", function ($q, $rootScope, $location, apiService, protobufBuilder, encodingService) {
 
     var TransactionBuilder = function (endpoint) {
         var _this = this;
@@ -232,6 +232,11 @@ module.service("TransactionBuilder", function ($q, apiService, protobufBuilder, 
             });
             
             return apiService.postTransaction(_this.endpoint, constructedTransaction.encode(), key);
+        };
+
+        this.uiSubmit = function (key) {
+            $rootScope.submitTransaction = { transaction: _this, key: key };
+            $location.path("/submit");
         };
     }
 
