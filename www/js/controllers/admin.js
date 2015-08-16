@@ -13,6 +13,7 @@ module.controller("AdminController", function ($scope, $rootScope, $location, wa
 
     $scope.endpoints = endpointManager.endpoints;
     $scope.display = "tree-view";
+    $scope.child = { refreshTree: function () { } };
 
     for (var key in $scope.endpoints) {
         $scope.endpoint = $scope.endpoints[key];
@@ -21,6 +22,9 @@ module.controller("AdminController", function ($scope, $rootScope, $location, wa
 
     $scope.setEndpoint = function (endpoint) {
         $scope.endpoint = endpoint;
+        if ($scope.display == "tree-view") {
+            $scope.child.refreshTree();
+        }
     }
 
     $scope.setView = function (view) {
@@ -107,61 +111,69 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
 });
 
 module.controller("TreeViewController", function ($scope, apiService, encodingService) {
-    apiService.getSubaccounts($scope.endpoint, "/").then(function (result) {
-        var rootNode = {
-            Path: "/",
-            type: "",
-            children: []
-        };
 
-        var treeData = [rootNode];
+    var refreshTree = function () {
+        apiService.getSubaccounts($scope.endpoint, "/").then(function (result) {
+            var rootNode = {
+                Path: "/",
+                type: "",
+                endpointId: $scope.endpoint.properties.id,
+                children: []
+            };
 
-        function addToTree(node, account, path) {
-            if (path.length == 0) {
-                var child = {
-                    Path: "[" + account.recordKey.recordType + "]",
-                    key: account.recordKey.toString(),
-                    record: account
-                };
+            var treeData = [rootNode];
 
-                if (account.recordKey.recordType == "ACC") {
-                    child.asset = account.recordKey.components[0];
-                    child.amount = encodingService.decodeInt64(account.value).toString();
-                }
-                else if (account.recordKey.recordType == "DATA") {
-                    child.data = encodingService.decodeString(account.value);
-                }
+            function addToTree(node, account, path) {
+                if (path.length == 0) {
+                    var child = {
+                        Path: "[" + account.recordKey.recordType + "]",
+                        key: account.recordKey.toString(),
+                        endpointId: $scope.endpoint.properties.id,
+                        record: account
+                    };
 
-                node.children.push(child);
-            }
-            else {
-                var part = path[0];
-                for (var index = 0; index < node.children.length; index++) {
-                    if (node.children[index].Path == part) {
-                        addToTree(node.children[index], account, path.slice(1, path.length));
-                        return;
+                    if (account.recordKey.recordType == "ACC") {
+                        child.asset = account.recordKey.components[0];
+                        child.amount = encodingService.decodeInt64(account.value).toString();
                     }
+                    else if (account.recordKey.recordType == "DATA") {
+                        child.data = encodingService.decodeString(account.value);
+                    }
+
+                    node.children.push(child);
                 }
+                else {
+                    var part = path[0];
+                    for (var index = 0; index < node.children.length; index++) {
+                        if (node.children[index].Path == part) {
+                            addToTree(node.children[index], account, path.slice(1, path.length));
+                            return;
+                        }
+                    }
 
-                var child = {
-                    Path: part,
-                    fullPath: account.recordKey.path.toString(),
-                    children: []
-                };
+                    var child = {
+                        Path: part,
+                        fullPath: account.recordKey.path.toString(),
+                        endpointId: $scope.endpoint.properties.id,
+                        children: []
+                    };
 
-                node.children.push(child);
+                    node.children.push(child);
 
-                addToTree(child, account, path.slice(1, path.length));
+                    addToTree(child, account, path.slice(1, path.length));
+                }
+            };
+
+            for (var i in result) {
+                addToTree(rootNode, result[i], result[i].recordKey.path.parts);
             }
-        };
 
-        for (var i in result) {
-            addToTree(rootNode, result[i], result[i].recordKey.path.parts);
-        }
+            $scope.treeData = treeData;
+            $scope.expandedNodes = [rootNode];
+        });
+    };
 
-        $scope.treeData = treeData;
-        $scope.expandedNodes = [rootNode];
-    });
+    $scope.child.refreshTree = refreshTree;
 
     $scope.treeData = [];
     $scope.treeOptions = {
@@ -172,4 +184,6 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
     $scope.selectNode = function (node, selected) {
         $scope.selectedNode = node;
     };
+
+    refreshTree();
 });
