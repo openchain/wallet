@@ -150,7 +150,7 @@ module.factory("LedgerPath", function () {
         this.parts = parts;
 
         this.toString = function () {
-            return "/" + _this.parts.map(function (item) { return item + "/" }).join("/");
+            return "/" + _this.parts.map(function (item) { return item + "/" }).join("");
         };
     }
 

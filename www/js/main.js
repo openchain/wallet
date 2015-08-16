@@ -4,7 +4,7 @@ var app =
         "OpenChainWallet.Models",
         "OpenChainWallet.Controllers",
         "OpenChainWallet.Services",
-        "treeGrid"
+        "treeControl"
     ])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider

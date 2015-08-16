@@ -119,12 +119,17 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
         function addToTree(node, account, path) {
             if (path.length == 0) {
                 var child = {
-                    Path: "[" + account.recordKey.recordType + "]"
+                    Path: "[" + account.recordKey.recordType + "]",
+                    key: account.recordKey.toString(),
+                    record: account
                 };
 
                 if (account.recordKey.recordType == "ACC") {
                     child.asset = account.recordKey.components[0];
                     child.amount = encodingService.decodeInt64(account.value).toString();
+                }
+                else if (account.recordKey.recordType == "DATA") {
+                    child.data = encodingService.decodeString(account.value);
                 }
 
                 node.children.push(child);
@@ -140,6 +145,7 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
 
                 var child = {
                     Path: part,
+                    fullPath: account.recordKey.path.toString(),
                     children: []
                 };
 
@@ -157,9 +163,12 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
     });
 
     $scope.treeData = [];
-    var cellTemplate = "<span class='tree-cell'>{{ row.branch[col.field] }}</span>";
-    $scope.colDefs = [
-        { field: "asset", displayName: "Asset", cellTemplate: cellTemplate },
-        { field: "amount", displayName: "Amount", cellTemplate: cellTemplate },
-    ];
+    $scope.treeOptions = {
+        dirSelectable: false,
+        allowDeselect: false
+    };
+
+    $scope.selectNode = function (node, selected) {
+        $scope.selectedNode = node;
+    };
 });

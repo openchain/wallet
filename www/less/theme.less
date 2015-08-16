@@ -143,18 +143,18 @@
     margin-top: 20px;
 }
 
-.table.tree-grid {
-    table-layout: fixed;
-    
-    td {
-        white-space: nowrap;
-        overflow: hidden;
+.tree-explorer {
+    overflow-x: auto;
+    padding-bottom: 50px;
+    treecontrol ul {
+        overflow: initial;
+    }
+}
 
-        .tree-cell {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: block;
-        }
+.table.record-property-table {
+    border-bottom: 1px solid #dddddd;
+
+    td {
+        word-break: break-word;
     }
 }
