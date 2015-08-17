@@ -71,11 +71,11 @@ module.service("apiService", function ($http, encodingService, LedgerRecord) {
         });
     }
 
-    this.getData = function (endpoint, alias) {
-        return this.getValue(endpoint, encodingService.encodeData(alias)).then(function (result) {
+    this.getData = function (endpoint, path, name) {
+        return this.getValue(endpoint, encodingService.encodeData(path, name)).then(function (result) {
             var accountResult = {
                 key: result.key,
-                alias: alias,
+                recordKey: LedgerRecord.parse(result.key),
                 version: result.version
             };
 
@@ -111,7 +111,7 @@ module.service("apiService", function ($http, encodingService, LedgerRecord) {
 
     this.getSubaccounts = function (endpoint, account) {
         return $http({
-            url: endpoint.rootUrl + "/query/subaccounts",
+            url: endpoint.rootUrl + "query/subaccounts",
             method: "GET",
             params: { account: account }
         }).then(function (result) {
@@ -176,12 +176,16 @@ module.service("encodingService", function () {
         return ByteBuffer.wrap(value, "utf8", true);
     };
 
-    this.encodeAccount = function (account, asset) {
-        return _this.encodeString(account + ":ACC:" + asset);
+    this.encodeRecordKey = function (path, type, name) {
+        return _this.encodeString(path + ":" + type + ":" + name);
     };
 
-    this.encodeData = function (path) {
-        return _this.encodeString(path + ":DATA");
+    this.encodeAccount = function (account, asset) {
+        return _this.encodeRecordKey(account, "ACC", asset);
+    };
+
+    this.encodeData = function (path, name) {
+        return _this.encodeRecordKey(path, "DATA", name);
     }
 
     this.encodeInt64 = function (value, usage) {
@@ -195,11 +199,13 @@ module.service("encodingService", function () {
     this.decodeInt64 = function (buffer) {
         buffer.BE();
         var result = buffer.readInt64();
+        buffer.flip();
         return result;
     };
 
     this.decodeString = function (buffer) {
         var result = buffer.readUTF8String(buffer.remaining());
+        buffer.flip();
         return result;
     };
 });

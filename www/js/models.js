@@ -30,7 +30,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
         this.assets = {};
 
         this.downloadAssetDefinition = function (assetPath) {
-            return apiService.getValue(_this, encodingService.encodeData(assetPath + "asdef/")).then(function (result) {
+            return apiService.getValue(_this, encodingService.encodeData(assetPath, "asdef")).then(function (result) {
                 if (result.value.remaining() == 0) {
                     return { key: result.key, value: null, version: result.version };
                 }
@@ -65,7 +65,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
                     
                     _this.assets[assetPath] = assetInfo;
 
-                    return assetInfo;
+                    return $q.resolve(assetInfo);
                 })
             };
         };
@@ -103,20 +103,16 @@ module.factory("AssetData", function ($q, apiService, encodingService) {
     return AssetData;
 });
 
-module.factory("LedgerRecord", function (LedgerPath) {
-    var LedgerRecord = function (path, recordType, components) {
+module.factory("LedgerRecord", function (LedgerPath, encodingService) {
+    var LedgerRecord = function (path, recordType, name) {
         var _this = this;
 
         this.path = LedgerPath.parse(path);
         this.recordType = recordType;
-
-        if (components)
-            this.components = components;
-        else
-            this.components = [];
-
+        this.name = name;
+        
         this.toString = function () {
-            return _this.path.toString() + ":" + _this.recordType + ":" + _this.components.join(":");
+            return _this.path.toString() + ":" + _this.recordType + ":" + _this.name;
         };
 
         this.toByteBuffer = function () {
@@ -127,17 +123,16 @@ module.factory("LedgerRecord", function (LedgerPath) {
     LedgerRecord.parse = function (value) {
         var text = value;
         if (typeof text !== "string") {
-            text = text.readUTF8String(text.remaining());
+            text = encodingService.decodeString(text);
         }
 
         var parts = text.split(":");
 
-        var components = [];
-        if (parts.length > 2) {
-            components = parts.slice(2, parts.length);
+        if (parts.length < 3) {
+            throw "Invalid record key";
         }
 
-        return new LedgerRecord(parts[0], parts[1], components);
+        return new LedgerRecord(parts[0], parts[1], parts.slice(2, parts.length).join(":"));
     };
 
     return LedgerRecord;
@@ -202,7 +197,7 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
 
         this.fetchAndAddAccountRecord = function (account, asset, change) {
             if (account.slice(0, 1) == "@") {
-                var resolvedAccount = apiService.getData(_this.endpoint, "/aka/" + account.slice(1, account.length) + "/").then(function (result) {
+                var resolvedAccount = apiService.getData(_this.endpoint, "/aka/" + account.slice(1, account.length) + "/", "goto").then(function (result) {
                     if (result.data == null) {
                         return $q.reject("Unable to resolve the alias");
                     }

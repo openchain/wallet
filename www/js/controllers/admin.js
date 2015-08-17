@@ -87,7 +87,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     };
 
     $scope.loadAlias = function () {
-        apiService.getData($scope.endpoint, "/aka/" + $scope.fields.alias + "/").then(function (result) {
+        apiService.getData($scope.endpoint, "/aka/" + $scope.fields.alias + "/", "goto").then(function (result) {
             if (result.data != null) {
                 $scope.fields.path = result.data;
             }
@@ -100,7 +100,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     $scope.submit = function () {
         var endpoint = $scope.endpoint;
 
-        apiService.getData(endpoint, "/aka/" + $scope.fields.alias + "/").then(function (result) {
+        apiService.getData(endpoint, "/aka/" + $scope.fields.alias + "/", "goto").then(function (result) {
 
             var transaction = new TransactionBuilder(endpoint);
             transaction.addRecord(result.key, encodingService.encodeString($scope.fields.path), result.version);
@@ -126,14 +126,14 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
             function addToTree(node, account, path) {
                 if (path.length == 0) {
                     var child = {
-                        Path: "[" + account.recordKey.recordType + "]",
+                        Path: "[" + account.recordKey.recordType + "] " + account.recordKey.name,
                         key: account.recordKey.toString(),
                         endpointId: $scope.endpoint.properties.id,
                         record: account
                     };
 
                     if (account.recordKey.recordType == "ACC") {
-                        child.asset = account.recordKey.components[0];
+                        child.asset = account.recordKey.name;
                         child.amount = encodingService.decodeInt64(account.value).toString();
                     }
                     else if (account.recordKey.recordType == "DATA") {

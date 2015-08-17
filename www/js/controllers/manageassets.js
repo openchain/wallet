@@ -1,8 +1,6 @@
 ﻿var module = angular.module("OpenChainWallet.Controllers");
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;
-var bitcore = require("bitcore");
-var Mnemonic = require("bitcore-mnemonic");
 
 // ***** ManageAssetsController *****
 // **********************************
@@ -58,7 +56,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, $locat
 
     $scope.editAsset = function () {
 
-        var key = encodingService.encodeData($scope.fields.assetPath + "asdef/");
+        var key = encodingService.encodeData($scope.fields.assetPath, "asdef");
 
         var value = JSON.stringify({
             name: $scope.fields.assetName,
