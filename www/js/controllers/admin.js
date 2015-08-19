@@ -110,6 +110,37 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     };
 });
 
+module.controller("DataEditorController", function ($scope, apiService, TransactionBuilder, LedgerRecord, encodingService, walletSettings) {
+    $scope.fields = {
+        recordName: "",
+        path: "",
+        data: ""
+    };
+
+    $scope.loadData = function () {
+        apiService.getData($scope.endpoint, $scope.fields.path, $scope.fields.recordName).then(function (result) {
+            if (result.data != null) {
+                $scope.fields.data = result.data;
+            }
+            else {
+                $scope.fields.data = "";
+            }
+        });
+    };
+
+    $scope.submit = function () {
+        var endpoint = $scope.endpoint;
+
+        apiService.getData(endpoint, $scope.fields.path, $scope.fields.recordName).then(function (result) {
+
+            var transaction = new TransactionBuilder(endpoint);
+            transaction.addRecord(result.key, encodingService.encodeString($scope.fields.data), result.version);
+
+            return transaction.uiSubmit(walletSettings.derivedKey);
+        });
+    };
+});
+
 module.controller("TreeViewController", function ($scope, apiService, encodingService) {
 
     var refreshTree = function () {

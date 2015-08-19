@@ -15,6 +15,7 @@
       <a href="" class="list-group-item" ng-click="setView('tree-view')" ng-class="{'active': display == 'tree-view'}">Tree View</a>
       <a href="" class="list-group-item" ng-click="setView('advanced-transaction')" ng-class="{'active': display == 'advanced-transaction'}">Transaction</a>
       <a href="" class="list-group-item" ng-click="setView('alias-editor')" ng-class="{'active': display == 'alias-editor'}">Edit Aliases</a>
+      <a href="" class="list-group-item" ng-click="setView('data-editor')" ng-class="{'active': display == 'data-editor'}">Edit Data Record</a>
     </div>
 
   </div>
@@ -44,46 +45,76 @@
 
     <!-- Transaction Builder -->
     <form method="post" ng-switch-when="alias-editor" name="aliasEditor" ng-submit="submit()" autocomplete="off" ng-controller="AliasEditorController">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">Edit Alias</h3>
-          </div>
-          <div class="panel-body">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Edit Alias</h3>
+        </div>
+        <div class="panel-body">
 
-            <div class="form-group" ng-class="{'has-error': sendForm.alias.$invalid && sendForm.alias.$dirty}">
-              <label class="control-label" for="alias">Alias</label>
-              <div class="input-group">
-                <input type="text" class="form-control" name="alias" id="alias" placeholder="Alias" ng-model="fields.alias" required>
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" ng-click="loadAlias()">Refresh</button>
-                </div>
+          <div class="form-group" ng-class="{'has-error': sendForm.alias.$invalid && sendForm.alias.$dirty}">
+            <label class="control-label" for="alias">Alias</label>
+            <div class="input-group">
+              <input type="text" class="form-control" name="alias" id="alias" placeholder="Alias" ng-model="fields.alias" required>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="loadAlias()">Refresh</button>
               </div>
             </div>
-
-            <div class="form-group" ng-class="{'has-error': sendForm.path.$invalid && sendForm.path.$dirty}">
-              <label class="control-label" for="assetImage">Path</label>
-              <input type="text" class="form-control" name="path" id="path" placeholder="Path" ng-model="fields.path" required>
-            </div>
-
           </div>
-          <div class="panel-footer text-right">
-            <button type="submit" class="btn btn-primary" ng-disabled="aliasEditor.$invalid">Send</button>
+
+          <div class="form-group" ng-class="{'has-error': sendForm.path.$invalid && sendForm.path.$dirty}">
+            <label class="control-label" for="assetImage">Path</label>
+            <input type="text" class="form-control" name="path" id="path" placeholder="Path" ng-model="fields.path" required>
           </div>
+
         </div>
+        <div class="panel-footer text-right">
+          <button type="submit" class="btn btn-primary" ng-disabled="aliasEditor.$invalid">Send</button>
+        </div>
+      </div>
+    </form>
+
+    <form method="post" ng-switch-when="data-editor" name="dataEditor" ng-submit="submit()" autocomplete="off" ng-controller="DataEditorController">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Edit Data Record</h3>
+        </div>
+        <div class="panel-body">
+
+          <div class="form-group" ng-class="{'has-error': sendForm.path.$invalid && sendForm.path.$dirty}">
+            <label class="control-label" for="path">Path</label>
+            <input type="text" class="form-control" name="path" id="path" placeholder="Path" ng-model="fields.path" required>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': sendForm.recordName.$invalid && sendForm.recordName.$dirty}">
+            <label class="control-label" for="recordName">Record Name</label>
+            <input type="text" class="form-control" name="recordName" id="recordName" placeholder="Record Name" ng-model="fields.recordName" required>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': sendForm.data.$invalid && sendForm.data.$dirty}">
+            <label class="control-label" for="data">Data</label>
+            <textarea class="form-control" name="data" id="data" placeholder="Data" ng-model="fields.data"></textarea>
+          </div>
+
+        </div>
+        <div class="panel-footer text-right">
+          <button type="button" class="btn btn-primary" ng-disabled="dataEditor.$invalid" ng-click="loadData()">Load</button>
+          <button type="submit" class="btn btn-primary" ng-disabled="dataEditor.$invalid">Send</button>
+        </div>
+      </div>
     </form>
 
     <div ng-switch-when="tree-view" ng-controller="TreeViewController">
       <div class="row">
-        
+
         <div class="col-md-6">
           <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">Ledger Tree</h3>
             </div>
             <div class="panel-body tree-explorer">
-                <treecontrol class="tree-classic" tree-model="treeData" options="treeOptions" expanded-nodes="expandedNodes" on-selection="selectNode(node)">
-                  {{node.Path}}
-                </treecontrol>
+              <treecontrol class="tree-classic" tree-model="treeData" options="treeOptions" expanded-nodes="expandedNodes" on-selection="selectNode(node)">
+                {{node.Path}}
+              </treecontrol>
             </div>
           </div>
         </div>
