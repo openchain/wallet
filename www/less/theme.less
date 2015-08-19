@@ -146,8 +146,17 @@
 .tree-explorer {
     overflow-x: auto;
     padding-bottom: 50px;
+    
     treecontrol ul {
         overflow: initial;
+
+        .tree-label {
+            white-space: nowrap;
+        }
+
+        li .tree-selected {
+            font-weight: initial;
+        }
     }
 }
 

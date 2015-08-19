@@ -178,7 +178,10 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
     $scope.treeData = [];
     $scope.treeOptions = {
         dirSelectable: false,
-        allowDeselect: false
+        allowDeselect: false,
+        injectClasses: {
+            label: "tree-label"
+        }
     };
 
     $scope.selectNode = function (node, selected) {
