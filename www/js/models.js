@@ -196,22 +196,21 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
         };
 
         this.fetchAndAddAccountRecord = function (account, asset, change) {
+            // Resolve name accounts
             if (account.slice(0, 1) == "@") {
-                var resolvedAccount = apiService.getData(_this.endpoint, "/aka/" + account.slice(1, account.length) + "/", "goto").then(function (result) {
-                    if (result.data == null) {
-                        return $q.reject("Unable to resolve the alias");
-                    }
-                    else {
-                        _this.addRecord(result.key, null, result.version);
-                        return $q.when(result.data);
-                    }
-                });
-            }
-            else {
-                var resolvedAccount = $q.when(account);
+                account = "/aka/" + account.slice(1, account.length) + "/";
             }
 
-            return resolvedAccount.then(function (accountResult) {
+            return apiService.getData(_this.endpoint, account, "goto").then(function (result) {
+                if (result.data == null) {
+                    return account;
+                }
+                else {
+                    // If a goto DATA record exists, we use the redirected path
+                    _this.addRecord(result.key, null, result.version);
+                    return result.data;
+                }
+            }).then(function (accountResult) {
                 return apiService.getAccount(_this.endpoint, accountResult, asset);
             })
             .then(function (currentRecord) {
