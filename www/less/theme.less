@@ -5,6 +5,22 @@
 @headings-font-weight:      300;
 @font-size-base:            15px;
 
+.navbar-brand {
+    @logo-height: 42px;
+
+    padding: ((@navbar-height - @logo-height) / 2) 0;
+
+    i {
+        background-image: url('../content/logo.png');
+        background-size: 242px 42px;
+        display: inline-block;
+        vertical-align: middle;
+        height: @logo-height;
+        width: 242px;
+        margin-left: @navbar-padding-horizontal;
+    }
+}
+
 .list-group-item {
     &.section-header {
         background-color: @panel-default-heading-bg;
