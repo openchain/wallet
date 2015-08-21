@@ -1,7 +1,8 @@
 <div class="row">
-  <div class="col-md-offset-3 col-md-6">
+  <div class="col-md-offset-3 col-md-6" ng-switch on="display">
 
-    <form method="post" ng-submit="submit()" autocomplete="off">
+    <!-- Sign in form -->
+    <form method="post" ng-submit="submit()" name="properties.signinForm" autocomplete="off" ng-switch-when="signin">
 
       <div class="panel panel-primary">
         <div class="panel-heading">
@@ -15,9 +16,18 @@
           </div>
           <hr>
 
-          <div class="form-group">
+          <p>
+            If you don't have a passphrase, you can generate one using the button below.
+          </p>
+          <div class="text-center">
+            <button type="button" class="btn btn-default btn-lg" ng-click="generate()">Create a new wallet</button>
+          </div>
+
+          <hr />
+
+          <div class="form-group" ng-class="{'has-error': properties.signinForm.seed.$invalid }">
             <label class="control-label" for="seed">Passphrase</label>
-            <input class="form-control hash-password" type="text" id="seed" ng-model="seed" placeholder="Passphrase">
+            <input class="form-control hash-password" name="seed" type="text" id="seed" ng-model="properties.seed" ng-change="properties.signinForm.seed.$setValidity('invalidSeed', true)" placeholder="Passphrase">
           </div>
 
         </div>
@@ -32,5 +42,46 @@
       </div>
 
     </form>
+
+    <!-- Generate passphrase -->
+    <div class="panel panel-primary" ng-switch-when="passphrase">
+      <div class="panel-heading">
+        <h3 class="panel-title">Get passphrase</h3>
+      </div>
+      <div class="panel-body">
+
+        <div class="body-header">
+          <i class="fa fa-lock fa-3x pull-left fa-border"></i>
+          <p>Here is a new passphrase. Make sure to write it down and keep it safe.</p>
+        </div>
+        <hr>
+
+        <pre>{{ passphrase }}</pre>
+
+      </div>
+      <div class="panel-footer text-right">
+
+        <div class="row">
+          <div class="col-md-12">
+            <button type="button" class="btn btn-primary" ng-click="back()">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="panel panel-primary" ng-switch-when="loading">
+      <div class="panel-heading">
+        <h3 class="panel-title">Calculating your key</h3>
+      </div>
+      <div class="panel-body">
+
+        <div class="body-header">
+          <i class="fa fa-spinner fa-pulse fa-3x pull-left"></i>
+          <p>Please wait while we derive your passphrase. This operation can take a few seconds.</p>
+        </div>
+      </div>
+      
+    </div>
   </div>
 </div>

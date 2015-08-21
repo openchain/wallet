@@ -27,11 +27,22 @@ module.controller("SignInController", function ($scope, $rootScope, $location, w
     $rootScope.selectedTab = "none";
 
     var generatedMnemonic = new Mnemonic();
-    $scope.seed = "patrol wise idea oyster inquiry crash dignity chronic scatter time admit pet";//generatedMnemonic.toString();
+    $scope.properties = { seed: "" };
+    $scope.display = "signin";
+
+    $scope.generate = function () {
+        var generatedMnemonic = new Mnemonic();
+        $scope.passphrase = generatedMnemonic.toString();
+        $scope.display = "passphrase";
+    };
+
+    $scope.back = function () {
+        $scope.display = "signin";
+    };
 
     $scope.submit = function () {
 
-        if (Mnemonic.isValid($scope.seed)) {
+        if (Mnemonic.isValid($scope.properties.seed)) {
 
             var worker = new Worker("js/derive.js");
 
@@ -43,7 +54,12 @@ module.controller("SignInController", function ($scope, $rootScope, $location, w
                 })
             }, false);
 
-            worker.postMessage({ mnemonic: $scope.seed, network: "testnet" });
+            worker.postMessage({ mnemonic: $scope.properties.seed, network: "testnet" });
+
+            $scope.display = "loading";
+        }
+        else {
+            $scope.properties.signinForm.seed.$setValidity("invalidSeed", false);
         }
     };
 });
