@@ -24,7 +24,6 @@ self.addEventListener("message", function (e) {
     window.Date = Date;
     window.parseInt = parseInt;
     window.parseFloat = parseFloat;
-    window.crypto = crypto;
 
     importScripts("../bower_components/bitcore/bitcore.js");
     importScripts("../bower_components/bitcore-mnemonic/bitcore-mnemonic.js");
