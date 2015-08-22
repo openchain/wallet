@@ -25,12 +25,12 @@ module.value("walletSettings", {
     setRootKey: function (key) {
         this.hdKey = key;
         this.network = key.network;
-        this.derivedKey = key.derive(44, true).derive(22, true).derive(0, true).derive(0).derive(0);
+        this.derivedKey = key.derive(44, true).derive(64, true).derive(0, true).derive(0).derive(0);
         this.rootAccount = "/p2pkh/" + this.derivedKey.privateKey.toAddress().toString() + "/";
         this.initialized = true;
     },
     getAssetKey: function (index) {
-        return this.hdKey.derive(44, true).derive(22, true).derive(1, true).derive(0).derive(index);
+        return this.hdKey.derive(44, true).derive(64, true).derive(1, true).derive(0).derive(index);
     }
 });
 
