@@ -16,12 +16,10 @@ var module = angular.module("OpenChainWallet.Controllers");
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;
 
-module.controller("AdminController", function ($scope, $rootScope, $location, walletSettings, apiService, encodingService, endpointManager) {
+module.controller("AdminController", function ($scope, $rootScope, $location, controllerService, walletSettings, apiService, encodingService, endpointManager) {
 
-    if (!walletSettings.initialized) {
-        $location.path("/signin");
+    if (!controllerService.checkState())
         return;
-    }
 
     $rootScope.selectedTab = "advanced";
 

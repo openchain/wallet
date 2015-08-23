@@ -20,14 +20,13 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** AddEndpointController *****
 // *********************************
 
-module.controller("AddEndpointController", function ($scope, $rootScope, $location, walletSettings, apiService, endpointManager) {
+module.controller("AddEndpointController", function ($scope, $rootScope, $location, controllerService, apiService, endpointManager) {
 
-    if (!walletSettings.initialized) {
-        $location.path("/signin");
+    if (!controllerService.checkState())
         return;
-    }
 
     $rootScope.selectedTab = "none";
+    $scope.hasNoEndpoint = Object.keys(endpointManager.endpoints).length === 0;
 
     $scope.check = function () {
         apiService.getLedgerInfo($scope.endpointUrl).then(function (result) {

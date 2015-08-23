@@ -19,12 +19,10 @@ var Long = dcodeIO.Long;
 // ***** ManageAssetsController *****
 // **********************************
 
-module.controller("ManageAssetsController", function ($scope, $rootScope, $location, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, encodingService, validator, AssetData) {
+module.controller("ManageAssetsController", function ($scope, $rootScope, controllerService, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, encodingService, validator, AssetData) {
 
-    if (!walletSettings.initialized) {
-        $location.path("/signin");
+    if (!controllerService.checkState())
         return;
-    }
 
     $rootScope.selectedTab = "assets";
 

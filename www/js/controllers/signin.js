@@ -17,12 +17,10 @@ var ByteBuffer = dcodeIO.ByteBuffer;
 var bitcore = require("bitcore");
 var Mnemonic = require("bitcore-mnemonic");
 
-module.controller("SignInController", function ($scope, $rootScope, $location, walletSettings) {
+module.controller("SignInController", function ($scope, $rootScope, $location, controllerService, walletSettings) {
 
-    if (walletSettings.initialized) {
-        $location.path("/");
+    if (!controllerService.checkState())
         return;
-    }
 
     $rootScope.selectedTab = "none";
 

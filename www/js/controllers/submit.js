@@ -17,12 +17,10 @@ var module = angular.module("OpenChainWallet.Controllers");
 // ***** SubmitController *****
 // ****************************
 
-module.controller("SubmitController", function ($scope, $rootScope, $location, walletSettings) {
+module.controller("SubmitController", function ($scope, $rootScope, $location, controllerService) {
 
-    if (!walletSettings.initialized) {
-        $location.path("/signin");
+    if (!controllerService.checkState())
         return;
-    }
 
     if (!$rootScope.submitTransaction) {
         $location.path("/");

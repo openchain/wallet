@@ -242,3 +242,22 @@ module.service("validator", function () {
         return regex.test(number);
     }
 });
+
+module.service("controllerService", function ($location, walletSettings, endpointManager) {
+    this.checkState = function() {
+        if (Object.keys(endpointManager.endpoints).length === 0) {
+            if ($location.path() != "/addendpoint") {
+                $location.path("/addendpoint");
+                return false;
+            }
+        }
+        else if (!walletSettings.initialized) {
+            if ($location.path() != "/signin") {
+                $location.path("/signin");
+                return false;
+            }
+        }
+        
+        return true;
+    };
+});
