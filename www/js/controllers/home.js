@@ -31,6 +31,7 @@ module.controller("HomeController", function ($scope, $rootScope, $location, $ro
     $rootScope.selectedTab = "home";
 
     $scope.rootAccount = walletSettings.rootAccount.toString();
+    $scope.rawAddress = walletSettings.derivedKey.privateKey.toAddress().toString();
     $scope.endpoints = endpointManager.endpoints;
     $scope.display = "home";
 

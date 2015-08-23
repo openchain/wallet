@@ -31,9 +31,25 @@
 
     <!-- Right column -->
     <div class="col-md-6">
-      <div class="alert alert-success">
-        {{ rootAccount }}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Receive funds</h3>
+        </div>
+        <div class="panel-body">
+          <div class="panel-split">
+            <div class="split-left">
+              <span class="thumbnail qr-code">
+                <img ng-src="https://testnet.coinprism.com/qr/{{ rawAddress }}" />
+              </span>
+            </div>
+            <div class="split-right">
+              <h4>{{ rawAddress }}</h4>
+              <p class="small note text-muted">Path: {{ rootAccount }}</p>
+            </div>
+          </div>
+        </div>
       </div>
+
     </div>
 
   </div>

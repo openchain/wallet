@@ -155,6 +155,37 @@
     }
 }
 
+.panel-split {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+
+    .split-left {
+        display: table-cell;
+        vertical-align: middle;
+        width: 115px;
+    }
+
+    .split-right {
+        .text-center;
+        display: table-cell;
+        vertical-align: middle;
+
+        .note {
+            padding-top: 5px;
+            color: lighten(@gray-base, 75%);
+        }
+    }
+}
+
+.qr-code {
+    margin: 0px;
+
+    img {
+        width: 105px;
+    }
+}
+
 .top-spacing {
     margin-top: 20px;
 }
