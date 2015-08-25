@@ -20,7 +20,7 @@ module.value("walletSettings", {
     derivedKey: null,
     rootAccount: null,
     initialized: false,
-    versionPrefix: "v1",
+    versionPrefix: "v2",
     network: null,
     setRootKey: function (key) {
         this.hdKey = key;

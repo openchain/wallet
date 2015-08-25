@@ -1,23 +1,27 @@
 ﻿@import "../bower_components/bootstrap/less/bootstrap.less";
 
-@font-family-sans-serif:    "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-@font-size-h1:              floor((@font-size-base * 2.4)); // ~36px
-@headings-font-weight:      300;
-@font-size-base:            15px;
+@font-family-sans-serif: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-size-h1: floor((@font-size-base * 2.4)); // ~36px
+@headings-font-weight: 300;
+@font-size-base: 15px;
 
-.navbar-brand {
-    @logo-height: 42px;
+.navbar {
+    font-size: @font-size-h4;
 
-    padding: ((@navbar-height - @logo-height) / 2) 0;
+    .navbar-brand {
+        @logo-height: 42px;
 
-    i {
-        background-image: url('../content/logo.png');
-        background-size: 250px 42px;
-        display: inline-block;
-        vertical-align: middle;
-        height: @logo-height;
-        width: 250px;
-        margin-left: @navbar-padding-horizontal;
+        padding: ((@navbar-height - @logo-height) / 2) 0;
+
+        i {
+            background-image: url('../content/logo.png');
+            background-size: 250px 42px;
+            display: inline-block;
+            vertical-align: middle;
+            height: @logo-height;
+            width: 250px;
+            margin-left: @navbar-padding-horizontal;
+        }
     }
 }
 
@@ -26,10 +30,9 @@
         background-color: @panel-default-heading-bg;
         color: @panel-default-text;
     }
-    
+
     .currency-icon {
         .pull-left;
-
         display: inline-block;
         text-align: center;
         margin: 0;
@@ -40,6 +43,7 @@
             display: block;
             height: 48px;
             width: 48px;
+
             .fa {
                 line-height: 46px;
             }
@@ -96,7 +100,7 @@
         padding: 10px 0;
     }
 
-    &+hr {
+    & + hr {
         margin-top: 10px;
     }
 }
@@ -169,7 +173,9 @@
     .split-right {
         .text-center;
         display: table-cell;
+        padding-left: 20px;
         vertical-align: middle;
+        word-wrap: break-word;
 
         .note {
             padding-top: 5px;
@@ -193,7 +199,7 @@
 .tree-explorer {
     overflow-x: auto;
     padding-bottom: 50px;
-    
+
     treecontrol ul {
         overflow: initial;
 

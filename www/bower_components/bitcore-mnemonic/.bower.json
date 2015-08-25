@@ -1,7 +1,7 @@
 {
   "name": "bitcore-mnemonic",
   "main": "./bitcore-mnemonic.min.js",
-  "version": "0.11.0",
+  "version": "0.13.2",
   "homepage": "https://github.com/bitpay/bitcore-mnemonic",
   "authors": [
     "BitPay"
@@ -28,14 +28,14 @@
     "test",
     "tests"
   ],
-  "_release": "0.11.0",
+  "_release": "0.13.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.11.0",
-    "commit": "c5d9eb20e5009f79f6401f03c071ac429f97de06"
+    "tag": "v0.13.2",
+    "commit": "18ac41d9b07620b609ee36aea7ff0d3afecf335a"
   },
   "_source": "git://github.com/bitpay/bitcore-mnemonic.git",
-  "_target": "~0.11.0",
+  "_target": "~0.13.2",
   "_originalSource": "bitcore-mnemonic",
   "_direct": true
 }

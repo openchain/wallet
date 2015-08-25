@@ -1,6 +1,8 @@
 'use strict';
 
 var bitcore = require('bitcore');
+var BN = bitcore.crypto.BN;
+var unorm = require('unorm');
 var _ = bitcore.deps._;
 
 var pbkdf2 = require('./pbkdf2');
@@ -49,7 +51,7 @@ var Mnemonic = function(data, wordlist) {
   if (Buffer.isBuffer(data)) {
     seed = data;
   } else if (_.isString(data)) {
-    phrase = data;
+    phrase = unorm.nfkd(data);
   } else if (_.isNumber(data)) {
     ent = data;
   } else if (data) {
@@ -106,6 +108,7 @@ Mnemonic.Words = require('./words');
  * @returns {boolean}
  */
 Mnemonic.isValid = function(mnemonic, wordlist) {
+  mnemonic = unorm.nfkd(mnemonic);
   wordlist = wordlist || Mnemonic._getDictionary(mnemonic);
 
   if (!wordlist) {
@@ -139,8 +142,12 @@ Mnemonic.isValid = function(mnemonic, wordlist) {
  * @returns {boolean}
  */
 Mnemonic._belongsToWordlist = function(mnemonic, wordlist) {
-  var word = mnemonic.split(' ')[0];
-  return wordlist.indexOf(word) !== -1; // only checks for a word
+  var words = unorm.nfkd(mnemonic).split(' ');
+  for (var i = 0; i < words.length; i++) {
+    var ind = wordlist.indexOf(words[i]);
+    if (ind < 0) return false;
+  }
+  return true;
 };
 
 /**
@@ -170,7 +177,7 @@ Mnemonic._getDictionary = function(mnemonic) {
  */
 Mnemonic.prototype.toSeed = function(passphrase) {
   passphrase = passphrase || '';
-  return pbkdf2(this.phrase, 'mnemonic' + passphrase, 2048, 64);
+  return pbkdf2(unorm.nfkd(this.phrase), unorm.nfkd('mnemonic' + passphrase), 2048, 64);
 };
 
 /**
@@ -252,7 +259,13 @@ Mnemonic._entropy2mnemonic = function(entropy, wordlist) {
     var wi = parseInt(bin.slice(i * 11, (i + 1) * 11), 2);
     mnemonic.push(wordlist[wi]);
   }
-  return mnemonic.join(' ');
+  var ret;
+  if (wordlist === Mnemonic.Words.JAPANESE) {
+    ret = mnemonic.join('\u3000');
+  } else {
+    ret = mnemonic.join(' ');
+  }
+  return ret;
 };
 
 /**
@@ -267,11 +280,16 @@ Mnemonic._entropyChecksum = function(entropy) {
   var bits = entropy.length * 8;
   var cs = bits / 32;
 
-  var hashbits = parseInt(hash.toString('hex'), 16).toString(2);
-  // zero pad the hash bits
-  hashbits = (new Array(256).join('0') + hashbits).slice(-256).slice(0, cs);
+  var hashbits = new BN(hash.toString('hex'), 16).toString(2);
 
-  return hashbits;
+  // zero pad the hash bits
+  while (hashbits.length % 256 !== 0) {
+    hashbits = '0' + hashbits;
+  }
+
+  var checksum = hashbits.slice(0, cs);
+
+  return checksum;
 };
 
 module.exports = Mnemonic;

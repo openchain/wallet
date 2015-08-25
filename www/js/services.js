@@ -171,7 +171,6 @@ module.service("endpointManager", function (apiService, walletSettings, Endpoint
 
         this.endpoints[newEndpoint.id] = new Endpoint(newEndpoint);
         this.saveEndpoints();
-
     };
 
     this.saveEndpoints = function () {
