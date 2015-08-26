@@ -13,6 +13,7 @@
             <i class="fa fa-cogs fa-3x pull-left fa-border"></i>
             <p ng-show="hasNoEndpoint">It seems this is the first time you use the Open Chain wallet. First, you need to configure it with the Open Chain endpoint you want to connect to.</p>
             <p>Please enter the URL of the endpoint to connect to.</p>
+            <p><a href="" ng-click="endpointUrl = 'https://test.openchain.org'">Click here</a> to use a test endpoint provided by Coinprism.</p>
           </div>
           <hr>
 
@@ -28,6 +29,19 @@
             <div class="form-group">
               <label for="from-address" class="control-label">Name</label>
               <h4 class="form-control-static" id="from-address">{{ endpoint.properties.name }} <span ng-hide="endpoint.properties.name">(No name set)</span></h4>
+            </div>
+
+            <div class="form-group">
+              <label for="from-address" class="control-label">
+                Validator URL
+                <i class="fa fa-exclamation-circle text-danger" ng-show="noMetadata || rootUrlWarning"></i>
+                <i class="fa fa-check-circle text-success" ng-show="success"></i>
+              </label>
+              <p class="form-control-static" id="from-address">
+                {{ endpoint.properties.validatorUrl }}
+                <span ng-show="noMetadata" class="text-danger">(Warning: This endpoint has no metadata defined)</span>
+                <span ng-show="rootUrlWarning" class="text-danger">(Warning: You are connecting to a URL that is different from the advertised validator URL)</span>
+              </p>
             </div>
 
             <div class="form-group">

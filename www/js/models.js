@@ -45,13 +45,19 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
 
         this.loadEndpointInfo = function () {
             return apiService.getData(_this, "/", "info").then(function (result) {
-                var properties = JSON.parse(result.data);
-                _this.properties = {
-                    name: properties.name,
-                    validatorUrl: properties.validator_url,
-                    tos: properties.tos,
-                    webpageUrl: properties.webpage_url
-                };
+                if (result.data == null) {
+                    _this.properties = {};
+                }
+                else {
+                    var properties = JSON.parse(result.data);
+                    _this.properties = {
+                        name: properties.name,
+                        validatorUrl: properties.validator_url,
+                        tos: properties.tos,
+                        webpageUrl: properties.webpage_url
+                    };
+                }
+
                 return _this;
             });
         };
@@ -89,7 +95,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
                             version: result.version
                         };
                     }
-                    
+
                     _this.assets[assetPath] = assetInfo;
 
                     return $q.resolve(assetInfo);
@@ -121,7 +127,7 @@ module.factory("AssetData", function ($q, apiService, encodingService) {
         };
 
         this.fetchAssetDefinition = function () {
-            return this.endpoint.getAssetDefinition(this.asset).then(function(result) {
+            return this.endpoint.getAssetDefinition(this.asset).then(function (result) {
                 _this.assetDefinition = result;
             });
         };
@@ -137,7 +143,7 @@ module.factory("LedgerRecord", function (LedgerPath, encodingService) {
         this.path = LedgerPath.parse(path);
         this.recordType = recordType;
         this.name = name;
-        
+
         this.toString = function () {
             return _this.path.toString() + ":" + _this.recordType + ":" + _this.name;
         };
@@ -215,7 +221,7 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
             return _this;
         };
 
-        this.addAccountRecord = function(previous, change) {
+        this.addAccountRecord = function (previous, change) {
             return _this.addRecord(
                 previous.key,
                 encodingService.encodeInt64(previous.balance.add(change)),
@@ -251,7 +257,7 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
                 "records": _this.records,
                 "metadata": ByteBuffer.fromHex("")
             });
-            
+
             return apiService.postTransaction(_this.endpoint, constructedTransaction.encode(), key);
         };
 

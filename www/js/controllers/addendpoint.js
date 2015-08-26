@@ -29,9 +29,24 @@ module.controller("AddEndpointController", function ($scope, $rootScope, $locati
     $scope.hasNoEndpoint = Object.keys(endpointManager.endpoints).length === 0;
 
     $scope.check = function () {
-        var endpoint = new Endpoint($scope.endpointUrl);
+        if ($scope.endpointUrl.slice(-1) != "/")
+            var endpointUrl = $scope.endpointUrl + "/";
+        else
+            var endpointUrl = $scope.endpointUrl;
+
+        var endpoint = new Endpoint(endpointUrl);
         endpoint.loadEndpointInfo().then(function (result) {
             $scope.endpoint = result;
+
+            if (!result.properties.validatorUrl) {
+                $scope.noMetadata = true;
+            }
+            else if (result.properties.validatorUrl != result.rootUrl) {
+                $scope.rootUrlWarning = true;
+            }
+            else {
+                $scope.success = true;
+            }
         }, function () {
             $scope.addEndpointForm.endpointUrl.$setValidity("connectionError", false);
         });
