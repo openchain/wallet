@@ -4,7 +4,6 @@
 <head>
   <meta charset="utf-8" />
   <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" type="image/png" href="/favicon-194x194.png" sizes="194x194">
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
 
@@ -39,7 +38,7 @@
   <script src="bower_components/less/dist/less.min.js"></script>
   <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.min.css" />
   <link rel="stylesheet" href="bower_components/angular-tree-control/css/tree-control.css" />
-  <title>OpenChain Wallet</title>
+  <title>Open Chain Wallet</title>
 </head>
 <body>
 
@@ -60,33 +59,14 @@
           <li ng-class="{'active': selectedTab == 'home'}"><a href="#/">Home</a></li>
           <li ng-class="{'active': selectedTab == 'assets'}"><a href="#/manageassets">Assets</a></li>
           <li ng-class="{'active': selectedTab == 'advanced'}"><a href="#/admin">Advanced</a></li>
-          <!--<li class="dropdown">
-            <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Advanced <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Action</a></li>
-              <li><a href="#">Another action</a></li>
-              <li><a href="#">Something else here</a></li>
-              <li role="separator" class="divider"></li>
-              <li class="dropdown-header">Nav header</li>
-              <li><a href="#">Separated link</a></li>
-              <li><a href="#">One more separated link</a></li>
-            </ul>
-          </li>-->
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <!--<li><a href="../navbar/">Default</a></li>
-          <li class="active"><a href="./">Static top <span class="sr-only">(current)</span></a></li>
-          <li><a href="../navbar-fixed-top/">Fixed top</a></li>-->
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a href="#/addendpoint">Add server...</a></li>
-              <!--<li><a href="#">Another action</a></li>
-              <li><a href="#">Something else here</a></li>-->
               <li role="separator" class="divider"></li>
-              <!--<li class="dropdown-header">Nav header</li>-->
               <li><a href="" ng-click="logOut()">Sign out</a></li>
-              <!--<li><a href="#">One more separated link</a></li>-->
             </ul>
           </li>
         </ul>
@@ -94,11 +74,8 @@
     </div>
   </nav>
 
-
   <div class="container">
-
     <ng-view></ng-view>
-
   </div>
 
 </body>
