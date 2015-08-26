@@ -153,6 +153,57 @@ module.controller("DataEditorController", function ($scope, apiService, Transact
     };
 });
 
+module.controller("InfoEditorController", function ($scope, apiService, TransactionBuilder, LedgerRecord, encodingService, walletSettings) {
+    $scope.fields = {
+        name: "",
+        validatorUrl: "",
+        tos: "",
+        webpageUrl: ""
+    };
+
+    $scope.loadData = function () {
+        apiService.getData($scope.endpoint, "/", "info").then(function (result) {
+            if (result.data != null) {
+                var fields = JSON.parse(result.data);
+                $scope.fields = {
+                    name: fields.name,
+                    validatorUrl: fields.validator_url,
+                    tos: fields.tos,
+                    webpageUrl: fields.webpage_url
+                };
+            }
+            else {
+                $scope.fields = {
+                    name: "",
+                    validatorUrl: "",
+                    tos: "",
+                    webpageUrl: ""
+                };
+            }
+        });
+    };
+
+    $scope.submit = function () {
+        var endpoint = $scope.endpoint;
+
+        apiService.getData(endpoint, "/", "info").then(function (result) {
+
+            var transaction = new TransactionBuilder(endpoint);
+
+            var value = JSON.stringify({
+                name: $scope.fields.name,
+                validator_url: $scope.fields.validatorUrl,
+                tos: $scope.fields.tos,
+                webpage_url: $scope.fields.webpageUrl
+            });
+
+            transaction.addRecord(result.key, encodingService.encodeString(value), result.version);
+
+            return transaction.uiSubmit(walletSettings.derivedKey);
+        });
+    };
+});
+
 module.controller("TreeViewController", function ($scope, apiService, encodingService) {
 
     var refreshTree = function () {

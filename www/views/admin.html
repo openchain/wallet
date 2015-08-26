@@ -16,6 +16,7 @@
       <a href="" class="list-group-item" ng-click="setView('advanced-transaction')" ng-class="{'active': display == 'advanced-transaction'}">Transaction</a>
       <a href="" class="list-group-item" ng-click="setView('alias-editor')" ng-class="{'active': display == 'alias-editor'}">Edit Aliases</a>
       <a href="" class="list-group-item" ng-click="setView('data-editor')" ng-class="{'active': display == 'data-editor'}">Edit Data Record</a>
+      <a href="" class="list-group-item" ng-click="setView('info-editor')" ng-class="{'active': display == 'info-editor'}">Edit Ledger Info</a>
     </div>
 
   </div>
@@ -43,7 +44,7 @@
       </div>
     </form>
 
-    <!-- Transaction Builder -->
+    <!-- Alias Editor -->
     <form method="post" ng-switch-when="alias-editor" name="aliasEditor" ng-submit="submit()" autocomplete="off" ng-controller="AliasEditorController">
       <div class="panel panel-primary">
         <div class="panel-heading">
@@ -73,6 +74,7 @@
       </div>
     </form>
 
+    <!-- Data Editor -->
     <form method="post" ng-switch-when="data-editor" name="dataEditor" ng-submit="submit()" autocomplete="off" ng-controller="DataEditorController">
       <div class="panel panel-primary">
         <div class="panel-heading">
@@ -103,6 +105,43 @@
       </div>
     </form>
 
+    <!-- Ledger Info Editor -->
+    <form method="post" ng-switch-when="info-editor" name="infoEditor" ng-submit="submit()" autocomplete="off" ng-controller="InfoEditorController">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Edit Ledger Info</h3>
+        </div>
+        <div class="panel-body">
+
+          <div class="form-group" ng-class="{'has-error': sendForm.name.$invalid && sendForm.name.$dirty}">
+            <label class="control-label" for="name">Ledger Name</label>
+            <input type="text" class="form-control" name="name" id="name" placeholder="Ledger Name" ng-model="fields.name" required>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': sendForm.validatorUrl.$invalid && sendForm.validatorUrl.$dirty}">
+            <label class="control-label" for="validatorUrl">Validator Root URL</label>
+            <input type="text" class="form-control" name="validatorUrl" id="validatorUrl" placeholder="https://<url>/" ng-model="fields.validatorUrl" required>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': sendForm.tos.$invalid && sendForm.tos.$dirty}">
+            <label class="control-label" for="tos">Terms of Service</label>
+            <textarea class="form-control" name="tos" id="tos" placeholder="" ng-model="fields.tos"></textarea>
+          </div>
+
+          <div class="form-group" ng-class="{'has-error': sendForm.webpageUrl.$invalid && sendForm.webpageUrl.$dirty}">
+            <label class="control-label" for="webpageUrl">Webpage URL</label>
+            <input type="text" class="form-control" name="webpageUrl" id="webpageUrl" placeholder="Webpage URL" ng-model="fields.webpageUrl">
+          </div>
+
+        </div>
+        <div class="panel-footer text-right">
+          <button type="button" class="btn btn-primary" ng-disabled="dataEditor.$invalid" ng-click="loadData()">Load</button>
+          <button type="submit" class="btn btn-primary" ng-disabled="dataEditor.$invalid">Send</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Tree View -->
     <div ng-switch-when="tree-view" ng-controller="TreeViewController">
       <div class="row">
 
