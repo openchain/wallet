@@ -20,7 +20,7 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** AddEndpointController *****
 // *********************************
 
-module.controller("AddEndpointController", function ($scope, $rootScope, $location, controllerService, apiService, endpointManager) {
+module.controller("AddEndpointController", function ($scope, $rootScope, $location, Endpoint, controllerService, apiService, endpointManager) {
 
     if (!controllerService.checkState())
         return;
@@ -29,8 +29,9 @@ module.controller("AddEndpointController", function ($scope, $rootScope, $locati
     $scope.hasNoEndpoint = Object.keys(endpointManager.endpoints).length === 0;
 
     $scope.check = function () {
-        apiService.getLedgerInfo($scope.endpointUrl).then(function (result) {
-            $scope.endpoint = result.data;
+        var endpoint = new Endpoint($scope.endpointUrl);
+        endpoint.loadEndpointInfo().then(function (result) {
+            $scope.endpoint = result;
         }, function () {
             $scope.addEndpointForm.endpointUrl.$setValidity("connectionError", false);
         });

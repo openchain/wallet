@@ -17,10 +17,12 @@ var ByteBuffer = dcodeIO.ByteBuffer;
 var bitcore = require("bitcore");
 var Mnemonic = require("bitcore-mnemonic");
 
-module.controller("SignInController", function ($scope, $rootScope, $location, controllerService, walletSettings) {
+module.controller("SignInController", function ($scope, $rootScope, $location, endpointManager, controllerService, walletSettings) {
 
     if (!controllerService.checkState())
         return;
+
+    var loadingEndpoints = endpointManager.loadEndpoints();
 
     $rootScope.selectedTab = "none";
 
@@ -48,7 +50,10 @@ module.controller("SignInController", function ($scope, $rootScope, $location, c
                 $rootScope.$apply(function () {
                     var hdPrivateKey = new bitcore.HDPrivateKey(hdKey.data);
                     walletSettings.setRootKey(hdPrivateKey);
-                    $location.path("/");
+
+                    loadingEndpoints.then(function () {
+                        $location.path("/");
+                    });
                 })
             }, false);
 

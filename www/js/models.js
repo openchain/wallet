@@ -36,12 +36,25 @@ module.value("walletSettings", {
 
 module.factory("Endpoint", function ($q, apiService, encodingService) {
 
-    var Endpoint = function (properties) {
+    var Endpoint = function (url) {
         var _this = this;
 
-        this.properties = properties;
-        this.rootUrl = properties.rootUrl;
+        this.properties = {};
+        this.rootUrl = url;
         this.assets = {};
+
+        this.loadEndpointInfo = function () {
+            return apiService.getData(_this, "/", "info").then(function (result) {
+                var properties = JSON.parse(result.data);
+                _this.properties = {
+                    name: properties.name,
+                    validatorUrl: properties.validator_url,
+                    tos: properties.tos,
+                    webpageUrl: properties.webpage_url
+                };
+                return _this;
+            });
+        };
 
         this.downloadAssetDefinition = function (assetPath) {
             return apiService.getValue(_this, encodingService.encodeData(assetPath, "asdef")).then(function (result) {

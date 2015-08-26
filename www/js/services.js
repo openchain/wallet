@@ -57,13 +57,6 @@ module.service("apiService", function ($http, encodingService, LedgerRecord) {
         });
     }
 
-    this.getLedgerInfo = function (rootUrl) {
-        return $http({
-            url: rootUrl + "info",
-            method: "GET"
-        });
-    }
-
     this.getAccount = function (endpoint, account, asset) {
         return this.getValue(endpoint, encodingService.encodeAccount(account, asset)).then(function (result) {
             var accountResult = {
@@ -144,39 +137,36 @@ module.service("apiService", function ($http, encodingService, LedgerRecord) {
     }
 });
 
-module.service("endpointManager", function (apiService, walletSettings, Endpoint) {
-    var nextEndpointId = 0;
+module.service("endpointManager", function ($q, apiService, walletSettings, Endpoint) {
     var storedEndpoints = localStorage[walletSettings.versionPrefix + ".endpoints"];
+    var _this = this;
 
     if (storedEndpoints)
         var initialEndpoints = JSON.parse(storedEndpoints);
     else
-        var initialEndpoints = {};
+        var initialEndpoints = [];
 
     this.endpoints = {};
 
-    for (var key in initialEndpoints) {
-        if (key >= nextEndpointId)
-            nextEndpointId = key + 1;
+    for (var i = 0; i < initialEndpoints.length; i++) {
+        this.endpoints[initialEndpoints[i]] = new Endpoint(initialEndpoints[i]);
+    }
 
-        this.endpoints[key] = new Endpoint(initialEndpoints[key]);
+    this.loadEndpoints = function () {
+        return $q.all(initialEndpoints.map(function (url) {
+            return _this.endpoints[url].loadEndpointInfo();
+        }));
     }
 
     this.addEndpoint = function (endpoint) {
-        var newEndpoint = {
-            id: nextEndpointId++,
-            rootUrl: endpoint.root_url,
-            name: endpoint.name
-        };
-
-        this.endpoints[newEndpoint.id] = new Endpoint(newEndpoint);
+        this.endpoints[endpoint.rootUrl] = endpoint;
         this.saveEndpoints();
     };
 
     this.saveEndpoints = function () {
-        var jsonData = {};
+        var jsonData = [];
         for (var key in this.endpoints)
-            jsonData[key] = this.endpoints[key].properties;
+            jsonData.push(this.endpoints[key].rootUrl);
 
         localStorage[walletSettings.versionPrefix + ".endpoints"] = JSON.stringify(jsonData);
     }
