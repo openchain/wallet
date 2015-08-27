@@ -23,10 +23,12 @@
                 <div class="dropdown">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                     <b class="caret"></b>
-                    <span>{{ endpoint.properties.name }}</span><span ng-hide="endpoint">Select an Endpoint...</span>
+                    <span>{{ endpoint.properties.name }}</span>
+                    <span ng-show="endpoint && !endpoint.properties.name">({{ endpoint.rootUrl }})</span>
+                    <span ng-hide="endpoint">Select an Endpoint...</span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li ng-repeat="e in endpoints"><a href="" ng-click="setEndpoint(e)">{{ e.properties.name }}</a></li>
+                    <li ng-repeat="e in endpoints"><a href="" ng-click="setEndpoint(e)">{{ e.properties.name }} <span ng-hide="e.properties.name">({{ e.rootUrl }})</span></a></li>
                   </ul>
                 </div>
               </div>

@@ -9,7 +9,7 @@
         <div class="list-group">
           
           <div class="list-group-item section-header" ng-repeat-start="endpoint in balance">
-            <h3 class="panel-title">{{ endpoint.endpoint.properties.name }}</h3>
+            <h3 class="panel-title">{{ endpoint.endpoint.properties.name }} <span ng-hide="endpoint.endpoint.properties.name">({{ endpoint.endpoint.rootUrl }})</span></h3>
           </div>
 
           <div class="list-group-item list-message" ng-show="endpoint.state == 'loading'">
