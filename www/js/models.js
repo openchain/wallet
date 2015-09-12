@@ -59,6 +59,8 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
                 }
 
                 return _this;
+            }, function () {
+                _this.properties = {};
             });
         };
 
