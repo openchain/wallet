@@ -61,7 +61,7 @@
   <!-- Send Screen -->
   <div ng-switch-when="send" class="row">
     <div class="col-md-8 col-md-offset-2">
-      <form class="form-horizontal" name="sendForm" ng-submit="confirmSend(sendTo, sendAmount)">
+      <form class="form-horizontal" name="sendForm" ng-submit="confirmSend(sendTo, sendAmount, sendForm.destination)">
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h3 class="panel-title">Send Funds</h3>
@@ -97,7 +97,7 @@
                 To
               </label>
               <div class="col-sm-9">
-                <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" ng-model="sendTo" required>
+                <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" ng-model="sendTo" ng-change="sendForm.destination.$setValidity('invalidValue', true)" required>
               </div>
             </div>
 

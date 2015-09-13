@@ -76,7 +76,7 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
     };
 
     // Handle sending the asset
-    $scope.confirmSend = function (sendTo, sendAmountText) {
+    $scope.confirmSend = function (sendTo, sendAmountText, destinationInput) {
         var sendAmount = Long.fromString(sendAmountText);
         var endpoint = $scope.asset.endpoint;
         var asset = $scope.asset.currentRecord;
@@ -85,6 +85,8 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
         transaction.addAccountRecord(asset, sendAmount.negate());
         transaction.fetchAndAddAccountRecord(sendTo, asset.asset, sendAmount).then(function () {
             return transaction.uiSubmit(walletSettings.derivedKey);
+        }, function () {
+            destinationInput.$setValidity("invalidValue", false);
         });
     };
 
