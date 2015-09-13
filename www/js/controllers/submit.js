@@ -32,14 +32,16 @@ module.controller("SubmitController", function ($scope, $rootScope, $location, c
     $scope.display = "pending";
 
     transaction.transaction.submit(transaction.key)
-        .then(function (data, status, headers, config) {
+        .then(function (response) {
             $scope.display = "success";
-            $scope.transactionHash = data.data["ledger_record"];
-        }, function (data, status, headers, config) {
-            if (status == 400) {
-                $scope.display = "error";
+            $scope.transactionHash = response.data["ledger_record"];
+        }, function (response) {
+            $scope.display = "error";
+
+            if (response.status == 400) {
+                $scope.error = response.data["error_code"];
             } else {
-                $scope.display = "error";
+                $scope.error = "Unknown";
             }
         });
 

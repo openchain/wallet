@@ -27,8 +27,22 @@
         <div class="panel-body">
           <div class="body-header">
             <i class="fa fa-exclamation fa-3x pull-left fa-border"></i>
-            <p>The transaction could not be confirmed. Reason: Unknown.</p>
-            <p>Feel free to retry later.</p>
+            <p>The transaction could not be confirmed.</p>
+            <p ng-switch on="error">
+              <span ng-switch-when="InvalidPath">A path was invalid.</span>
+              <span ng-switch-when="CannotSpendFromAccount">You are not authorized to spend from this account.</span>
+              <span ng-switch-when="CannotIssueAsset">You have insufficient funds.</span>
+              <span ng-switch-when="CannotModifyData">You are not authorized to modify this data record.</span>
+              <span ng-switch-when="InvalidNamespace">The namespace used in the transaction is invalid.</span>
+              <span ng-switch-when="OptimisticConcurrency">The account has been modified, please retry.</span>
+              <span ng-switch-when="InvalidSignature">A digital signature was invalid.</span>
+              <span ng-switch-when="NonCanonicalSerialization">The transaction was malformed.</span>
+              <span ng-switch-when="InvalidRecord">You attempted to create or modify a type of record which is unknown by the validator.</span>
+              <span ng-switch-when="AccountModificationUnauthorized">You are not authorized to receive or send to this account.</span>
+              <span ng-switch-when="UnbalancedTransaction">The transaction is unbalanced.</span>
+              <span ng-switch-when="Disabled">The server you are connected to does not validate transactions.</span>
+              <span ng-switch-when="Unknown">An unknown error occured.</span>
+            </p>
           </div>
 
         </div>
