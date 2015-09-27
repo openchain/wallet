@@ -109,13 +109,14 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
     return Endpoint;
 });
 
-module.factory("AssetData", function ($q, apiService, encodingService) {
+module.factory("AssetData", function ($q, apiService, LedgerPath, encodingService) {
 
     var AssetData = function (endpoint, assetPath) {
         var _this = this;
 
         this.asset = assetPath;
         this.endpoint = endpoint;
+        this.assetPath = LedgerPath.parse(assetPath);
 
         if (endpoint.rootUrl.slice(endpoint.rootUrl.length - 1, endpoint.rootUrl.length) == "/") {
             this.fullPath = endpoint.rootUrl + assetPath.slice(1, assetPath.length);

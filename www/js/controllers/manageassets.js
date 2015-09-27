@@ -63,6 +63,9 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, contro
         .then(function () {
             
             $scope.mode = "show-form";
+        }, function () {
+
+            $scope.manageAssets.assetPath.$setValidity("invalidPath", false);
         });
     }
 

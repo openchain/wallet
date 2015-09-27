@@ -98,6 +98,8 @@
               </label>
               <div class="col-sm-9">
                 <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" ng-model="sendTo" ng-change="sendForm.destination.$setValidity('invalidValue', true)" required>
+                
+                <p class="help-block" ng-if="sendForm.destination.$invalid && sendForm.destination.$dirty">The destination must start and finish with a slash character if it is a path, or start with @ if it is an alias.</p>
               </div>
             </div>
 

@@ -2,7 +2,7 @@
   <div class="col-md-8 col-md-offset-2">
 
     <!-- Asset Selector -->
-    <form method="post" autocomplete="off">
+    <form method="post" autocomplete="off" name="manageAssets">
       <div class="panel panel-primary">
         <div class="panel-heading">
           <h3 class="panel-title">Manage Asset</h3>
@@ -34,10 +34,10 @@
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" ng-class="{'has-error': manageAssets.assetPath.$invalid && manageAssets.assetPath.$dirty}">
               <label class="control-label" for="assetPath">Asset Path</label>
               <div class="input-group">
-                <input type="text" class="form-control" name="assetPath" id="assetPath" placeholder="Asset Path" ng-model="fields.assetPath">
+                <input type="text" class="form-control" name="assetPath" id="assetPath" placeholder="Asset Path" ng-model="fields.assetPath" ng-change="manageAssets.assetPath.$setValidity('invalidPath', true)">
                 <div class="input-group-btn">
 
                   <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -45,11 +45,13 @@
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li ng-repeat="slot in slots"><a href="" ng-click="fields.assetPath = '/asset/p2pkh/' + slot.address + '/'">[{{ slot.index }}] {{ slot.address }}</a></li>
+                    <li ng-repeat="slot in slots"><a href="" ng-click="fields.assetPath = '/asset/p2pkh/' + slot.address + '/';manageAssets.assetPath.$setValidity('invalidPath', true)">[{{ slot.index }}] {{ slot.address }}</a></li>
                   </ul>
 
                 </div>
               </div>
+
+              <p class="help-block" ng-if="manageAssets.assetPath.$invalid && manageAssets.assetPath.$dirty">A path must start and finish with a slash character.</p>
             </div>
 
           </div>
