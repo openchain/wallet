@@ -218,8 +218,8 @@ module.service("protobufBuilder", function () {
 
     dcodeIO.ProtoBuf.loadProtoFile("content/schema.proto", function (e, builder) {
         var root = builder.build();
-        _this.Mutation = root.OpenChain.Mutation;
-        _this.Transaction = root.OpenChain.Transaction;
+        _this.Mutation = root.Openchain.Mutation;
+        _this.Transaction = root.Openchain.Transaction;
     });
 });
 
