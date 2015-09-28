@@ -42,41 +42,81 @@
 </head>
 <body>
 
-  <!-- Static navbar -->
-  <nav class="navbar navbar-default navbar-static-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#/"><i></i></a>
+  <div class="body-content">
+    <!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#/"><i></i></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li ng-class="{'active': selectedTab == 'home'}"><a href="#/">Home</a></li>
+            <li ng-class="{'active': selectedTab == 'assets'}"><a href="#/manageassets">Assets</a></li>
+            <li ng-class="{'active': selectedTab == 'advanced'}"><a href="#/admin">Advanced</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#/addendpoint">Add server...</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="" ng-click="logOut()">Sign out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          <li ng-class="{'active': selectedTab == 'home'}"><a href="#/">Home</a></li>
-          <li ng-class="{'active': selectedTab == 'assets'}"><a href="#/manageassets">Assets</a></li>
-          <li ng-class="{'active': selectedTab == 'advanced'}"><a href="#/admin">Advanced</a></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#/addendpoint">Add server...</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="" ng-click="logOut()">Sign out</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div>
-  </nav>
+    </nav>
 
-  <div class="container">
-    <ng-view></ng-view>
+    <div class="container">
+      <ng-view></ng-view>
+
+      <div class="footer-push"></div>
+    </div>
   </div>
+
+  <footer>
+    <div class="footer-links">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <h4>Developers</h4>
+            <p><a href="https://github.com/openchain">GitHub</a></p>
+            <p><a href="https://docs.openchain.org">Documentation</a></p>
+          </div>
+          <div class="col-md-3">
+            <h4>Support</h4>
+            <p><a href="https://docs.openchain.org/en/latest/general/client.html">Help</a></p>
+            <p><a href="https://www.openchain.org/#contact-us">Contact us</a></p>
+            <p><a href="https://www.coinprism.com/">Coinprism</a></p>
+          </div>
+          <div class="col-md-3">
+            <h4>Community</h4>
+            <p><a href="https://forum.openchain.org/">Forum</a></p>
+            <p><a href="http://blog.coinprism.com">Blog</a></p>
+          </div>
+          <div class="col-md-3">
+            <h4>Social</h4>
+            <p><a href="https://twitter.com/openchainorg">Twitter</a></p>
+            <p><a href="https://facebook.com/coinprism">Facebook</a></p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 footer-copyright">
+            <p class="text-center">&copy; 2015 - Coinprism</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 </body>
 </html>

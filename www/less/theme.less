@@ -5,6 +5,19 @@
 @headings-font-weight: 300;
 @font-size-base: 15px;
 @brand-primary: #01A4EF;
+@footer-height: 234px;
+
+/* Page layout */
+
+body, html {
+    height: 100%;
+}
+
+.body-content {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -@footer-height;
+}
 
 .navbar {
     font-size: @font-size-h4;
@@ -25,6 +38,41 @@
         }
     }
 }
+
+.footer-push {
+    height: @footer-height;
+}
+
+footer {
+    background-color: @navbar-default-bg;
+    border: 1px solid @navbar-default-border;
+
+    .footer-links {
+        padding: 10px 0 10px;
+
+        h4 {
+            color: @navbar-default-link-color;
+            border-bottom: 1px solid darken(@gray-lighter, 2%);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+    }
+
+    a {
+        color: @navbar-default-link-color;
+
+        &:hover, &:focus, &:active {
+            color: @navbar-default-link-hover-color;
+            text-decoration: none;
+        }
+    }
+
+    .footer-copyright p {
+        margin: 30px 0 10px;
+    }
+}
+
+/* Balance list items */
 
 .list-group-item {
     &.section-header {
@@ -87,6 +135,19 @@
     }
 }
 
+.list-message {
+    text-align: center;
+    padding: 15px;
+    font-size: @font-size-h4;
+    font-weight: 300;
+
+    .fa {
+        margin-right: 10px;
+    }
+}
+
+/* Panel box */
+
 .body-header {
     .clearfix;
 
@@ -106,6 +167,14 @@
     }
 }
 
+.panel-footer {
+    .btn {
+        margin-left: 10px;
+    }
+}
+
+/* Forms */
+
 .form-group {
     h4.form-control-static {
         margin-top: 0;
@@ -117,11 +186,7 @@
     }
 }
 
-.panel-footer {
-    .btn {
-        margin-left: 10px;
-    }
-}
+/* Fullsize dropdown */
 
 .fullsize-dropdown {
     width: 100%;
@@ -149,16 +214,11 @@
     }
 }
 
-.list-message {
-    text-align: center;
-    padding: 15px;
-    font-size: @font-size-h4;
-    font-weight: 300;
-
-    .fa {
-        margin-right: 10px;
-    }
+.top-spacing {
+    margin-top: 20px;
 }
+
+/* Address box */
 
 .panel-split {
     display: table;
@@ -193,9 +253,7 @@
     }
 }
 
-.top-spacing {
-    margin-top: 20px;
-}
+/* Tree explorer */
 
 .tree-explorer {
     overflow-x: auto;
