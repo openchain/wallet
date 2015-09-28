@@ -20,7 +20,8 @@
           <div class="form-group" ng-class="{'has-error': addEndpointForm.endpointUrl.$invalid}">
             <label class="control-label" for="endpointUrl">Endpoint URL</label>
             <input type="text" class="form-control" name="endpointUrl" id="endpointUrl" placeholder="Endpoint URL" ng-model="endpointUrl" ng-disabled="endpoint != null" ng-change="changeUrl()">
-            <p class="help-block" ng-show="addEndpointForm.endpointUrl.$invalid">The URL could not be reached.</p>
+            <p class="help-block" ng-show="addEndpointForm.endpointUrl.$invalid && endpointError == 'unreachable'">The URL could not be reached. Make sure the URL your typed is a full, valid URL.</p>
+            <p class="help-block" ng-show="addEndpointForm.endpointUrl.$invalid && endpointError == 'nonsecure'">The URL you are connected to is not secure. Use the <a ng-href="{{httpRedirect}}">non-SSL wallet</a> to connect to this endpoint.</p>
           </div>
 
           <div ng-show="endpoint != null">

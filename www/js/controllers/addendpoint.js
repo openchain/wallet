@@ -20,13 +20,14 @@ var Mnemonic = require("bitcore-mnemonic");
 // ***** AddEndpointController *****
 // *********************************
 
-module.controller("AddEndpointController", function ($scope, $rootScope, $location, Endpoint, controllerService, apiService, endpointManager) {
+module.controller("AddEndpointController", function ($scope, $rootScope, $location, Endpoint, settings, controllerService, apiService, endpointManager) {
 
     if (!controllerService.checkState())
         return;
 
     $rootScope.selectedTab = "none";
     $scope.hasNoEndpoint = Object.keys(endpointManager.endpoints).length === 0;
+    $scope.httpRedirect = settings.httpRedirect;
 
     $scope.check = function () {
         if ($scope.endpointUrl.slice(-1) != "/")
@@ -35,6 +36,13 @@ module.controller("AddEndpointController", function ($scope, $rootScope, $locati
             var endpointUrl = $scope.endpointUrl;
 
         var endpoint = new Endpoint(endpointUrl);
+
+        if (location.protocol === "https:" && endpointUrl.slice(0, 5) === "http:") {
+            $scope.addEndpointForm.endpointUrl.$setValidity("connectionError", false);
+            $scope.endpointError = "nonsecure";
+            return;
+        }
+
         endpoint.loadEndpointInfo().then(function (result) {
             $scope.endpoint = result;
 
@@ -47,8 +55,9 @@ module.controller("AddEndpointController", function ($scope, $rootScope, $locati
             else {
                 $scope.success = true;
             }
-        }, function () {
+        }).then(function () { }, function () {
             $scope.addEndpointForm.endpointUrl.$setValidity("connectionError", false);
+            $scope.endpointError = "unreachable";
         });
     };
 
