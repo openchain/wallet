@@ -13,11 +13,11 @@
 // limitations under the License.
 
 var app =
-    angular.module('OpenChainWallet', [
+    angular.module('OpenchainWallet', [
         "ngRoute",
-        "OpenChainWallet.Models",
-        "OpenChainWallet.Controllers",
-        "OpenChainWallet.Services",
+        "OpenchainWallet.Models",
+        "OpenchainWallet.Controllers",
+        "OpenchainWallet.Services",
         "treeControl"
     ])
     .config(['$routeProvider', function ($routeProvider) {
@@ -61,4 +61,4 @@ var app =
         $rootScope.logOut = function () { $window.location.reload(); };
     });
 
-angular.module("OpenChainWallet.Controllers", []);
+angular.module("OpenchainWallet.Controllers", []);

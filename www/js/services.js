@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var module = angular.module("OpenChainWallet.Services", []);
+var module = angular.module("OpenchainWallet.Services", []);
 var bitcore = require("bitcore");
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;

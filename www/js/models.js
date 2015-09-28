@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var module = angular.module("OpenChainWallet.Models", []);
+var module = angular.module("OpenchainWallet.Models", []);
 var bitcore = require("bitcore");
 
 module.value("walletSettings", {
