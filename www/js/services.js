@@ -33,7 +33,7 @@ module.service("apiService", function ($http, encodingService, LedgerRecord) {
         return $http.post(
             endpoint.rootUrl + "submit",
             {
-                transaction: encodedTransaction.toHex(),
+                mutation: encodedTransaction.toHex(),
                 signatures: [
                     {
                         pub_key: ByteBuffer.wrap(key.publicKey.toBuffer()).toHex(),

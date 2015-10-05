@@ -34,7 +34,7 @@ module.controller("SubmitController", function ($scope, $rootScope, $location, c
     transaction.transaction.submit(transaction.key)
         .then(function (response) {
             $scope.display = "success";
-            $scope.transactionHash = response.data["ledger_record"];
+            $scope.transactionHash = response.data["transaction_hash"];
         }, function (response) {
             $scope.display = "error";
 
