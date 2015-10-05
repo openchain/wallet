@@ -45,7 +45,7 @@ module.service("apiService", function ($http, encodingService, LedgerRecord) {
 
     this.getValue = function (endpoint, key) {
         return $http({
-            url: endpoint.rootUrl + "value",
+            url: endpoint.rootUrl + "record",
             method: "GET",
             params: { key: key.toHex() }
         }).then(function (result) {
