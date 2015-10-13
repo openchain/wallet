@@ -32,7 +32,7 @@ self.addEventListener("message", function (e) {
     var Mnemonic = require("bitcore-mnemonic");
 
     var code = new Mnemonic(e.data.mnemonic);
-    var derivedKey = code.toHDPrivateKey(null, e.data.network);
+    var derivedKey = code.toHDPrivateKey(null, "livenet");
     self.postMessage(derivedKey.xprivkey);
 
 }, false);

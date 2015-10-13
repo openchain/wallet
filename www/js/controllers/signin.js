@@ -49,6 +49,7 @@ module.controller("SignInController", function ($scope, $rootScope, $location, e
             worker.addEventListener("message", function (hdKey) {
                 $rootScope.$apply(function () {
                     var hdPrivateKey = new bitcore.HDPrivateKey(hdKey.data);
+                    hdPrivateKey.network = bitcore.Networks.get("openchain");
                     walletSettings.setRootKey(hdPrivateKey);
 
                     loadingEndpoints.then(function () {
@@ -57,7 +58,22 @@ module.controller("SignInController", function ($scope, $rootScope, $location, e
                 })
             }, false);
 
-            worker.postMessage({ mnemonic: $scope.properties.seed, network: "testnet" });
+            var livenet = bitcore.Networks.get("livenet");
+
+            bitcore.Networks.add({
+                name: "openchain",
+                alias: "openchain",
+                pubkeyhash: 76,
+                privatekey: livenet.privatekey,
+                scripthash: 78,
+                xpubkey: livenet.xpubkey,
+                xprivkey: livenet.xprivkey,
+                networkMagic: 0,
+                port: livenet.port,
+                dnsSeeds: livenet.dnsSeeds
+            });
+
+            worker.postMessage({ mnemonic: $scope.properties.seed });
 
             $scope.display = "loading";
         }
