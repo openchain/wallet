@@ -19,7 +19,7 @@ var Long = dcodeIO.Long;
 // ***** ManageAssetsController *****
 // **********************************
 
-module.controller("ManageAssetsController", function ($scope, $rootScope, controllerService, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, encodingService, validator, AssetData) {
+module.controller("ManageAssetsController", function ($scope, $rootScope, controllerService, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, LedgerPath, encodingService, validator, AssetData) {
 
     if (!controllerService.checkState())
         return;
@@ -47,7 +47,14 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, contro
     }
 
     $scope.displayForm = function () {
-        
+        try {
+            LedgerPath.parse($scope.fields.assetPath)
+        }
+        catch (e) {
+            $scope.manageAssets.assetPath.$setValidity("invalidPath", false);
+            return;
+        }
+
         $scope.endpoint.getAssetDefinition($scope.fields.assetPath, true).then(function (result) {
 
             $scope.version = result.version;
@@ -64,8 +71,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, contro
             
             $scope.mode = "show-form";
         }, function () {
-
-            $scope.manageAssets.assetPath.$setValidity("invalidPath", false);
+            return TransactionBuilder.uiError();
         });
     }
 
@@ -93,6 +99,8 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, contro
             transaction.fetchAndAddAccountRecord(walletSettings.rootAccount, $scope.fields.assetPath, issueAmount),
         ]).then(function (array) {
             return transaction.uiSubmit(findKey($scope.fields.assetPath));
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 

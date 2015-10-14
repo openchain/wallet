@@ -270,5 +270,10 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
         };
     }
 
+    TransactionBuilder.uiError = function () {
+        $rootScope.submitTransaction = null;
+        $location.path("/submit");
+    }
+
     return TransactionBuilder;
 });

@@ -85,6 +85,8 @@ module.controller("TransactionController", function ($scope, $location, $q, Tran
         }))
         .then(function(array) {
             return transaction.uiSubmit(walletSettings.derivedKey);
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 
@@ -106,6 +108,8 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
             else {
                 $scope.fields.path = "";
             }
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 
@@ -118,6 +122,8 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
             transaction.addRecord(result.key, encodingService.encodeString($scope.fields.path), result.version);
 
             return transaction.uiSubmit(walletSettings.derivedKey);
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 });
@@ -137,6 +143,8 @@ module.controller("DataEditorController", function ($scope, apiService, Transact
             else {
                 $scope.fields.data = "";
             }
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 
@@ -149,6 +157,8 @@ module.controller("DataEditorController", function ($scope, apiService, Transact
             transaction.addRecord(result.key, encodingService.encodeString($scope.fields.data), result.version);
 
             return transaction.uiSubmit(walletSettings.derivedKey);
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 });
@@ -180,6 +190,8 @@ module.controller("InfoEditorController", function ($scope, apiService, Transact
                     webpageUrl: ""
                 };
             }
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 
@@ -200,6 +212,8 @@ module.controller("InfoEditorController", function ($scope, apiService, Transact
             transaction.addRecord(result.key, encodingService.encodeString(value), result.version);
 
             return transaction.uiSubmit(walletSettings.derivedKey);
+        }, function () {
+            return TransactionBuilder.uiError();
         });
     };
 });

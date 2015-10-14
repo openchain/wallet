@@ -22,28 +22,30 @@ module.controller("SubmitController", function ($scope, $rootScope, $location, c
     if (!controllerService.checkState())
         return;
 
-    if (!$rootScope.submitTransaction) {
-        $location.path("/");
-        return;
-    }
-
     var transaction = $rootScope.submitTransaction;
     $rootScope.submitTransaction = null;
-    $scope.display = "pending";
 
-    transaction.transaction.submit(transaction.key)
-        .then(function (response) {
-            $scope.display = "success";
-            $scope.transactionHash = response.data["transaction_hash"];
-        }, function (response) {
-            $scope.display = "error";
+    if (transaction == null) {
+        $scope.display = "error";
+        $scope.error = "ConnectionError";
+    }
+    else {
+        $scope.display = "pending";
 
-            if (response.status == 400) {
-                $scope.error = response.data["error_code"];
-            } else {
-                $scope.error = "Unknown";
-            }
-        });
+        transaction.transaction.submit(transaction.key)
+            .then(function (response) {
+                $scope.display = "success";
+                $scope.transactionHash = response.data["transaction_hash"];
+            }, function (response) {
+                $scope.display = "error";
+
+                if (response.status == 400) {
+                    $scope.error = response.data["error_code"];
+                } else {
+                    $scope.error = "Unknown";
+                }
+            });
+    }
 
     $scope.cancelSend = function () {
         $location.path("/");
