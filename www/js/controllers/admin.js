@@ -245,7 +245,12 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
                         child.amount = encodingService.decodeInt64(account.value).toString();
                     }
                     else if (account.recordKey.recordType == "DATA") {
-                        child.data = encodingService.decodeString(account.value);
+                        try {
+                            child.data = encodingService.decodeString(account.value);
+                        }
+                        catch (e) {
+                            child.data = "<invalid>";
+                        }
                     }
 
                     node.children.push(child);
