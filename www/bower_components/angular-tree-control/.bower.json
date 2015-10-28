@@ -1,6 +1,6 @@
 {
   "name": "angular-tree-control",
-  "version": "0.2.15",
+  "version": "0.2.21",
   "author": "Yoav Abrahami",
   "contributors": [
     "Benjamin Orozco <benoror@gmail.com>"
@@ -26,14 +26,13 @@
     "google-code-prettify": "1.0.1"
   },
   "homepage": "https://github.com/wix/angular-tree-control",
-  "_release": "0.2.15",
+  "_release": "0.2.21",
   "_resolution": {
     "type": "version",
-    "tag": "0.2.15",
-    "commit": "dde52dc0af2b0b2f19dc1bc6a8458bf11eb58bb7"
+    "tag": "0.2.21",
+    "commit": "363cab47c5c55960ed4da1d9e99c2f1d66499b74"
   },
   "_source": "git://github.com/wix/angular-tree-control.git",
   "_target": "~0.2.15",
-  "_originalSource": "wix/angular-tree-control",
-  "_direct": true
+  "_originalSource": "wix/angular-tree-control"
 }

@@ -14,9 +14,6 @@
  limitations under the License.
  */
 
-/**
- * Long.js Pretty Simple Test Suite.
- */
 var Long = require(__dirname+"/../index.js"),
     gmLong = require("./goog.math.long.js");
 
@@ -30,6 +27,14 @@ var suite = {
         test.equal(longVal2.toNumber(), 9223372036854775807);
         test.equal(longVal2.toString(), "9223372036854775807");
         test.equal(longVal2.unsigned, longVal.unsigned);
+        test.done();
+    },
+
+    "isLong": function(test) {
+        var longVal = new Long(0xFFFFFFFF, 0x7FFFFFFF);
+        test.strictEqual(Long.isLong(longVal), true);
+        longVal = {"__isLong__": true};
+        test.strictEqual(Long.isLong(longVal), true);
         test.done();
     },
     

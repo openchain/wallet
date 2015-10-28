@@ -1,11 +1,12 @@
 {
-  "name": "OpenChainWallet",
-  "version": "0.1.0",
+  "name": "OpenchainWallet",
+  "version": "0.2.1",
   "authors": [
     "Flavien Charlon <flavien@charlon.net>"
   ],
   "main": "www/index.html",
-  "license": "MIT",
+  "license": "Apache License Version 2.0",
+  "homepage": "https://github.com/openchain/wallet",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -15,14 +16,14 @@
   ],
   "dependencies": {
     "jquery": "~2.1.4",
-    "bitcore": "~0.12.11",
-    "angular": "~1.4.1",
-    "angular-route": "~1.4.1",
+    "bitcore": "~0.13.5",
+    "bitcore-mnemonic": "~0.14.0",
+    "angular": "~1.4.7",
+    "angular-route": "~1.4.7",
     "protobuf": "dcodeIO/ProtoBuf.js#~4.0.0",
     "bootstrap": "~3.3.5",
-    "less": "~2.5.1",
+    "less": "~2.5.3",
     "components-font-awesome": "~4.3.0",
-    "angular-tree-control": "wix/angular-tree-control#~0.2.15",
-    "bitcore-mnemonic": "~0.13.2"
+    "angular-tree-control": "wix/angular-tree-control#~0.2.15"
   }
 }

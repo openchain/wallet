@@ -202,7 +202,19 @@ Long.prototype.equals = function(other) {};
  * @param {!Long|number|string} other
  * @return {boolean}
  */
+Long.prototype.eq = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {boolean}
+ */
 Long.prototype.notEquals = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {boolean}
+ */
+Long.prototype.neq = function(other) {};
 
 /**
  * @param {!Long|number|string} other
@@ -214,7 +226,19 @@ Long.prototype.lessThan = function(other) {};
  * @param {!Long|number|string} other
  * @return {boolean}
  */
+Long.prototype.lt = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {boolean}
+ */
 Long.prototype.lessThanOrEqual = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {boolean}
+ */
+Long.prototype.lte = function(other) {};
 
 /**
  * @param {!Long|number|string} other
@@ -226,7 +250,19 @@ Long.prototype.greaterThan = function(other) {};
  * @param {!Long|number|string} other
  * @return {boolean}
  */
+Long.prototype.gt = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {boolean}
+ */
 Long.prototype.greaterThanOrEqual = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {boolean}
+ */
+Long.prototype.gte = function(other) {};
 
 /**
  * @param {!Long|number|string} other
@@ -238,6 +274,11 @@ Long.prototype.compare = function(other) {};
  * @return {!Long}
  */
 Long.prototype.negate = function() {};
+
+/**
+ * @return {!Long}
+ */
+Long.prototype.neg = function() {};
 
 /**
  * @param {!Long|number|string} other
@@ -255,7 +296,25 @@ Long.prototype.subtract = function(other) {};
  * @param {!Long|number|string} other
  * @return {!Long}
  */
+Long.prototype.sub = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {!Long}
+ */
 Long.prototype.multiply = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {!Long}
+ */
+Long.prototype.mul = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {!Long}
+ */
+Long.prototype.divide = function(other) {};
 
 /**
  * @param {!Long|number|string} other
@@ -268,6 +327,12 @@ Long.prototype.div = function(other) {};
  * @return {!Long}
  */
 Long.prototype.modulo = function(other) {};
+
+/**
+ * @param {!Long|number|string} other
+ * @return {!Long}
+ */
+Long.prototype.mod = function(other) {};
 
 /**
  * @return {!Long}
@@ -302,13 +367,31 @@ Long.prototype.shiftLeft = function(numBits) {};
  * @param {number|!Long} numBits
  * @return {!Long}
  */
+Long.prototype.shl = function(numBits) {};
+
+/**
+ * @param {number|!Long} numBits
+ * @return {!Long}
+ */
 Long.prototype.shiftRight = function(numBits) {};
 
 /**
  * @param {number|!Long} numBits
  * @return {!Long}
  */
+Long.prototype.shr = function(numBits) {};
+
+/**
+ * @param {number|!Long} numBits
+ * @return {!Long}
+ */
 Long.prototype.shiftRightUnsigned = function(numBits) {};
+
+/**
+ * @param {number|!Long} numBits
+ * @return {!Long}
+ */
+Long.prototype.shru = function(numBits) {};
 
 /**
  * @return {!Long}
