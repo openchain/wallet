@@ -19,7 +19,7 @@ var module = angular.module("OpenchainWallet.Controllers");
 
 module.controller("TransactionInfoController", function ($scope, $rootScope, $routeParams, $route, $q, controllerService, apiService, encodingService, endpointManager, LedgerRecord) {
 
-    if (!controllerService.ensureEndpoint())
+    if (!controllerService.checkState())
         return;
 
     $rootScope.selectedTab = "home";
@@ -27,28 +27,40 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
     var mutationHash = $routeParams.hash;
     var transactions = [];
     $scope.transactions = transactions;
+    $scope.endpoints = endpointManager.endpoints;
+
+    $scope.setEndpoint = function (endpoint) {
+        $scope.selectedRootUrl = endpoint.rootUrl;
+    }
+
+    for (var key in endpointManager.endpoints) {
+        $scope.setEndpoint(endpointManager.endpoints[key]);
+        break;
+    }
 
     function loadEndpoint(key) {
         var endpoint = endpointManager.endpoints[key];
         
         apiService.getTransaction(endpoint, mutationHash).then(function (result) {
             if (result == null) {
-                return;
+                transactions.push({ endpoint: endpoint, success: false });
             }
+            else {
+                var parsedTransaction = { success: true, acc_records: [], endpoint: endpoint };
 
-            var parsedTransaction = { acc_records: [], endpoint: endpoint };
-
-            $q.all(result.mutation.records.map(function (record) {
-                var key = LedgerRecord.parse(record.key);
-                if (key.recordType == "ACC") {
-                    parsedTransaction.acc_records.push({
-                        key: key,
-                        value: encodingService.decodeInt64(record.value.data)
-                    });
-                }
-            })).then(function (result) {
-                transactions.push(parsedTransaction);
-            });
+                $q.all(result.mutation.records.map(function (record) {
+                    var key = LedgerRecord.parse(record.key);
+                    if (key.recordType == "ACC") {
+                        parsedTransaction.acc_records.push({
+                            key: key,
+                            value: encodingService.decodeInt64(record.value.data)
+                        });
+                    }
+                })).then(function (result) {
+                    transactions.push(parsedTransaction);
+                    $scope.setEndpoint(endpoint);
+                });
+            }
 
         });
     }

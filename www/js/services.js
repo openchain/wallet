@@ -129,6 +129,8 @@ module.service("apiService", function ($http, encodingService, protobufBuilder, 
                 transaction: transaction,
                 mutation: mutation
             };
+        }, function (result) {
+            return null;
         });
     }
 
@@ -265,13 +267,4 @@ module.service("controllerService", function ($location, walletSettings, endpoin
         
         return true;
     };
-
-    this.ensureEndpoint = function() {
-        if (Object.keys(endpointManager.endpoints).length === 0) {
-            $location.path("/addendpoint");
-            return false;
-        }
-
-        return true;
-    }
 });
