@@ -17,7 +17,7 @@ var bitcore = require("bitcore");
 var ByteBuffer = dcodeIO.ByteBuffer;
 var Long = dcodeIO.Long;
 
-module.service("apiService", function ($http, encodingService, LedgerRecord) {
+module.service("apiService", function ($http, encodingService, protobufBuilder, LedgerRecord) {
 
     this.postTransaction = function (endpoint, encodedTransaction, key) {
         
@@ -113,6 +113,22 @@ module.service("apiService", function ($http, encodingService, LedgerRecord) {
                     balance: Long.fromString(item.balance)
                 };
             });
+        });
+    }
+
+    this.getTransaction = function (endpoint, mutationHash) {
+        return $http({
+            url: endpoint.rootUrl + "query/transaction",
+            method: "GET",
+            params: { mutation_hash: mutationHash }
+        }).then(function (result) {
+            var buffer = ByteBuffer.fromHex(result.data.raw);
+            var transaction = protobufBuilder.Transaction.decode(buffer);
+            var mutation = protobufBuilder.Mutation.decode(transaction.mutation);
+            return {
+                transaction: transaction,
+                mutation: mutation
+            };
         });
     }
 
@@ -249,4 +265,13 @@ module.service("controllerService", function ($location, walletSettings, endpoin
         
         return true;
     };
+
+    this.ensureEndpoint = function() {
+        if (Object.keys(endpointManager.endpoints).length === 0) {
+            $location.path("/addendpoint");
+            return false;
+        }
+
+        return true;
+    }
 });

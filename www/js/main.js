@@ -46,6 +46,10 @@ var app =
                 templateUrl: "views/admin.html",
                 controller: "AdminController"
             })
+            .when("/transaction/:hash", {
+                templateUrl: "views/transaction.html",
+                controller: "TransactionInfoController"
+            })
             .otherwise({
                 redirectTo: '/'
             });
