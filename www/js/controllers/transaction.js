@@ -17,7 +17,7 @@ var module = angular.module("OpenchainWallet.Controllers");
 // ***** TransactionController *****
 // *********************************
 
-module.controller("TransactionInfoController", function ($scope, $rootScope, $routeParams, $route, $q, controllerService, apiService, endpointManager) {
+module.controller("TransactionInfoController", function ($scope, $rootScope, $routeParams, $route, $q, controllerService, apiService, encodingService, endpointManager, LedgerRecord) {
 
     if (!controllerService.ensureEndpoint())
         return;
@@ -25,12 +25,31 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
     $rootScope.selectedTab = "home";
 
     var mutationHash = $routeParams.hash;
+    var transactions = [];
+    $scope.transactions = transactions;
 
     function loadEndpoint(key) {
         var endpoint = endpointManager.endpoints[key];
-
+        
         apiService.getTransaction(endpoint, mutationHash).then(function (result) {
-            
+            if (result == null) {
+                return;
+            }
+
+            var parsedTransaction = { acc_records: [], endpoint: endpoint };
+
+            $q.all(result.mutation.records.map(function (record) {
+                var key = LedgerRecord.parse(record.key);
+                if (key.recordType == "ACC") {
+                    parsedTransaction.acc_records.push({
+                        key: key,
+                        value: encodingService.decodeInt64(record.value.data)
+                    });
+                }
+            })).then(function (result) {
+                transactions.push(parsedTransaction);
+            });
+
         });
     }
 

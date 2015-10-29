@@ -1,4 +1,46 @@
 <div>
 
+  <div ng-repeat="transaction in transactions">
+
+    <h4>General</h4>
+    <table class="table table-condensed record-property-table">
+      <tr>
+        <th>Instance</th>
+        <td>{{ transaction.endpoint.properties.name }}</td>
+      </tr>
+      <tr>
+        <th>Transaction Hash</th>
+        <td>6b9b9ec144007cb10236c15dba4b7ef50b66ef7ddcdcf85cf777e70a80eb00fd</td>
+      </tr>
+      <tr>
+        <th>Mutation Hash</th>
+        <td>6b9b9ec144007cb10236c15dba4b7ef50b66ef7ddcdcf85cf777e70a80eb00fd</td>
+      </tr>
+      <tr>
+        <th>Date</th>
+        <td>6b9b9ec144007cb10236c15dba4b7ef50b66ef7ddcdcf85cf777e70a80eb00fd</td>
+      </tr>
+      <tr>
+        <th>Namespace</th>
+        <td>http://localhost:8080/</td>
+      </tr>
+    </table>
+
+    <h4>Accounts</h4>
+    <table class="table table-striped">
+      <tr>
+        <th>Path</th>
+        <th>Asset</th>
+        <th>Balance change</th>
+        <th>New balance</th>
+      </tr>
+      <tr ng-repeat="record in transaction.acc_records">
+        <td>{{ record.key.path.toString() }}</td>
+        <td>{{ record.key.name }}</td>
+        <td>Balance change</td>
+        <td>{{ record.value.toString() }}</td>
+      </tr>
+    </table>
+  </div>
 
 </div>
