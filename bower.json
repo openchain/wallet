@@ -24,6 +24,7 @@
     "bootstrap": "~3.3.5",
     "less": "~2.5.3",
     "components-font-awesome": "~4.3.0",
-    "angular-tree-control": "wix/angular-tree-control#~0.2.15"
+    "angular-tree-control": "wix/angular-tree-control#~0.2.15",
+    "moment": "~2.10.6"
   }
 }
