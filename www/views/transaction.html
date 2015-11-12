@@ -35,16 +35,16 @@
         </table>
 
         <h4>Accounts</h4>
-        <table class="table table-striped">
+        <table class="table table-striped wide-table">
           <tr>
-            <th>Path</th>
-            <th>Asset</th>
-            <th>Balance change</th>
-            <th>New balance</th>
+            <th class="col-md-4">Path</th>
+            <th class="col-md-4">Asset</th>
+            <th class="col-md-2">Balance change</th>
+            <th class="col-md-2">New balance</th>
           </tr>
           <tr ng-repeat="record in transaction.acc_records">
-            <td>{{ record.key.path.toString() }}</td>
-            <td>{{ record.key.name }}</td>
+            <td><span title="{{ record.key.path.toString() }}">{{ record.key.path.toString() }}</span></td>
+            <td><span title="{{ record.key.name }}">{{ record.key.name }}</span></td>
             <td>{{ record.valueDelta.toString() }}</td>
             <td>{{ record.value.toString() }}</td>
           </tr>
