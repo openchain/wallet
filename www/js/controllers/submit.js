@@ -36,6 +36,7 @@ module.controller("SubmitController", function ($scope, $rootScope, $location, c
             .then(function (response) {
                 $scope.display = "success";
                 $scope.transactionHash = response.data["transaction_hash"];
+                $scope.mutationHash = response.data["mutation_hash"];
             }, function (response) {
                 $scope.display = "error";
 
