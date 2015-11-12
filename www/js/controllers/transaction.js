@@ -52,7 +52,8 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                     transactionHash: result.transactionHash.toHex(),
                     namespace: encodingService.decodeString(result.mutation.namespace),
                     acc_records: [],
-                    endpoint: endpoint
+                    endpoint: endpoint,
+                    date: moment(result.transaction.timestamp.toString(), "X").format("MMMM Do YYYY, hh:mm:ss")
                 };
 
                 $q.all(result.mutation.records.map(function (record) {
