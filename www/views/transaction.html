@@ -13,8 +13,8 @@
         <h4>General</h4>
         <table class="table table-condensed record-property-table">
           <tr>
-            <th>Instance</th>
-            <td>{{ transaction.endpoint.properties.name }} <span ng-hide="transaction.endpoint.properties.name">({{ transaction.endpoint.rootUrl }})</span></td>
+            <th class="col-md-3">Instance</th>
+            <td class="col-md-9">{{ transaction.endpoint.properties.name }} <span ng-hide="transaction.endpoint.properties.name">({{ transaction.endpoint.rootUrl }})</span></td>
           </tr>
           <tr>
             <th>Transaction Hash</th>
@@ -58,8 +58,8 @@
         <div class="data-record-block" ng-repeat="record in transaction.data_records">
           <table class="table table-condensed record-property-table">
             <tr>
-              <th>Path</th>
-              <td>{{ record.key.path.toString() }}</td>
+              <th class="col-md-3">Path</th>
+              <td class="col-md-9">{{ record.key.path.toString() }}</td>
             </tr>
             <tr>
               <th>Record name</th>
