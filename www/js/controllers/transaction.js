@@ -46,7 +46,14 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                 transactions.push({ endpoint: endpoint, success: false });
             }
             else {
-                var parsedTransaction = { success: true, acc_records: [], endpoint: endpoint };
+                var parsedTransaction = {
+                    success: true,
+                    mutationHash: result.mutationHash.toHex(),
+                    transactionHash: result.transactionHash.toHex(),
+                    namespace: encodingService.decodeString(result.mutation.namespace),
+                    acc_records: [],
+                    endpoint: endpoint
+                };
 
                 $q.all(result.mutation.records.map(function (record) {
                     var key = LedgerRecord.parse(record.key);

@@ -123,11 +123,19 @@ module.service("apiService", function ($http, encodingService, protobufBuilder, 
             params: { mutation_hash: mutationHash }
         }).then(function (result) {
             var buffer = ByteBuffer.fromHex(result.data.raw);
-            var transaction = protobufBuilder.Transaction.decode(buffer);
-            var mutation = protobufBuilder.Mutation.decode(transaction.mutation);
+            var transaction = protobufBuilder.Transaction.decode(buffer.clone());
+            var mutation = protobufBuilder.Mutation.decode(transaction.mutation.clone());
+
+            var transactionBuffer = new Uint8Array(buffer.toArrayBuffer());
+            var transactionHash = bitcore.crypto.Hash.sha256(bitcore.crypto.Hash.sha256(transactionBuffer));
+            var mutationBuffer = new Uint8Array(transaction.mutation.toArrayBuffer());
+            var mutationHash = bitcore.crypto.Hash.sha256(bitcore.crypto.Hash.sha256(mutationBuffer));
+
             return {
                 transaction: transaction,
-                mutation: mutation
+                mutation: mutation,
+                mutationHash: ByteBuffer.wrap(mutationHash),
+                transactionHash: ByteBuffer.wrap(transactionHash)
             };
         }, function (result) {
             return null;

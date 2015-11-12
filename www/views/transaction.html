@@ -1,7 +1,9 @@
 <div class="row">
   <div class="col-md-3">
     <div class="list-group top-spacing">
-      <a href="" ng-repeat="endpoint in endpoints" class="list-group-item" ng-click="setEndpoint(endpoint)" ng-class="{'active': endpoint.rootUrl == selectedRootUrl}">{{ endpoint.properties.name }}</a>
+      <a href="" ng-repeat="endpoint in endpoints" class="list-group-item" ng-click="setEndpoint(endpoint)" ng-class="{'active': endpoint.rootUrl == selectedRootUrl}">
+        {{ endpoint.properties.name }} <span ng-hide="endpoint.properties.name">({{ endpoint.rootUrl }})</span>
+      </a>
     </div>
     
   </div>
@@ -12,15 +14,15 @@
         <table class="table table-condensed record-property-table">
           <tr>
             <th>Instance</th>
-            <td>{{ transaction.endpoint.properties.name }}</td>
+            <td>{{ transaction.endpoint.properties.name }} <span ng-hide="transaction.endpoint.properties.name">({{ transaction.endpoint.rootUrl }})</span></td>
           </tr>
           <tr>
             <th>Transaction Hash</th>
-            <td>6b9b9ec144007cb10236c15dba4b7ef50b66ef7ddcdcf85cf777e70a80eb00fd</td>
+            <td>{{ transaction.transactionHash }}</td>
           </tr>
           <tr>
             <th>Mutation Hash</th>
-            <td>6b9b9ec144007cb10236c15dba4b7ef50b66ef7ddcdcf85cf777e70a80eb00fd</td>
+            <td>{{ transaction.mutationHash }}</td>
           </tr>
           <tr>
             <th>Date</th>
@@ -28,7 +30,7 @@
           </tr>
           <tr>
             <th>Namespace</th>
-            <td>http://localhost:8080/</td>
+            <td>{{ transaction.namespace }}</td>
           </tr>
         </table>
 
