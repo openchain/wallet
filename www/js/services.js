@@ -125,6 +125,16 @@ module.service("apiService", function ($http, encodingService, protobufBuilder, 
         });
     }
 
+    this.getRecordTransactions = function (endpoint, key) {
+        return $http({
+            url: endpoint.rootUrl + "query/recordmutations",
+            method: "GET",
+            params: { key: key }
+        }).then(function (result) {
+            return result.data;
+        });
+    }
+
     this.getTransaction = function (endpoint, mutationHash) {
         return $http({
             url: endpoint.rootUrl + "query/transaction",

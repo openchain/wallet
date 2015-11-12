@@ -195,6 +195,14 @@
             </table>
           </div>
 
+          <div class="tree-related-transactions">
+            <h4>Related transactions</h4>
+
+            <div ng-repeat="transaction in transactions">
+              <div><a href="#/transaction/{{ transaction.mutation_hash }}">{{ transaction.mutation_hash }}</a></div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

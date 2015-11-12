@@ -299,6 +299,11 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
 
     $scope.selectNode = function (node, selected) {
         $scope.selectedNode = node;
+        $scope.transactions = [];
+
+        apiService.getRecordTransactions($scope.endpoint, encodingService.encodeString(node.key).toHex()).then(function (result) {
+            $scope.transactions = result;
+        });
     };
 
     refreshTree();
