@@ -43,12 +43,21 @@ module.service("apiService", function ($http, encodingService, protobufBuilder, 
             });
     }
 
-    this.getValue = function (endpoint, key) {
-        return $http({
-            url: endpoint.rootUrl + "record",
-            method: "GET",
-            params: { key: key.toHex() }
-        }).then(function (result) {
+    this.getValue = function (endpoint, key, version) {
+        if (version)
+            var request = $http({
+                url: endpoint.rootUrl + "query/recordversion",
+                method: "GET",
+                params: { key: key.toHex(), version: version.toHex() }
+            });
+        else
+            var request = $http({
+                url: endpoint.rootUrl + "record",
+                method: "GET",
+                params: { key: key.toHex() }
+            });
+
+        return request.then(function (result) {
             return {
                 key: key,
                 value: ByteBuffer.fromHex(result.data.value),
@@ -57,8 +66,8 @@ module.service("apiService", function ($http, encodingService, protobufBuilder, 
         });
     }
 
-    this.getAccount = function (endpoint, account, asset) {
-        return this.getValue(endpoint, encodingService.encodeAccount(account, asset)).then(function (result) {
+    this.getAccount = function (endpoint, account, asset, version) {
+        return this.getValue(endpoint, encodingService.encodeAccount(account, asset), version).then(function (result) {
             var accountResult = {
                 key: result.key,
                 account: account,
