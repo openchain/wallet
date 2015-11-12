@@ -55,7 +55,7 @@
 
       <div ng-show="transaction.data_records.length > 0">
         <h4>Data records</h4>
-        <div ng-repeat="record in transaction.data_records">
+        <div class="data-record-block" ng-repeat="record in transaction.data_records">
           <table class="table table-condensed record-property-table">
             <tr>
               <th>Path</th>
@@ -66,7 +66,8 @@
               <td>{{ record.key.name }}</td>
             </tr>
           </table>
-          <pre>{{ record.value }}</pre>
+          <pre ng-show="record.value">{{ record.value }}</pre>
+          <p ng-hide="record.value" class="text-center">The value was not modified</p>
         </div>
       </div>
 

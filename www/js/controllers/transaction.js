@@ -61,17 +61,17 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                     var key = LedgerRecord.parse(record.key);
                     if (key.recordType == "ACC") {
                         return apiService.getAccount(endpoint, key.path.toString(), key.name, record.version).then(function (previousRecord) {
-                            var newValue = encodingService.decodeInt64(record.value.data);
+                            var newValue = record.value == null ? null : encodingService.decodeInt64(record.value.data);
                             parsedTransaction.acc_records.push({
                                 key: key,
-                                valueDelta: newValue.subtract(previousRecord.balance),
+                                valueDelta: newValue == null ? null : newValue.subtract(previousRecord.balance),
                                 value: newValue
                             });
                         });
                     } else if (key.recordType == "DATA") {
                         parsedTransaction.data_records.push({
                             key: key,
-                            value: encodingService.decodeString(record.value.data)
+                            value: record.value == null ? null : encodingService.decodeString(record.value.data)
                         });
                     }
                 })).then(function (result) {
