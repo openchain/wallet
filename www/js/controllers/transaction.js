@@ -52,6 +52,7 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                     transactionHash: result.transactionHash.toHex(),
                     namespace: encodingService.decodeString(result.mutation.namespace),
                     acc_records: [],
+                    data_records: [],
                     endpoint: endpoint,
                     date: moment(result.transaction.timestamp.toString(), "X").format("MMMM Do YYYY, hh:mm:ss")
                 };
@@ -66,6 +67,11 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                                 valueDelta: newValue.subtract(previousRecord.balance),
                                 value: newValue
                             });
+                        });
+                    } else if (key.recordType == "DATA") {
+                        parsedTransaction.data_records.push({
+                            key: key,
+                            value: encodingService.decodeString(record.value.data)
                         });
                     }
                 })).then(function (result) {

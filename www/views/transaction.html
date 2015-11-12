@@ -34,22 +34,42 @@
           </tr>
         </table>
 
-        <h4>Accounts</h4>
-        <table class="table table-striped wide-table">
-          <tr>
-            <th class="col-md-4">Path</th>
-            <th class="col-md-4">Asset</th>
-            <th class="col-md-2">Balance change</th>
-            <th class="col-md-2">New balance</th>
-          </tr>
-          <tr ng-repeat="record in transaction.acc_records">
-            <td><span title="{{ record.key.path.toString() }}">{{ record.key.path.toString() }}</span></td>
-            <td><span title="{{ record.key.name }}">{{ record.key.name }}</span></td>
-            <td>{{ record.valueDelta.toString() }}</td>
-            <td>{{ record.value.toString() }}</td>
-          </tr>
-        </table>
+        <div ng-show="transaction.acc_records.length > 0">
+          <h4>Accounts</h4>
+          <table class="table table-striped wide-table">
+            <tr>
+              <th class="col-md-4">Path</th>
+              <th class="col-md-4">Asset</th>
+              <th class="col-md-2">Balance change</th>
+              <th class="col-md-2">New balance</th>
+            </tr>
+            <tr ng-repeat="record in transaction.acc_records">
+              <td><span title="{{ record.key.path.toString() }}">{{ record.key.path.toString() }}</span></td>
+              <td><span title="{{ record.key.name }}">{{ record.key.name }}</span></td>
+              <td>{{ record.valueDelta.toString() }}</td>
+              <td>{{ record.value.toString() }}</td>
+            </tr>
+          </table>
+        </div>
       </div>
+
+      <div ng-show="transaction.data_records.length > 0">
+        <h4>Data records</h4>
+        <div ng-repeat="record in transaction.data_records">
+          <table class="table table-condensed record-property-table">
+            <tr>
+              <th>Path</th>
+              <td>{{ record.key.path.toString() }}</td>
+            </tr>
+            <tr>
+              <th>Record name</th>
+              <td>{{ record.key.name }}</td>
+            </tr>
+          </table>
+          <pre>{{ record.value }}</pre>
+        </div>
+      </div>
+
       <div ng-hide="transaction.success">
         <h3 class="text-center">This transaction does not exist on this Openchain endpoint</h3>
       </div>
