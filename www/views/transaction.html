@@ -45,7 +45,7 @@
           <tr ng-repeat="record in transaction.acc_records">
             <td>{{ record.key.path.toString() }}</td>
             <td>{{ record.key.name }}</td>
-            <td>Balance change</td>
+            <td>{{ record.valueDelta.toString() }}</td>
             <td>{{ record.value.toString() }}</td>
           </tr>
         </table>

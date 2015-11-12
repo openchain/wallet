@@ -58,9 +58,13 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                 $q.all(result.mutation.records.map(function (record) {
                     var key = LedgerRecord.parse(record.key);
                     if (key.recordType == "ACC") {
-                        parsedTransaction.acc_records.push({
-                            key: key,
-                            value: encodingService.decodeInt64(record.value.data)
+                        return apiService.getAccount(endpoint, key.path.toString(), key.name, record.version).then(function (previousRecord) {
+                            var newValue = encodingService.decodeInt64(record.value.data);
+                            parsedTransaction.acc_records.push({
+                                key: key,
+                                valueDelta: newValue.subtract(previousRecord.balance),
+                                value: newValue
+                            });
                         });
                     }
                 })).then(function (result) {
