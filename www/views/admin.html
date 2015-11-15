@@ -195,7 +195,7 @@
             </table>
           </div>
 
-          <div class="tree-related-transactions">
+          <div class="tree-related-transactions" ng-show="selectedNode.record.recordKey.recordType">
             <h4>Related transactions</h4>
 
             <div ng-repeat="transaction in transactions">
