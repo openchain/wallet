@@ -205,6 +205,7 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
 
         this.endpoint = endpoint;
         this.records = [];
+        this.metadata = ByteBuffer.fromHex("");
 
         this.addRecord = function (key, value, version) {
             var newRecord = {
@@ -254,11 +255,15 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
             });
         }
 
+        this.addMetadata = function (data) {
+            _this.metadata = encodingService.encodeString(JSON.stringify(data));
+        }
+
         this.submit = function (key) {
             var constructedTransaction = new protobufBuilder.Mutation({
                 "namespace": encodingService.encodeString(_this.endpoint.rootUrl),
                 "records": _this.records,
-                "metadata": ByteBuffer.fromHex("")
+                "metadata": _this.metadata
             });
 
             return apiService.postTransaction(_this.endpoint, constructedTransaction.encode(), key);

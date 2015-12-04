@@ -61,7 +61,7 @@
   <!-- Send Screen -->
   <div ng-switch-when="send" class="row">
     <div class="col-md-8 col-md-offset-2">
-      <form class="form-horizontal" name="sendForm" ng-submit="confirmSend(sendTo, sendAmount, sendForm.destination)">
+      <form class="form-horizontal" name="sendForm" ng-submit="confirmSend(sendForm.destination)">
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h3 class="panel-title">Send Funds</h3>
@@ -97,7 +97,7 @@
                 To
               </label>
               <div class="col-sm-9">
-                <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" ng-model="sendTo" ng-change="sendForm.destination.$setValidity('invalidValue', true)" required>
+                <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" ng-model="fields.sendTo" ng-change="sendForm.destination.$setValidity('invalidValue', true)" required>
                 
                 <p class="help-block" ng-if="sendForm.destination.$invalid && sendForm.destination.$dirty">The destination must start and finish with a slash character if it is a path, or start with @ if it is an alias.</p>
               </div>
@@ -106,7 +106,32 @@
             <div class="form-group" ng-class="{'has-error': sendForm.amount.$invalid && sendForm.amount.$dirty}">
               <label for="amount" class="col-sm-3 control-label">Amount</label>
               <div class="col-sm-9">
-                <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount" ng-change="validateAmount(sendAmount, sendForm.amount)" ng-model="sendAmount" required>
+                <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount" ng-change="validateAmount(sendForm.amount)" ng-model="fields.sendAmount" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="amount" class="col-sm-3 control-label"></label>
+              <div class="col-sm-9">
+                <a onclick="return false;" role="button" data-toggle="collapse" href="#advanced-send" aria-expanded="false">
+                  Advanced
+                </a>
+              </div>
+            </div>
+            
+            <div class="collapse" id="advanced-send">
+              <div class="form-group">
+                <label for="amount" class="col-sm-3 control-label">Memo</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" name="memo" id="memo" placeholder="Memo" ng-model="fields.memo">
+                </div>
+              </div>
+
+              <div class="form-group" >
+                <label for="amount" class="col-sm-3 control-label">Routing to</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" name="routeTo" id="routeTo" placeholder="Route to..." ng-model="fields.routeTo">
+                </div>
               </div>
             </div>
 

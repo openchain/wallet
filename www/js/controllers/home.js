@@ -32,6 +32,12 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
     $scope.rawAddress = walletSettings.derivedKey.privateKey.toAddress().toString();
     $scope.endpoints = endpointManager.endpoints;
     $scope.display = "home";
+    $scope.fields = {
+        "sendTo": "",
+        "sendAmount": "",
+        "routingTo": "",
+        "memo": ""
+    };
 
     // Load all assets in the account
     var balance = [];
@@ -76,22 +82,39 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
     };
 
     // Handle sending the asset
-    $scope.confirmSend = function (sendTo, sendAmountText, destinationInput) {
-        var sendAmount = Long.fromString(sendAmountText);
+    $scope.confirmSend = function (destinationField) {
+        var sendAmount = Long.fromString($scope.fields.sendAmount);
         var endpoint = $scope.asset.endpoint;
         var asset = $scope.asset.currentRecord;
 
+        var memo = $scope.fields.memo;
+        var routing = $scope.fields.routingTo;
+
         var transaction = new TransactionBuilder(endpoint);
+
+        if (memo != "" || routing != "") {
+            var metadata = {};
+            if (memo != "") {
+                metadata.memo = memo;
+            }
+
+            if (routing != "") {
+                metadata.routing = routing;
+            }
+
+            transaction.addMetadata(metadata);
+        }
+
         transaction.addAccountRecord(asset, sendAmount.negate());
-        transaction.fetchAndAddAccountRecord(sendTo, asset.asset, sendAmount).then(function () {
+        transaction.fetchAndAddAccountRecord($scope.fields.sendTo, asset.asset, sendAmount).then(function () {
             return transaction.uiSubmit(walletSettings.derivedKey);
         }, function () {
-            destinationInput.$setValidity("invalidValue", false);
+            destinationField.$setValidity("invalidValue", false);
         });
     };
 
-    $scope.validateAmount = function (amount, control) {
-        control.$setValidity("invalidNumber", validator.isNumber(amount));
+    $scope.validateAmount = function (amountField) {
+        amountField.$setValidity("invalidNumber", validator.isNumber($scope.fields.sendAmount));
     };
 
     $scope.cancelSend = function () {
