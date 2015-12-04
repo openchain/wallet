@@ -35,7 +35,7 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
     $scope.fields = {
         "sendTo": "",
         "sendAmount": "",
-        "routingTo": "",
+        "routeTo": "",
         "memo": ""
     };
 
@@ -88,7 +88,7 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
         var asset = $scope.asset.currentRecord;
 
         var memo = $scope.fields.memo;
-        var routing = $scope.fields.routingTo;
+        var routing = $scope.fields.routeTo;
 
         var transaction = new TransactionBuilder(endpoint);
 
