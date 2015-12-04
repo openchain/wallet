@@ -32,6 +32,10 @@
             <th>Namespace</th>
             <td>{{ transaction.namespace }}</td>
           </tr>
+          <tr ng-show="transaction.memo">
+            <th>Memo</th>
+            <td><code>{{ transaction.memo }}</code></td>
+          </tr>
         </table>
 
         <div ng-show="transaction.acc_records.length > 0">

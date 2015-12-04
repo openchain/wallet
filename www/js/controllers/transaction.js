@@ -51,6 +51,7 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                     mutationHash: result.mutationHash.toHex(),
                     transactionHash: result.transactionHash.toHex(),
                     namespace: encodingService.decodeString(result.mutation.namespace),
+                    memo: getMemo(result.mutation.metadata),
                     acc_records: [],
                     data_records: [],
                     endpoint: endpoint,
@@ -81,6 +82,16 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
             }
 
         });
+    }
+
+    function getMemo(metadata) {
+        try {
+            var decodedMetadata = JSON.parse(encodingService.decodeString(metadata));
+            return decodedMetadata.memo;
+        }
+        catch (e) {
+            return null;
+        }
     }
 
     for (var key in endpointManager.endpoints) {
