@@ -38,7 +38,8 @@
               <span ng-switch-when="InvalidSignature">A digital signature was invalid.</span>
               <span ng-switch-when="NonCanonicalSerialization">The transaction was malformed.</span>
               <span ng-switch-when="InvalidRecord">You attempted to create or modify a type of record which is unknown by the validator.</span>
-              <span ng-switch-when="AccountModificationUnauthorized">You are not authorized to receive or send to this account.</span>
+              <span ng-switch-when="AccountModificationUnauthorized">You are not allowed to send to this account.</span>
+              <span ng-switch-when="AccountCreationUnauthorized">This account has not been authorized to receive payments.</span>
               <span ng-switch-when="UnbalancedTransaction">The transaction is unbalanced.</span>
               <span ng-switch-when="Disabled">The server you are connected to does not validate transactions.</span>
               <span ng-switch-when="ValidationDisabled">The server you are connected to does not validate transactions.</span>
