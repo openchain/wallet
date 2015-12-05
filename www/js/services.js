@@ -245,6 +245,9 @@ module.service("encodingService", function () {
     };
 
     this.decodeInt64 = function (buffer) {
+        if (buffer.limit == 0)
+            return Long.fromNumber(0);
+
         buffer.BE();
         var result = buffer.readInt64();
         buffer.flip();
