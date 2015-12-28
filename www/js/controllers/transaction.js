@@ -50,7 +50,7 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                     success: true,
                     mutationHash: result.mutationHash.toHex(),
                     transactionHash: result.transactionHash.toHex(),
-                    namespace: encodingService.decodeString(result.mutation.namespace),
+                    namespace: result.mutation.namespace.toHex(),
                     memo: getMemo(result.mutation.metadata),
                     acc_records: [],
                     data_records: [],
