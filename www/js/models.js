@@ -42,9 +42,10 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
         this.properties = {};
         this.rootUrl = url;
         this.assets = {};
+        this.namespace = null;
 
         this.loadEndpointInfo = function () {
-            return apiService.getData(_this, "/", "info").then(function (result) {
+            var infoRecord = apiService.getData(_this, "/", "info").then(function (result) {
                 if (result.data == null) {
                     _this.properties = {};
                 }
@@ -62,6 +63,14 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
             }, function () {
                 _this.properties = {};
             });
+
+            var chainInfo = apiService.getChainInfo(_this).then(function (result) {
+                _this.namespace = ByteBuffer.fromHex(result.namespace);
+            }, function () {
+                _this.namespace = encodingService.encodeString(_this.rootUrl);
+            })
+
+            return $q.all([infoRecord, chainInfo]);
         };
 
         this.downloadAssetDefinition = function (assetPath) {
@@ -261,7 +270,7 @@ module.service("TransactionBuilder", function ($q, $rootScope, $location, apiSer
 
         this.submit = function (key) {
             var constructedTransaction = new protobufBuilder.Mutation({
-                "namespace": encodingService.encodeString(_this.endpoint.rootUrl),
+                "namespace": _this.endpoint.namespace,
                 "records": _this.records,
                 "metadata": _this.metadata
             });

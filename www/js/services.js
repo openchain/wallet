@@ -66,6 +66,17 @@ module.service("apiService", function ($http, encodingService, protobufBuilder, 
         });
     }
 
+    this.getChainInfo = function (endpoint) {
+        return $http({
+            url: endpoint.rootUrl + "info",
+            method: "GET"
+        }).then(function (result) {
+            return {
+                namespace: result.data.namespace
+            };
+        });
+    }
+
     this.getAccount = function (endpoint, account, asset, version) {
         return this.getValue(endpoint, encodingService.encodeAccount(account, asset), version).then(function (result) {
             var accountResult = {
