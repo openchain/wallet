@@ -13,6 +13,7 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Controllers");
+var sdk = require("openchain");
 
 // ***** SubmitController *****
 // ****************************
@@ -32,19 +33,21 @@ module.controller("SubmitController", function ($scope, $rootScope, $location, c
     else {
         $scope.display = "pending";
 
-        transaction.transaction.submit(transaction.key)
+        var signer = new sdk.MutationSigner(transaction.key);
+
+        transaction.transaction.addSigningKey(signer).submit()
             .then(function (response) {
                 $scope.display = "success";
-                $scope.transactionHash = response.data["transaction_hash"];
-                $scope.mutationHash = response.data["mutation_hash"];
+                $scope.transactionHash = response["transaction_hash"];
+                $scope.mutationHash = response["mutation_hash"];
             }, function (response) {
                 $scope.display = "error";
 
-                if (response.status == 400) {
-                    $scope.error = response.data["error_code"];
-                } else {
-                    $scope.error = "Unknown";
-                }
+                //if (response.status == 400) {
+                    $scope.error = response["error_code"];
+                //} else {
+                //    $scope.error = "Unknown";
+                //}
             });
     }
 

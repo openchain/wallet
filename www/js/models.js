@@ -13,7 +13,11 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Models", []);
-var bitcore = require("bitcore");
+var bitcore = require("bitcore-lib");
+var sdk = require("openchain");
+var ByteBuffer = sdk.ByteBuffer;
+var LedgerPath = sdk.LedgerPath;
+var RecordKey = sdk.RecordKey;
 
 module.value("walletSettings", {
     hdKey: null,
@@ -34,7 +38,35 @@ module.value("walletSettings", {
     }
 });
 
-module.factory("Endpoint", function ($q, apiService, encodingService) {
+module.factory("ApiClient", function ($http) {
+    var ApiClient = function (url) {
+        var _this = this;
+
+        sdk.ApiClient.call(this, url);
+
+        this.httpGet = function (url) {
+            return $http({
+                url: url,
+                method: "GET"
+            }).then(function (result) {
+                return result.data;
+            });
+        };
+
+        this.httpPost = function (url, data) {
+            return $http.post(url, data)
+            .then(function (result) {
+                return result.data;
+            });
+        };
+    };
+
+    ApiClient.prototype = new sdk.ApiClient();
+
+    return ApiClient;
+});
+
+module.factory("Endpoint", function ($q, ApiClient) {
 
     var Endpoint = function (url) {
         var _this = this;
@@ -43,9 +75,10 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
         this.rootUrl = url;
         this.assets = {};
         this.namespace = null;
+        this.apiService = new ApiClient(this.rootUrl);
 
         this.loadEndpointInfo = function () {
-            var infoRecord = apiService.getData(_this, "/", "info").then(function (result) {
+            var infoRecord = _this.apiService.getDataRecord("/", "info").then(function (result) {
                 if (result.data == null) {
                     _this.properties = {};
                 }
@@ -64,22 +97,22 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
                 _this.properties = {};
             });
 
-            var chainInfo = apiService.getChainInfo(_this).then(function (result) {
-                _this.namespace = ByteBuffer.fromHex(result.namespace);
-            }, function () {
-                _this.namespace = encodingService.encodeString(_this.rootUrl);
+            var chainInfo = _this.apiService.initialize().then(function () { }, function () {
+                _this.apiService.namespace = sdk.encoding.encodeString(_this.rootUrl);
             })
 
-            return $q.all([infoRecord, chainInfo]);
+            return $q.all([infoRecord, chainInfo]).then(function (result) {
+                return result[0];
+            });
         };
 
         this.downloadAssetDefinition = function (assetPath) {
-            return apiService.getValue(_this, encodingService.encodeData(assetPath, "asdef")).then(function (result) {
+            return _this.apiService.getDataRecord(assetPath, "asdef").then(function (result) {
                 if (result.value.remaining() == 0) {
                     return { key: result.key, value: null, version: result.version };
                 }
                 else {
-                    return { key: result.key, value: JSON.parse(encodingService.decodeString(result.value)), version: result.version };
+                    return { key: result.key, value: JSON.parse(sdk.encoding.decodeString(result.value)), version: result.version };
                 }
             })
         };
@@ -118,7 +151,7 @@ module.factory("Endpoint", function ($q, apiService, encodingService) {
     return Endpoint;
 });
 
-module.factory("AssetData", function ($q, apiService, LedgerPath, encodingService) {
+module.factory("AssetData", function ($q) {
 
     var AssetData = function (endpoint, assetPath) {
         var _this = this;
@@ -136,6 +169,9 @@ module.factory("AssetData", function ($q, apiService, LedgerPath, encodingServic
 
         this.setAccountBalance = function (balanceData) {
             _this.currentRecord = balanceData;
+            _this.currentRecord.version = ByteBuffer.fromHex(balanceData.version);
+            _this.currentRecord.key = new RecordKey(balanceData.account, "ACC", balanceData.asset).toByteBuffer();
+            _this.currentRecord.balance = Long.fromString(balanceData.balance);
         };
 
         this.fetchAssetDefinition = function () {
@@ -148,141 +184,20 @@ module.factory("AssetData", function ($q, apiService, LedgerPath, encodingServic
     return AssetData;
 });
 
-module.factory("LedgerRecord", function (LedgerPath, encodingService) {
-    var LedgerRecord = function (path, recordType, name) {
-        var _this = this;
-
-        this.path = LedgerPath.parse(path);
-        this.recordType = recordType;
-        this.name = name;
-
-        this.toString = function () {
-            return _this.path.toString() + ":" + _this.recordType + ":" + _this.name;
-        };
-
-        this.toByteBuffer = function () {
-            return ByteBuffer.wrap(_this.toString(), "utf8", true);
-        };
-    }
-
-    LedgerRecord.parse = function (value) {
-        var text = value;
-        if (typeof text !== "string") {
-            text = encodingService.decodeString(text);
-        }
-
-        var parts = text.split(":");
-
-        if (parts.length < 3) {
-            throw "Invalid record key";
-        }
-
-        return new LedgerRecord(parts[0], parts[1], parts.slice(2, parts.length).join(":"));
-    };
-
-    return LedgerRecord;
-});
-
-module.factory("LedgerPath", function () {
-    var LedgerPath = function (parts) {
-        var _this = this;
-
-        this.parts = parts;
-
-        this.toString = function () {
-            return "/" + _this.parts.map(function (item) { return item + "/" }).join("");
-        };
-    }
-
-    LedgerPath.parse = function (value) {
-        var parts = value.split("/");
-
-        if (parts.length < 2 || parts[0] != "" || parts[parts.length - 1] != "") {
-            throw "Invalid path";
-        }
-
-        return new LedgerPath(parts.slice(1, parts.length - 1));
-    };
-
-    return LedgerPath;
-});
-
-module.service("TransactionBuilder", function ($q, $rootScope, $location, apiService, protobufBuilder, encodingService) {
+module.service("TransactionBuilder", function ($q, $rootScope, $location) {
 
     var TransactionBuilder = function (endpoint) {
         var _this = this;
 
-        this.endpoint = endpoint;
-        this.records = [];
-        this.metadata = ByteBuffer.fromHex("");
-
-        this.addRecord = function (key, value, version) {
-            var newRecord = {
-                "key": key,
-                "version": version
-            };
-
-            if (value != null) {
-                newRecord["value"] = { "data": value };
-            }
-            else {
-                newRecord["value"] = null;
-            }
-
-            _this.records.push(newRecord);
-
-            return _this;
-        };
-
-        this.addAccountRecord = function (previous, change) {
-            return _this.addRecord(
-                previous.key,
-                encodingService.encodeInt64(previous.balance.add(change)),
-                previous.version);
-        };
-
-        this.fetchAndAddAccountRecord = function (account, asset, change) {
-            // Resolve name accounts
-            if (account.slice(0, 1) == "@") {
-                account = "/aka/" + account.slice(1, account.length) + "/";
-            }
-
-            return apiService.getData(_this.endpoint, account, "goto").then(function (result) {
-                if (result.data == null) {
-                    return account;
-                }
-                else {
-                    // If a goto DATA record exists, we use the redirected path
-                    _this.addRecord(result.key, null, result.version);
-                    return result.data;
-                }
-            }).then(function (accountResult) {
-                return apiService.getAccount(_this.endpoint, accountResult, asset);
-            })
-            .then(function (currentRecord) {
-                _this.addAccountRecord(currentRecord, change);
-            });
-        }
-
-        this.addMetadata = function (data) {
-            _this.metadata = encodingService.encodeString(JSON.stringify(data));
-        }
-
-        this.submit = function (key) {
-            var constructedTransaction = new protobufBuilder.Mutation({
-                "namespace": _this.endpoint.namespace,
-                "records": _this.records,
-                "metadata": _this.metadata
-            });
-
-            return apiService.postTransaction(_this.endpoint, constructedTransaction.encode(), key);
-        };
+        sdk.TransactionBuilder.call(this, endpoint.apiService);
 
         this.uiSubmit = function (key) {
             $rootScope.submitTransaction = { transaction: _this, key: key };
             $location.path("/submit");
         };
-    }
+    };
+
+    TransactionBuilder.prototype = new sdk.TransactionBuilder({ namespace: "" });
 
     TransactionBuilder.uiError = function () {
         $rootScope.submitTransaction = null;

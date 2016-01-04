@@ -25,10 +25,10 @@ self.addEventListener("message", function (e) {
     window.parseInt = parseInt;
     window.parseFloat = parseFloat;
 
-    importScripts("../bower_components/bitcore/bitcore.js");
+    importScripts("../bower_components/bitcore-lib/bitcore-lib.js");
     importScripts("../bower_components/bitcore-mnemonic/bitcore-mnemonic.js");
 
-    var bitcore = require("bitcore");
+    var bitcore = require("bitcore-lib");
     var Mnemonic = require("bitcore-mnemonic");
 
     var code = new Mnemonic(e.data.mnemonic);

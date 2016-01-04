@@ -13,15 +13,13 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Controllers");
-var ByteBuffer = dcodeIO.ByteBuffer;
-var Long = dcodeIO.Long;
-var bitcore = require("bitcore");
-var Mnemonic = require("bitcore-mnemonic");
+var sdk = require("openchain");
+var Long = sdk.Long;
 
 // ***** HomeController *****
 // **************************
 
-module.controller("HomeController", function ($scope, $rootScope, controllerService, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, encodingService, validator, AssetData) {
+module.controller("HomeController", function ($scope, $rootScope, controllerService, $route, $q, walletSettings, endpointManager, TransactionBuilder, validator, AssetData) {
 
     if (!controllerService.checkState())
         return;
@@ -50,7 +48,7 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
             assets: []
         };
         balance.push(dataModel);
-        apiService.getAccountAssets(endpoint, walletSettings.rootAccount).then(function (result) {
+        endpoint.apiService.getAccountRecords(walletSettings.rootAccount).then(function (result) {
             for (var itemKey in result) {
                 var assetData = new AssetData(endpoint, result[itemKey].asset);
                 assetData.setAccountBalance(result[itemKey]);
@@ -102,11 +100,11 @@ module.controller("HomeController", function ($scope, $rootScope, controllerServ
                 metadata.routing = routing;
             }
 
-            transaction.addMetadata(metadata);
+            transaction.setMetadata(metadata);
         }
 
         transaction.addAccountRecord(asset, sendAmount.negate());
-        transaction.fetchAndAddAccountRecord($scope.fields.sendTo, asset.asset, sendAmount).then(function () {
+        transaction.updateAccountRecord($scope.fields.sendTo, asset.asset, sendAmount).then(function () {
             return transaction.uiSubmit(walletSettings.derivedKey);
         }, function () {
             destinationField.$setValidity("invalidValue", false);

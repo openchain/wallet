@@ -13,10 +13,12 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Controllers");
-var ByteBuffer = dcodeIO.ByteBuffer;
-var Long = dcodeIO.Long;
+var sdk = require("openchain");
+var RecordKey = sdk.RecordKey;
+var encoding = sdk.encoding;
+var Long = sdk.Long;
 
-module.controller("AdminController", function ($scope, $rootScope, $location, controllerService, walletSettings, apiService, encodingService, endpointManager) {
+module.controller("AdminController", function ($scope, $rootScope, $location, controllerService, walletSettings, endpointManager) {
 
     if (!controllerService.checkState())
         return;
@@ -44,7 +46,7 @@ module.controller("AdminController", function ($scope, $rootScope, $location, co
     }
 });
 
-module.controller("TransactionController", function ($scope, $location, $q, TransactionBuilder, apiService, encodingService, walletSettings, validator) {
+module.controller("TransactionController", function ($scope, $location, $q, TransactionBuilder, walletSettings, validator) {
 
     $scope.mutations = [];
 
@@ -79,7 +81,7 @@ module.controller("TransactionController", function ($scope, $location, $q, Tran
         if (!valid)
             return;
         
-        var transaction = new TransactionBuilder(endpoint);
+        var transaction = new TransactionBuilder(endpoint.apiService);
         $q.all($scope.mutations.map(function (mutation) {
             return transaction.fetchAndAddAccountRecord(mutation.account, mutation.asset, Long.fromString(mutation.amount));
         }))
@@ -94,7 +96,7 @@ module.controller("TransactionController", function ($scope, $location, $q, Tran
 
 });
 
-module.controller("AliasEditorController", function ($scope, $location, $q, TransactionBuilder, apiService, encodingService, walletSettings) {
+module.controller("AliasEditorController", function ($scope, $location, $q, TransactionBuilder, walletSettings) {
     $scope.fields = {
         alias: "",
         path: ""
@@ -119,7 +121,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
         apiService.getData(endpoint, "/aka/" + $scope.fields.alias + "/", "goto").then(function (result) {
 
             var transaction = new TransactionBuilder(endpoint);
-            transaction.addRecord(result.key, encodingService.encodeString($scope.fields.path), result.version);
+            transaction.addRecord(result.key, encoding.encodeString($scope.fields.path), result.version);
 
             return transaction.uiSubmit(walletSettings.derivedKey);
         }, function () {
@@ -128,7 +130,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     };
 });
 
-module.controller("DataEditorController", function ($scope, apiService, TransactionBuilder, LedgerRecord, encodingService, walletSettings) {
+module.controller("DataEditorController", function ($scope, TransactionBuilder, walletSettings) {
     $scope.fields = {
         recordName: "",
         path: "",
@@ -136,7 +138,7 @@ module.controller("DataEditorController", function ($scope, apiService, Transact
     };
 
     $scope.loadData = function () {
-        apiService.getData($scope.endpoint, $scope.fields.path, $scope.fields.recordName).then(function (result) {
+        $scope.endpoint.apiService.getDataRecord($scope.fields.path, $scope.fields.recordName).then(function (result) {
             if (result.data != null) {
                 $scope.fields.data = result.data;
             }
@@ -151,10 +153,10 @@ module.controller("DataEditorController", function ($scope, apiService, Transact
     $scope.submit = function () {
         var endpoint = $scope.endpoint;
 
-        apiService.getData(endpoint, $scope.fields.path, $scope.fields.recordName).then(function (result) {
+        $scope.endpoint.apiService.getDataRecord($scope.fields.path, $scope.fields.recordName).then(function (result) {
 
             var transaction = new TransactionBuilder(endpoint);
-            transaction.addRecord(result.key, encodingService.encodeString($scope.fields.data), result.version);
+            transaction.addRecord(result.key, encoding.encodeString($scope.fields.data), result.version);
 
             return transaction.uiSubmit(walletSettings.derivedKey);
         }, function () {
@@ -163,7 +165,7 @@ module.controller("DataEditorController", function ($scope, apiService, Transact
     };
 });
 
-module.controller("InfoEditorController", function ($scope, apiService, TransactionBuilder, LedgerRecord, encodingService, walletSettings) {
+module.controller("InfoEditorController", function ($scope, TransactionBuilder, walletSettings) {
     $scope.fields = {
         name: "",
         validatorUrl: "",
@@ -172,7 +174,7 @@ module.controller("InfoEditorController", function ($scope, apiService, Transact
     };
 
     $scope.loadData = function () {
-        apiService.getData($scope.endpoint, "/", "info").then(function (result) {
+        $scope.endpoint.apiService.getDataRecord("/", "info").then(function (result) {
             if (result.data != null) {
                 var fields = JSON.parse(result.data);
                 $scope.fields = {
@@ -198,7 +200,7 @@ module.controller("InfoEditorController", function ($scope, apiService, Transact
     $scope.submit = function () {
         var endpoint = $scope.endpoint;
 
-        apiService.getData(endpoint, "/", "info").then(function (result) {
+        $scope.endpoint.apiService.getDataRecord("/", "info").then(function (result) {
 
             var transaction = new TransactionBuilder(endpoint);
 
@@ -209,7 +211,7 @@ module.controller("InfoEditorController", function ($scope, apiService, Transact
                 webpage_url: $scope.fields.webpageUrl
             });
 
-            transaction.addRecord(result.key, encodingService.encodeString(value), result.version);
+            transaction.addRecord(result.key, encoding.encodeString(value), result.version);
 
             return transaction.uiSubmit(walletSettings.derivedKey);
         }, function () {
@@ -218,10 +220,10 @@ module.controller("InfoEditorController", function ($scope, apiService, Transact
     };
 });
 
-module.controller("TreeViewController", function ($scope, apiService, encodingService) {
+module.controller("TreeViewController", function ($scope) {
 
     var refreshTree = function () {
-        apiService.getSubaccounts($scope.endpoint, "/").then(function (result) {
+        $scope.endpoint.apiService.getSubAccounts("/").then(function (result) {
             var rootNode = {
                 Path: "/",
                 type: "",
@@ -242,11 +244,11 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
 
                     if (account.recordKey.recordType == "ACC") {
                         child.asset = account.recordKey.name;
-                        child.amount = encodingService.decodeInt64(account.value).toString();
+                        child.amount = encoding.decodeInt64(account.value).toString();
                     }
                     else if (account.recordKey.recordType == "DATA") {
                         try {
-                            child.data = encodingService.decodeString(account.value);
+                            child.data = encoding.decodeString(account.value);
                         }
                         catch (e) {
                             child.data = "<invalid>";
@@ -278,6 +280,7 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
             };
 
             for (var i in result) {
+                result[i].recordKey = RecordKey.parse(result[i].key);
                 addToTree(rootNode, result[i], result[i].recordKey.path.parts);
             }
 
@@ -301,8 +304,8 @@ module.controller("TreeViewController", function ($scope, apiService, encodingSe
         $scope.selectedNode = node;
         $scope.transactions = [];
 
-        apiService.getRecordTransactions($scope.endpoint, encodingService.encodeString(node.key).toHex()).then(function (result) {
-            $scope.transactions = result;
+        $scope.endpoint.apiService.getRecordMutations(node.key).then(function (result) {
+            $scope.transactions = result.map(function (item) { return item.toHex(); });
         });
     };
 

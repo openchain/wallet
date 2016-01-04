@@ -13,11 +13,14 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Controllers");
+var sdk = require("openchain");
+var RecordKey = sdk.RecordKey;
+var encoding = sdk.encoding;
 
 // ***** TransactionController *****
 // *********************************
 
-module.controller("TransactionInfoController", function ($scope, $rootScope, $routeParams, $route, $q, controllerService, apiService, encodingService, endpointManager, LedgerRecord) {
+module.controller("TransactionInfoController", function ($scope, $rootScope, $routeParams, $route, $q, controllerService, endpointManager) {
 
     if (!controllerService.checkState())
         return;
@@ -41,7 +44,7 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
     function loadEndpoint(key) {
         var endpoint = endpointManager.endpoints[key];
         
-        apiService.getTransaction(endpoint, mutationHash).then(function (result) {
+        endpoint.apiService.getTransaction(mutationHash).then(function (result) {
             if (result == null) {
                 transactions.push({ endpoint: endpoint, success: false });
             }
@@ -59,10 +62,10 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                 };
 
                 $q.all(result.mutation.records.map(function (record) {
-                    var key = LedgerRecord.parse(record.key);
+                    var key = RecordKey.parse(record.key);
                     if (key.recordType == "ACC") {
-                        return apiService.getAccount(endpoint, key.path.toString(), key.name, record.version).then(function (previousRecord) {
-                            var newValue = record.value == null ? null : encodingService.decodeInt64(record.value.data);
+                        return endpoint.apiService.getAccount(key.path.toString(), key.name, record.version).then(function (previousRecord) {
+                            var newValue = record.value == null ? null : encoding.decodeInt64(record.value.data);
                             parsedTransaction.acc_records.push({
                                 key: key,
                                 valueDelta: newValue == null ? null : newValue.subtract(previousRecord.balance),
@@ -72,7 +75,7 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                     } else if (key.recordType == "DATA") {
                         parsedTransaction.data_records.push({
                             key: key,
-                            value: record.value == null ? null : encodingService.decodeString(record.value.data)
+                            value: record.value == null ? null : encoding.decodeString(record.value.data)
                         });
                     }
                 })).then(function (result) {
@@ -86,7 +89,7 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
 
     function getMemo(metadata) {
         try {
-            var decodedMetadata = JSON.parse(encodingService.decodeString(metadata));
+            var decodedMetadata = JSON.parse(encoding.decodeString(metadata));
             return decodedMetadata.memo;
         }
         catch (e) {

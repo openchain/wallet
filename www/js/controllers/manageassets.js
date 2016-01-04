@@ -13,13 +13,16 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Controllers");
-var ByteBuffer = dcodeIO.ByteBuffer;
-var Long = dcodeIO.Long;
+var sdk = require("openchain");
+var encoding = sdk.encoding;
+var RecordKey = sdk.RecordKey;
+var LedgerPath = sdk.LedgerPath;
+var Long = sdk.Long;
 
 // ***** ManageAssetsController *****
 // **********************************
 
-module.controller("ManageAssetsController", function ($scope, $rootScope, controllerService, $route, $q, apiService, walletSettings, endpointManager, TransactionBuilder, LedgerPath, encodingService, validator, AssetData) {
+module.controller("ManageAssetsController", function ($scope, $rootScope, controllerService, $route, $q, walletSettings, endpointManager, TransactionBuilder, validator, AssetData) {
 
     if (!controllerService.checkState())
         return;
@@ -77,7 +80,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, contro
 
     $scope.editAsset = function () {
 
-        var key = encodingService.encodeData($scope.fields.assetPath, "asdef");
+        var key = new RecordKey($scope.fields.assetPath, "DATA", "asdef").toByteBuffer();
 
         var value = JSON.stringify({
             name: $scope.fields.assetName,
@@ -86,7 +89,7 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, contro
         });
 
         new TransactionBuilder($scope.endpoint)
-            .addRecord(key, encodingService.encodeString(value), $scope.version)
+            .addRecord(key, encoding.encodeString(value), $scope.version)
             .uiSubmit(findKey($scope.fields.assetPath));
     };
 
@@ -95,8 +98,8 @@ module.controller("ManageAssetsController", function ($scope, $rootScope, contro
         var transaction = new TransactionBuilder($scope.endpoint);
 
         $q.all([
-            transaction.fetchAndAddAccountRecord($scope.fields.assetPath, $scope.fields.assetPath, issueAmount.negate()),
-            transaction.fetchAndAddAccountRecord(walletSettings.rootAccount, $scope.fields.assetPath, issueAmount),
+            transaction.updateAccountRecord($scope.fields.assetPath, $scope.fields.assetPath, issueAmount.negate()),
+            transaction.updateAccountRecord(walletSettings.rootAccount, $scope.fields.assetPath, issueAmount),
         ]).then(function (array) {
             return transaction.uiSubmit(findKey($scope.fields.assetPath));
         }, function () {

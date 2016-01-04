@@ -13,14 +13,11 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Controllers");
-var ByteBuffer = dcodeIO.ByteBuffer;
-var bitcore = require("bitcore");
-var Mnemonic = require("bitcore-mnemonic");
 
 // ***** AddEndpointController *****
 // *********************************
 
-module.controller("AddEndpointController", function ($scope, $rootScope, $location, Endpoint, settings, controllerService, apiService, endpointManager) {
+module.controller("AddEndpointController", function ($scope, $rootScope, $location, Endpoint, settings, controllerService, endpointManager) {
 
     if (!controllerService.checkState())
         return;

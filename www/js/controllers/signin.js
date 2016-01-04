@@ -13,8 +13,7 @@
 // limitations under the License.
 
 var module = angular.module("OpenchainWallet.Controllers");
-var ByteBuffer = dcodeIO.ByteBuffer;
-var bitcore = require("bitcore");
+var bitcore = require("bitcore-lib");
 var Mnemonic = require("bitcore-mnemonic");
 
 module.controller("SignInController", function ($scope, $rootScope, $location, endpointManager, controllerService, walletSettings) {
@@ -57,21 +56,6 @@ module.controller("SignInController", function ($scope, $rootScope, $location, e
                     });
                 })
             }, false);
-
-            var livenet = bitcore.Networks.get("livenet");
-
-            bitcore.Networks.add({
-                name: "openchain",
-                alias: "openchain",
-                pubkeyhash: 76,
-                privatekey: livenet.privatekey,
-                scripthash: 78,
-                xpubkey: livenet.xpubkey,
-                xprivkey: livenet.xprivkey,
-                networkMagic: 0,
-                port: livenet.port,
-                dnsSeeds: livenet.dnsSeeds
-            });
 
             worker.postMessage({ mnemonic: $scope.properties.seed });
 
