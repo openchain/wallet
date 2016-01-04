@@ -1,0 +1,31 @@
+{
+  "name": "openchain",
+  "version": "0.1.7",
+  "main": "dist/openchain.js",
+  "ignore": [
+    "lib",
+    "tests",
+    ".gitattributes",
+    ".gitignore",
+    ".npmignore",
+    "bower.json",
+    "gruntFile.js",
+    "package.json",
+    "openchain-js.njsproj",
+    "openchain-js.sln",
+    "package.json"
+  ],
+  "dependencies": {
+    "bitcore-lib": "~0.13.11"
+  },
+  "homepage": "https://github.com/openchain/openchain-js",
+  "_release": "0.1.7",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.7",
+    "commit": "9e3d018a58f8f106b48c9ad1eb9c5bb7e5f87c0d"
+  },
+  "_source": "git://github.com/openchain/openchain-js.git",
+  "_target": "~0.1.7",
+  "_originalSource": "openchain"
+}

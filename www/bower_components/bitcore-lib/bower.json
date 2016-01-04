@@ -1,7 +1,7 @@
 {
-  "name": "bitcore",
-  "main": "./bitcore.min.js",
-  "version": "0.13.5",
+  "name": "bitcore-lib",
+  "main": "./bitcore-lib.min.js",
+  "version": "0.13.11",
   "homepage": "http://bitcore.io",
   "authors": [
     "BitPay, Inc."
@@ -26,14 +26,5 @@
     "karma.conf.js",
     "npm-shrinkwrap.json",
     "test"
-  ],
-  "_release": "0.13.5",
-  "_resolution": {
-    "type": "version",
-    "tag": "v0.13.5",
-    "commit": "0f051b9dcffa10710633c225dc9959aed985b3cb"
-  },
-  "_source": "git://github.com/bitpay/bitcore.git",
-  "_target": "~0.13.5",
-  "_originalSource": "bitcore"
+  ]
 }

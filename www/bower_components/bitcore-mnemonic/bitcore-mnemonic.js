@@ -16,13 +16,13 @@ var spec = {
   }]
 };
 
-module.exports = require('bitcore').errors.extend(spec);
+module.exports = require('bitcore-lib').errors.extend(spec);
 
-},{"bitcore":"bitcore"}],2:[function(require,module,exports){
+},{"bitcore-lib":"bitcore-lib"}],2:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
-var bitcore = require('bitcore');
+var bitcore = require('bitcore-lib');
 var BN = bitcore.crypto.BN;
 var unorm = require('unorm');
 var _ = bitcore.deps._;
@@ -317,7 +317,7 @@ Mnemonic._entropyChecksum = function(entropy) {
 module.exports = Mnemonic;
 
 }).call(this,require("buffer").Buffer)
-},{"./errors":1,"./pbkdf2":3,"./words":7,"bitcore":"bitcore","buffer":11,"unorm":223}],3:[function(require,module,exports){
+},{"./errors":1,"./pbkdf2":3,"./words":7,"bitcore-lib":"bitcore-lib","buffer":11,"unorm":223}],3:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -18663,8 +18663,8 @@ exports.isBuffer = isBuffer;
 function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
-}).call(this,{"isBuffer":require("/home/braydon/bitcore-mnemonic/node_modules/bitcore-build/node_modules/browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js")})
-},{"/home/braydon/bitcore-mnemonic/node_modules/bitcore-build/node_modules/browserify/node_modules/insert-module-globals/node_modules/is-buffer/index.js":203}],213:[function(require,module,exports){
+}).call(this,{"isBuffer":require("../../../../insert-module-globals/node_modules/is-buffer/index.js")})
+},{"../../../../insert-module-globals/node_modules/is-buffer/index.js":203}],213:[function(require,module,exports){
 (function (process){
 'use strict';
 module.exports = nextTick;
