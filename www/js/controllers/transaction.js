@@ -64,7 +64,7 @@ module.controller("TransactionInfoController", function ($scope, $rootScope, $ro
                 $q.all(result.mutation.records.map(function (record) {
                     var key = RecordKey.parse(record.key);
                     if (key.recordType == "ACC") {
-                        return endpoint.apiService.getAccount(key.path.toString(), key.name, record.version).then(function (previousRecord) {
+                        return endpoint.apiService.getAccountRecord(key.path.toString(), key.name, record.version).then(function (previousRecord) {
                             var newValue = record.value == null ? null : encoding.decodeInt64(record.value.data);
                             parsedTransaction.acc_records.push({
                                 key: key,

@@ -61,7 +61,7 @@ module.factory("ApiClient", function ($http) {
         };
     };
 
-    ApiClient.prototype = new sdk.ApiClient();
+    ApiClient.prototype = new sdk.ApiClient("");
 
     return ApiClient;
 });
@@ -93,7 +93,7 @@ module.factory("Endpoint", function ($q, ApiClient) {
                 }
 
                 return _this;
-            }, function () {
+            }, function (err) {
                 _this.properties = {};
             });
 

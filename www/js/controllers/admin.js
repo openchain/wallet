@@ -81,9 +81,9 @@ module.controller("TransactionController", function ($scope, $location, $q, Tran
         if (!valid)
             return;
         
-        var transaction = new TransactionBuilder(endpoint.apiService);
+        var transaction = new TransactionBuilder(endpoint);
         $q.all($scope.mutations.map(function (mutation) {
-            return transaction.fetchAndAddAccountRecord(mutation.account, mutation.asset, Long.fromString(mutation.amount));
+            return transaction.updateAccountRecord(mutation.account, mutation.asset, Long.fromString(mutation.amount));
         }))
         .then(function(array) {
             return transaction.uiSubmit(walletSettings.derivedKey);
@@ -103,7 +103,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     };
 
     $scope.loadAlias = function () {
-        apiService.getData($scope.endpoint, "/aka/" + $scope.fields.alias + "/", "goto").then(function (result) {
+        $scope.endpoint.apiService.getDataRecord("/aka/" + $scope.fields.alias + "/", "goto").then(function (result) {
             if (result.data != null) {
                 $scope.fields.path = result.data;
             }
@@ -118,7 +118,7 @@ module.controller("AliasEditorController", function ($scope, $location, $q, Tran
     $scope.submit = function () {
         var endpoint = $scope.endpoint;
 
-        apiService.getData(endpoint, "/aka/" + $scope.fields.alias + "/", "goto").then(function (result) {
+        endpoint.apiService.getDataRecord("/aka/" + $scope.fields.alias + "/", "goto").then(function (result) {
 
             var transaction = new TransactionBuilder(endpoint);
             transaction.addRecord(result.key, encoding.encodeString($scope.fields.path), result.version);

@@ -43,11 +43,11 @@ module.controller("SubmitController", function ($scope, $rootScope, $location, c
             }, function (response) {
                 $scope.display = "error";
 
-                //if (response.status == 400) {
-                    $scope.error = response["error_code"];
-                //} else {
-                //    $scope.error = "Unknown";
-                //}
+                if (response.status == 400) {
+                    $scope.error = response.data["error_code"];
+                } else {
+                    $scope.error = "Unknown";
+                }
             });
     }
 
