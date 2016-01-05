@@ -1,6 +1,6 @@
 {
   "name": "openchain",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "main": "dist/openchain.js",
   "ignore": [
     "lib",
@@ -19,13 +19,13 @@
     "bitcore-lib": "~0.13.11"
   },
   "homepage": "https://github.com/openchain/openchain-js",
-  "_release": "0.1.7",
+  "_release": "0.1.9",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.7",
-    "commit": "9e3d018a58f8f106b48c9ad1eb9c5bb7e5f87c0d"
+    "tag": "v0.1.9",
+    "commit": "6498db7b34ec24f1e5ce3d57f2d92aab4250d568"
   },
   "_source": "git://github.com/openchain/openchain-js.git",
-  "_target": "~0.1.7",
+  "_target": "~0.1.9",
   "_originalSource": "openchain"
 }

@@ -17,7 +17,7 @@
   "dependencies": {
     "jquery": "~2.1.4",
     "bitcore-mnemonic": "~1.0.1",
-    "openchain": "~0.1.7",
+    "openchain": "~0.1.9",
     "angular": "~1.4.7",
     "angular-route": "~1.4.7",
     "protobuf": "dcodeIO/ProtoBuf.js#~4.0.0",
