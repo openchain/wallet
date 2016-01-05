@@ -1,5 +1,5 @@
 {
-  "name": "OpenchainWallet",
+  "name": "openchain-wallet",
   "version": "0.3.0",
   "authors": [
     "Flavien Charlon <flavien@charlon.net>"
@@ -17,10 +17,9 @@
   "dependencies": {
     "jquery": "~2.1.4",
     "bitcore-mnemonic": "~1.0.1",
-    "openchain": "~0.1.9",
+    "openchain": "~0.2.0",
     "angular": "~1.4.7",
     "angular-route": "~1.4.7",
-    "protobuf": "dcodeIO/ProtoBuf.js#~4.0.0",
     "bootstrap": "~3.3.5",
     "less": "~2.5.3",
     "components-font-awesome": "~4.3.0",
