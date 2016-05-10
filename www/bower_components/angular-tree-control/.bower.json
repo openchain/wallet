@@ -1,6 +1,6 @@
 {
   "name": "angular-tree-control",
-  "version": "0.2.21",
+  "version": "0.2.26",
   "author": "Yoav Abrahami",
   "contributors": [
     "Benjamin Orozco <benoror@gmail.com>"
@@ -16,21 +16,21 @@
     "karma.conf.js"
   ],
   "dependencies": {
-    "angular": "~1.2.7"
+    "angular": "~1.4.4"
   },
   "devDependencies": {
-    "angular-mocks": "~1.2.7",
-    "jquery": "~2.0.3",
+    "angular-mocks": "~1.4.4",
+    "jquery": "~2.2.2",
     "bootstrap": "~3.1.1",
     "angular-bootstrap": "~0.11.0",
     "google-code-prettify": "1.0.1"
   },
   "homepage": "https://github.com/wix/angular-tree-control",
-  "_release": "0.2.21",
+  "_release": "0.2.26",
   "_resolution": {
     "type": "version",
-    "tag": "0.2.21",
-    "commit": "363cab47c5c55960ed4da1d9e99c2f1d66499b74"
+    "tag": "0.2.26",
+    "commit": "b197cc3b2d0697e48f10c2245911f138443e2f04"
   },
   "_source": "git://github.com/wix/angular-tree-control.git",
   "_target": "~0.2.15",

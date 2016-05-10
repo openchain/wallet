@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Angular Tree</title>
-    <script src="demo/jquery.2.0.3.js"></script>
+    <script src="demo/jquery-2.2.2.js"></script>
     <script src="demo/angular.1.2.29.js"></script>
     <script src="demo/bootstrap.3.1.1.js"></script>
     <script src="demo/ui-bootstrap-tpls.0.11.2.js"></script>
@@ -31,6 +31,7 @@
         .docs-sidenav > li > a:hover {background-color: transparent; color: #563d7c; border-left: 1px solid #563d7c;padding-left: 19px;}
         .type-hint-object {background:#999;}
         .type-hint-boolean {background:rgb(18, 131, 39);}
+        .type-hint-function {background: rgb(36, 53, 131);}
         .type-hint-number {background:rgb(189, 63, 66);}
     </style>
 </head>
@@ -174,6 +175,7 @@
         <tr><td><code>$last</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is last in the iterator.</td></tr>
         <tr><td><code>$odd</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is even (otherwise false).</td></tr>
         <tr><td><code>$even</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is odd (otherwise false).</td></tr>
+        <tr><td><code>$path</code></td><td><span class="label type-hint-function">function</span></td><td>a function that when called, returns the path to the current node.</td></tr>
     </table>
     <div class="row">
         <tabset>
@@ -428,8 +430,8 @@
                     <div save-content="events-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     on-selection="showSelected(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even)"
-                                     on-node-toggle="showToggle(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even)">
+                                     on-selection="showSelected(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even, $path)"
+                                     on-node-toggle="showToggle(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even, $path)">
                             label: {{node.label}} ({{node.id}})
                         </treecontrol>
                     </div>
@@ -460,6 +462,7 @@
         <tr><td><code>$last</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is last in the iterator.</td></tr>
         <tr><td><code>$odd</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is even (otherwise false).</td></tr>
         <tr><td><code>$even</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is odd (otherwise false).</td></tr>
+        <tr><td><code>$path</code></td><td><span class="label type-hint-function">function</span></td><td>a function that when called, returns the path to the current node.</td></tr>
         <tr><td><code>selected</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the node is selected, false if it is de-selected. Only applies to the on-selection event.</td></tr>
         <tr><td><code>expanded</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the node is expanding, false if the node is contracting. Only applies to the on-node-toggle event.</td></tr>
     </table>
@@ -476,17 +479,19 @@
     <script save-content="events-js">
         function Events($scope) {
             $scope.treedata=createSubTree(3, 4, "");
-            $scope.showToggle = function(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+            $scope.showToggle = function(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even, $path) {
                 var parent = $parentNode?("child of: " + $parentNode.label):"root node";
                 var location = $first?"first":($last?"last":("middle node at index " + $index));
                 var oddEven = $odd?"odd":"even";
-                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
+                var path = $path().map(function(node) {return node.label});
+                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") +" (" + parent + ", " + location +", " + oddEven + ", ["+ path+"])</li>");
             };
-            $scope.showSelected = function(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+            $scope.showSelected = function(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even, $path) {
                 var parent = $parentNode?("child of: " + $parentNode.label):"root node";
                 var location = $first?"first":($last?"last":("middle node at index " + $index));
                 var oddEven = $odd?"odd":"even";
-                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
+                var path = $path().map(function(node) {return node.label});
+                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") +" (" + parent + ", " + location +", " + oddEven + ", ["+ path +"])</li>");
             };
         }
     </script>
@@ -1005,9 +1010,9 @@
                     <div save-content="sorting-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     order-by="label"
+                                     order-by="orderby"
                                      reverse-order="{{reverse}}">
-                            label: {{node.label}} ({{node.id}})
+                            label: {{node.label}} {{node.name}} ({{node.id}})
                         </treecontrol>
                     </div>
                 </div>
@@ -1017,8 +1022,15 @@
             <p>The <code>order-by</code> and <code>reverse-order</code> properties allows controlling the sorting of the tree nodes.
                 The value of those attributes is used with the <code>ng-repeat</code> orderBy filter -
                 see more details at the <a href="https://code.angularjs.org/1.2.0-rc.3/docs/api/ng.filter:orderBy">Angular JS orderBy</a> docs.</p>
-            <p>The sorting is done for each branch individually (sorting does not change the stucture of the tree itself).</p>
-            <input type="checkbox" ng-model="reverse"/> Reverse Order
+            <p>The sorting is done for each branch individually (sorting does not change the structure of the tree itself).</p>
+            <p>Note that since 0.2.24 the order-by property has changed from a '&' binding to a '=?' binding to allow support for arrays and functions.
+                This means that 0.2.23 and earlier usage like <code>order-by="{{before}}"</code> should be changed to <code>order-by="predicate"</code>.</p>
+            <p>Sort:</p>
+            <a ng-click="byLabel()">by label</a></br>
+            <a ng-click="byName()">by name</a></br>
+            <a ng-click="byNameAndLabel()">by name & label (multi-field)</a></br>
+            <a ng-click="byFunction()">by label number (using a function)</a></br>
+            <input type="checkbox" ng-model="reverse"/> Reverse Order</br>
         </div>
     </div>
     <div class="row">
@@ -1033,8 +1045,19 @@
     </div>
     <script save-content="sorting-js">
         function Sorting($scope) {
-            $scope.treedata=createSubTree(3, 4, "");
+            $scope.before = '{{predicate}}';
+
+            $scope.treedata=createSubTree(3, 12, "");
             $scope.reverse = true;
+            $scope.orderby = 'label';
+
+            $scope.byLabel = function () {$scope.orderby = 'label'};
+            $scope.byName = function () {$scope.orderby = 'name'};
+            $scope.byNameAndLabel = function () {$scope.orderby = ['name', 'label']};
+            $scope.byFunction = function () {$scope.orderby = $scope.getLabelNumber};
+            $scope.getLabelNumber = function(obj) {
+                return Number(obj.label.substring(5));
+            }
         }
     </script>
 </section>
@@ -1342,17 +1365,17 @@
                         }
                     })
             ;
+    var names = ['Homer', 'Marge', 'Bart', 'Lisa', 'Mo'];
     function createSubTree(level, width, prefix) {
         if (level > 0) {
             var res = [];
             for (var i=1; i <= width; i++)
-                res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "i": i, "children": createSubTree(level-1, width, prefix + i +".") });
+                res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "i": i, "children": createSubTree(level-1, width, prefix + i +"."), "name": names[i%names.length] });
             return res;
         }
         else
             return [];
     }
 </script>
-
 </body>
 </html>
